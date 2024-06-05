@@ -1,0 +1,50 @@
+// userService.js
+const Role = require('../../models/RolModel');
+const User = require('../../models/UserModel');
+const bcrypt = require('bcrypt');
+const Enterprise = require('../../models/EnterpriseModel');
+
+async function createUser(userData) {
+  try {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    userData.password = hashedPassword;
+    return User.create(userData);
+  } catch (error) {
+    throw new Error('Error al crear el usuario');
+  }
+}
+
+async function createUserAdmin(data) {
+  try {
+    console.log(data); // Log the data object
+    data.password = await bcrypt.hash(data.password, 10);
+    data.role_id = 3; 
+    return await User.create({
+      dni: data.dni,
+      password: data.password,
+      role_id: data.role_id,
+      enterprise_id: data.enterprise_id,
+    
+    });
+  } catch (error) {
+    console.error(error); // Log the error object
+    throw new Error('Error al crear el usuario');
+  }
+}
+
+async function getUserById(userId) {
+  return User.findByPk(userId);
+}
+
+async function updateUser(userId, userData) {
+  return User.update(userData, { where: { user_id: userId } });
+}
+
+async function deleteUser(userId) {
+  return User.destroy({ where: { user_id: userId } });
+}
+
+
+
+
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser }
