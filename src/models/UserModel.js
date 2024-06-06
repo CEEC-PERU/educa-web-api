@@ -1,5 +1,6 @@
 const { DataTypes, Sequelize } = require('sequelize');
 const { sequelize } = require('../config/database');
+const bcrypt = require('bcrypt');
 const Enterprise = require('./EnterpriseModel'); // Importar el modelo Enterprise
 const Role = require('./RolModel'); // Importar el modelo Role
 
@@ -63,3 +64,9 @@ const User = sequelize.define('User', {
 });
 
 module.exports = User;
+
+User.comparePassword = async (password, hashedPassword) => {
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch
+  }
+  

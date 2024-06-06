@@ -35,7 +35,7 @@ exports.authService = async function({ dni, password }) {
                 loginTime: new Date()
             },
             JWT_SECRET,
-            { expiresIn: '2d' }
+            { expiresIn: '24h' }
         );
 
         return { token };
