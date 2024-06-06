@@ -1,80 +1,71 @@
 const { DataTypes, Sequelize } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Professor = require('./professorModel'); // Importar el modelo professor
-const Category = require('./categoryModel'); // Importar el modelo categria
+const bcrypt = require('bcrypt');
+const Enterprise = require('./EnterpriseModel'); // Importar el modelo Enterprise
+const Role = require('./RolModel'); // Importar el modelo Role
 
-const Course = sequelize.define('Course', {
-    course_id: {
+const User = sequelize.define('User', {
+    user_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
-        type: DataTypes.STRING,
+    user_name: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    dni: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        unique: true
+    },
+    enterprise_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Enterprise,
+            key: 'enterprise_id'
+        }
+    },
+    password: {
+        type: DataTypes.STRING(100),
         allowNull: false
     },
-    description_short: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    description_large: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    categoria_id: {
+    role_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         references: {
-            model: Category,
-            key: 'id'
+            model: Role,
+            key: 'role_id'
         }
     },
-    profesor_id: {
+    expired_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    failed_login_attempts: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        references: {
-            model: Professor,
-            key: 'professor_id'
-        }
+        defaultValue: 0
     },
-    intro_video: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    image: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    duracion_curso: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    is_active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-    },
-    created_at: {
+    last_failed_login: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        allowNull: true
     },
-    updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    is_finish: {
+    is_blocked: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
+        allowNull: true,
         defaultValue: false
-    },
-    limit_date: {
-        type: DataTypes.DATE,
-        allowNull: true
     }
 }, {
-    tableName: 'courses',
-    timestamps: false
+    tableName: 'users',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 });
 
-
 module.exports = User;
+
+User.comparePassword = async (password, hashedPassword) => {
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch
+  }
