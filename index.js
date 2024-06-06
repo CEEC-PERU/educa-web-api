@@ -31,4 +31,5 @@ app.use('/api/auth', require('./src/routes/auth/auth-route'));
 
 server.listen(PORT, () => {
   console.log(`Server is running 🚀`);
+
 });

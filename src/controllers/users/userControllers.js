@@ -69,5 +69,15 @@ async function deleteUser(req, res) {
 }
 
 
+async function getAllUsers(req, res) {
+  try {
+    const users = await userService.getAllUsers();
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+}
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser }
+
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers }

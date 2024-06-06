@@ -44,7 +44,21 @@ async function deleteUser(userId) {
   return User.destroy({ where: { user_id: userId } });
 }
 
+async function getAllUsers() {
+  return User.findAll({
+    include: [{
+      model: Profile,
+      attributes: ['first_name', 'last_name', 'phone', 'profile_picture'],
+    },
+    {
+      model: Role,
+      attributes: ['description'],
+    }],
+    attributes: ['email','client_id', 'role_id', 'user_id'],
+
+  });
+}
 
 
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser }
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers }

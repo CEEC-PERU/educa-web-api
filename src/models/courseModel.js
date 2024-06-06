@@ -1,7 +1,7 @@
-const { DataTypes, Sequelize } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Professor = require('./professorModel'); // Importar el modelo professor
-const Category = require('./categoryModel'); // Importar el modelo categria
+const Category = require('./categoryModel');
+const Professor = require('./professorModel');  
 
 const Course = sequelize.define('Course', {
     course_id: {
@@ -21,15 +21,15 @@ const Course = sequelize.define('Course', {
         type: DataTypes.TEXT,
         allowNull: true
     },
-    categoria_id: {
+    category_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
             model: Category,
-            key: 'id'
+            key: 'category_id'
         }
     },
-    profesor_id: {
+    professor_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
@@ -76,5 +76,4 @@ const Course = sequelize.define('Course', {
     timestamps: false
 });
 
-
-module.exports = User;
+module.exports = Course;
