@@ -15,7 +15,6 @@ exports.getAllCourses = async (req, res) => {
 exports.getCursoDetalleById = async (req, res) => {
   const courseId = req.params.id;
   try {
-    // Lógica para obtener el detalle del curso por su ID
     const curso = await courseService.getCourseById(courseId);
     if (curso) {
       res.json(curso);
