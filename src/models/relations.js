@@ -17,18 +17,18 @@ User.belongsTo(Enterprise, {
 // Una empresa puede tener muchos usuarios
 Enterprise.hasMany(User, {
     foreignKey: 'enterprise_id',
-    as: 'users'
+    as: 'enterpriseUsers'  // Alias único
 });
 
 // Un perfil tiene un tipo de documento
 DocumentType.hasOne(Profile, {
     foreignKey: 'document_id'
-})
+});
 
 // Una sesión de aplicación pertenece a un usuario
 AppSession.belongsTo(User, {
     foreignKey: 'user_id',
-    as: 'usersession',
+    as: 'userSession'  // Alias único
 });
 
 // Un usuario pertenece a un rol
@@ -40,67 +40,53 @@ User.belongsTo(Role, {
 // Un rol puede tener muchos usuarios
 Role.hasMany(User, {
     foreignKey: 'role_id',
-    as: 'users'
+    as: 'roleUsers'  // Alias único
 });
 
 // Un perfil pertenece a un usuario
 Profile.belongsTo(User, {
     foreignKey: 'user_id',
+    as: 'profileUser'  // Alias único
 });
 
 // Un perfil pertenece a un tipo de documento
 Profile.belongsTo(DocumentType, {
-    foreignKey: 'document_id'
-});
-
-// Una empresa puede tener muchos usuarios
-Enterprise.hasMany(User, {
-    foreignKey: 'enterprise_id',
-    as: 'users',
-});
-
-// Un usuario pertenece a una empresa
-User.belongsTo(Enterprise, {
-    foreignKey: 'enterprise_id',
-    as: 'enterprise',
-});
-
-// Un usuario pertenece a un rol
-User.belongsTo(Role, {
-    foreignKey: 'role_id',
+    foreignKey: 'document_id',
+    as: 'profileDocumentType'  // Alias único
 });
 
 // Un usuario puede tener varias sesiones de aplicación
 User.hasMany(AppSession, {
     foreignKey: 'user_id',
-    as: 'appsessions',
+    as: 'appSessions'  // Alias único
 });
 
 // Un usuario tiene un perfil
 User.hasOne(Profile, {
     foreignKey: 'user_id',
+    as: 'userProfile'  // Alias único
 });
 
 // Un curso pertenece a una categoría
 Course.belongsTo(Category, {
     foreignKey: 'category_id',
-    as: 'category'
+    as: 'courseCategory'  // Alias único
 });
 
 // Un curso pertenece a un profesor
 Course.belongsTo(Professor, {
     foreignKey: 'professor_id',
-    as: 'professor'
+    as: 'courseProfessor'  // Alias único
 });
 
 // Una categoría puede tener muchos cursos
 Category.hasMany(Course, {
     foreignKey: 'category_id',
-    as: 'courses'
+    as: 'categoryCourses'  // Alias único
 });
 
 // Un profesor puede tener muchos cursos
 Professor.hasMany(Course, {
     foreignKey: 'professor_id',
-    as: 'courses'
+    as: 'professorCourses'  // Alias único
 });

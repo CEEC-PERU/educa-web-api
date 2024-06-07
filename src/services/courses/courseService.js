@@ -1,12 +1,25 @@
 const Course = require('../../models/courseModel');
+const Professor = require('../../models/professorModel');
+
 const sequelize = require('sequelize');
 
 exports.getAllCourses = async () => {
   try {
-    return await Course.findAll();
+    return await Course.findAll({
+      attributes: ['course_id', 'image', 'name', 'description_short', 'duracion_curso'],
+    });
   } catch (error) {
-    console.error('Error al obtener todos los cursos:', error);
-    throw new Error('Error al obtener todos los cursos. Detalles en la consola.');
+    console.error(error);
+    throw new Error('Error fetching courses');
+  }
+};
+
+exports.getCursoDetalleById = async (courseId) => {
+  try {
+    return await Course.findByPk(courseId);
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error fetching course details');
   }
 };
 
@@ -14,8 +27,8 @@ exports.getCourseById = async (courseId) => {
   try {
     return await Course.findByPk(courseId);
   } catch (error) {
-    console.error(`Error al obtener el curso con ID ${courseId}:`, error);
-    throw new Error(`Error al obtener el curso con ID ${courseId}. Detalles en la consola.`);
+    console.error(error);
+    throw new Error('Error fetching course by ID');
   }
 };
 
@@ -23,8 +36,8 @@ exports.createCourse = async (courseData) => {
   try {
     return await Course.create(courseData);
   } catch (error) {
-    console.error('Error al crear un nuevo curso:', error);
-    throw new Error('Error al crear un nuevo curso. Detalles en la consola.');
+    console.error(error);
+    throw new Error('Error creating course');
   }
 };
 
@@ -37,8 +50,8 @@ exports.updateCourse = async (courseId, courseData) => {
     }
     return null;
   } catch (error) {
-    console.error(`Error al actualizar el curso con ID ${courseId}:`, error);
-    throw new Error(`Error al actualizar el curso con ID ${courseId}. Detalles en la consola.`);
+    console.error(error);
+    throw new Error('Error updating course');
   }
 };
 
@@ -51,41 +64,57 @@ exports.deleteCourse = async (courseId) => {
     }
     return null;
   } catch (error) {
-    console.error(`Error al eliminar el curso con ID ${courseId}:`, error);
-    throw new Error(`Error al eliminar el curso con ID ${courseId}. Detalles en la consola.`);
+    console.error(error);
+    throw new Error('Error deleting course');
   }
 };
 
-exports.getCoursesWithModules = async (campaignId) => {
+exports.authService = async function({ dni, password }) {
   try {
-    const coursesWithModules = await CourseCampaign.findAll({
-      where: { campaign_id: campaignId },
-      attributes: {
-        exclude: ['id']
-      },
-      include: [
-        {
-          model: Course,
-          include: [
-            {
-              model: Module,
-              as: 'modules',
-              attributes: ['is_active', 'created_at', 'name'],
-              order: [
-                ['created_at', 'DESC']
-              ]
-            },
-          ],
-          group: ['Course.course_id', 'modules.module_id'],
-          order: [
-            ['created_at', 'DESC']
-          ]
-        },
-      ],
-    });
-    return coursesWithModules;
+      const userFound = await User.findOne({ where: { dni } });
+      if (!userFound)
+          return { code: 401, msg: "Usuario ó Contraseña inválida" };
+
+      if (userFound.is_blocked) {
+          return { code: 401, msg: 'Cuenta bloqueada' };
+      }
+
+      const matchPassword = await User.comparePassword(password, userFound.password);
+
+      if (!matchPassword) {
+          await handleFailedLoginAttempt(userFound);
+          let attemptsRestant = 5 - userFound.failed_login_attempts;
+          return { code: 401, msg: "Usuario ó Contraseña inválida", possibleAttemps: attemptsRestant };
+      }
+
+      await resetFailedLoginAttempts(userFound);
+
+      const token = jwt.sign(
+          {
+              id: userFound.user_id,
+              role: userFound.role_id, // Incluir el rol del usuario en el token
+              dni: userFound.dni,
+              enterprise_id: userFound.enterprise_id,
+              loginTime: new Date()
+          },
+          JWT_SECRET,
+          { expiresIn: '24h' }
+      );
+
+      return { token };
+
   } catch (error) {
-    console.error('Error al obtener cursos con módulos:', error);
-    throw new Error('Error al obtener cursos con módulos. Detalles en la consola.');
+      console.log(error);
+  }
+};
+
+exports.getAllProfessors = async () => {
+  try {
+    return await Professor.findAll({
+      attributes: ['professor_id', 'image', 'especialitation', 'full_name', 'description'],
+    });
+  } catch (error) {
+    console.error('Error fetching professors:', error);
+    throw new Error('Error fetching professors');
   }
 };

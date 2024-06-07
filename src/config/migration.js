@@ -2,6 +2,13 @@ const { sequelize } = require('./database');
 const Enterprise  = require('../models/EnterpriseModel');
 const Role  = require('../models/RolModel');
 const  User  = require('../models/UserModel');
+const Category = require('../models/categoryModel');
+const AppSession = require('../models/appSessionModel');
+const Profile = require('../models/profileModel');
+const Course = require('../models/courseModel');
+const DocumentType = require('../models/documentTypeModel');
+const Professor = require('../models/professorModel');
+
 // Sincronizar con la base de datos models
 async function authenticateDatabase() {
     try {

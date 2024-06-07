@@ -1,11 +1,29 @@
-const courseService = require('../../services/courseService');
+const courseService = require('../../services/courses/courseService');
+const Course = require('../../models/courseModel');
+const Professor = require('../../models/professorModel');
 
 exports.getAllCourses = async (req, res) => {
   try {
     const courses = await courseService.getAllCourses();
     res.json(courses);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getCursoDetalleById = async (req, res) => {
+  const courseId = req.params.id;
+  try {
+    // Lógica para obtener el detalle del curso por su ID
+    const curso = await courseService.getCourseById(courseId);
+    if (curso) {
+      res.json(curso);
+    } else {
+      res.status(404).json({ error: 'Curso no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
@@ -24,9 +42,8 @@ exports.getCourseById = async (req, res) => {
 };
 
 exports.createCourse = async (req, res) => {
-  const { name, description_short, description_large, category_id, professor_id, intro_video, image, duracion_curso, is_active, limit_date } = req.body;
   try {
-    const newCourse = await courseService.createCourse({ name, description_short, description_large, category_id, professor_id, intro_video, image, duracion_curso, is_active, limit_date });
+    const newCourse = await courseService.createCourse(req.body);
     res.status(201).json({
       message: "Curso creado exitosamente",
       newCourse
@@ -38,9 +55,8 @@ exports.createCourse = async (req, res) => {
 
 exports.updateCourse = async (req, res) => {
   const courseId = req.params.id;
-  const { name, description_short, description_large, category_id, professor_id, intro_video, image, duracion_curso, is_active, limit_date } = req.body;
   try {
-    const updatedCourse = await courseService.updateCourse(courseId, { name, description_short, description_large, category_id, professor_id, intro_video, image, duracion_curso, is_active, limit_date });
+    const updatedCourse = await courseService.updateCourse(courseId, req.body);
     if (updatedCourse) {
       res.json(updatedCourse);
     } else {
@@ -65,11 +81,10 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
-exports.getCoursesWithModules = async (req, res) => {
+exports.getAllProfessors = async (req, res) => {
   try {
-    const { campaign_id } = req.params;
-    const coursesWithModules = await courseService.getCoursesWithModules(campaign_id);
-    res.json(coursesWithModules);
+    const professors = await professorService.getAllProfessors();
+    res.json(professors);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
