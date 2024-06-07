@@ -1,7 +1,3 @@
-const jwt = require('jsonwebtoken');
-const secretKey = 'MYSECRETTOKENJWT'; // Cambia por una clave secreta segura
-
-
 function authenticateToken(req, res, next) {
   const token = req.header('Authorization');
 
@@ -18,6 +14,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
+
 function authorizeRole(roles) {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -26,7 +23,3 @@ function authorizeRole(roles) {
     next();
   };
 }
-
-
-
-module.exports = authenticateToken,authorizeRole;
