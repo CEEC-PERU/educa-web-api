@@ -8,6 +8,7 @@ const Profile = require('../models/profileModel');
 const Course = require('../models/courseModel');
 const DocumentType = require('../models/documentTypeModel');
 const Professor = require('../models/professorModel');
+const Level = require('../models/levelModel')
 
 // Sincronizar con la base de datos models
 async function authenticateDatabase() {

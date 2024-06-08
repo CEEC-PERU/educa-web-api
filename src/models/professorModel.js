@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
+const Level = require('./levelModel');
 
 const Professor = sequelize.define('Professor', {
     professor_id: {
@@ -23,6 +24,14 @@ const Professor = sequelize.define('Professor', {
         type: DataTypes.TEXT,
         allowNull: true
     },
+    level_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Level,
+            key: 'level_id'
+        },
+        allowNull: false
+    }
 }, {
     tableName: 'professors',
     timestamps: false

@@ -7,6 +7,7 @@ const DocumentType = require('./documentTypeModel');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');
 const Course = require('./courseModel');
+const Level = require('./levelModel');
 
 // Un usuario pertenece a una empresa
 User.belongsTo(Enterprise, {
@@ -90,3 +91,6 @@ Professor.hasMany(Course, {
     foreignKey: 'professor_id',
     as: 'professorCourses'  // Alias único
 });
+
+// Establecer la relación entre Professor y Level
+Professor.belongsTo(Level, { foreignKey: 'level_id' });

@@ -16,9 +16,9 @@ router.get('/:id', coursesController.getCourseById);
 router.post('/', coursesController.createCourse);
 
 // Actualizar un curso
-router.put('/:id', authenticateToken, coursesController.updateCourse);  // Aquí asegurarse de que updateCourse es una función
+router.put('/:id', coursesController.updateCourse);  // Aquí asegurarse de que updateCourse es una función
 
 // Eliminar un curso
-router.delete('/:id', authenticateToken, coursesController.deleteCourse);
+router.delete('/:id', coursesController.deleteCourse);
 
 module.exports = router;
