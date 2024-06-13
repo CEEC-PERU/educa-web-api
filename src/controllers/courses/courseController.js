@@ -20,7 +20,7 @@ exports.uploadCourseVideo = async (req, res) => {
 
 exports.createCourse = async (req, res) => {
   try {
-    const { name, description_short, description_large, category_id, professor_id, duracion_video, image, duracion_curso, is_active } = req.body;
+    const { name, description_short, description_large, category_id, professor_id, duration_video, image, duration_course, is_active } = req.body;
     const intro_video = req.body.intro_video; // URL del video cargado
 
     const newCourse = await courseService.createCourse({
@@ -30,9 +30,9 @@ exports.createCourse = async (req, res) => {
       category_id,
       professor_id,
       intro_video,
-      duracion_video,
+      duration_video,
       image,
-      duracion_curso,
+      duration_course,
       is_active
     });
 

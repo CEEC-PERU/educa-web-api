@@ -41,7 +41,7 @@ const Course = sequelize.define('Course', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    duracion_video: {
+    duration_video: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -49,7 +49,7 @@ const Course = sequelize.define('Course', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    duracion_curso: {
+    duration_curso: {
         type: DataTypes.STRING,
         allowNull: false
     },
