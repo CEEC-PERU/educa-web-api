@@ -1,42 +1,39 @@
+// src/models/sessionModel.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Level = require('./levelModel');
+const Module = require('./moduleModel');
 
-const Professor = sequelize.define('Professor', {
-    professor_id: {
+const Session = sequelize.define('Session', {
+    session_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    image: {
+    video_enlace: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    especialitation: {
+    duracion_minutos: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    full_name: {
+    name: {
         type: DataTypes.STRING(100),
         allowNull: false
     },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    level_id: {
+    modulo_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: Level,
-            key: 'level_id'
+            model: Module,
+            key: 'module_id'
         },
         allowNull: false
-    }
+    },
 }, {
-    tableName: 'professors',
+    tableName: 'sessions',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 });
 
-module.exports = Professor;
+module.exports = Session;

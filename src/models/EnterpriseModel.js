@@ -1,5 +1,6 @@
 const { DataTypes, Sequelize } = require('sequelize');
 const { sequelize } = require('../config/database');
+const Rol = require('./RolModel');
 
 const Enterprise = sequelize.define('Enterprise', {
     enterprise_id: {
@@ -16,10 +17,24 @@ const Enterprise = sequelize.define('Enterprise', {
         type: DataTypes.STRING(50),
         allowNull: false
     },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    }
+    role_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: Rol,
+            key: 'role_id'
+        }
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: true,
+      },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        allowNull: true,
+    },
 }, {
     tableName: 'enterprises',
     timestamps: false

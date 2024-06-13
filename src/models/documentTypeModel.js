@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
 const DocumentType = sequelize.define('DocumentType', {
-    document_id: {
+  document_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
@@ -10,10 +10,12 @@ const DocumentType = sequelize.define('DocumentType', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-  }
+  },
 }, {
   tableName: 'documenttypes', 
-  timestamps: false,
+  timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
 });
 
 module.exports = DocumentType;

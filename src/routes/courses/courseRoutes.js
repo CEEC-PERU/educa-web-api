@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const coursesController = require('../../controllers/courses/courseController');
-const authenticateToken = require('../../middlewares/authenticationMiddleware');
+
+router.post('/upload', upload.single('video'), coursesController.uploadCourseVideo);
 
 // Todos los cursos
 router.get('/', coursesController.getAllCourses);

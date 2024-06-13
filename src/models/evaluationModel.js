@@ -1,21 +1,25 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-const Level = sequelize.define('Level', {
-    level_id: {
+const Evaluation = sequelize.define('Evaluation', {
+    evaluation_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
     name: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.TEXT,
         allowNull: false
     },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    }
 }, {
-    tableName: 'levels',
+    tableName: 'evaluations',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 });
 
-module.exports = Level;
+module.exports = Evaluation;
