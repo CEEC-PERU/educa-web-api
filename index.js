@@ -36,7 +36,7 @@ app.use('/api/auth', require('./src/routes/auth/auth-route'));
 app.use('/api/profiles', require('./src/routes/users/profileRoutes'));
 app.use('/api/categories', require('./src/routes/courses/categoryRoutes'));
 app.use('/api/professors', require('./src/routes/courses/professorRoutes'));
-
+SocketService(server);
 server.listen(PORT, () => {
   console.log(`Server is running 🚀`);
 });

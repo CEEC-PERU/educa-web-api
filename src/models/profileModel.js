@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const User = require('./UserModel');
-const DocumentType = require('./documentTypeModel')
 
 const Profile = sequelize.define('Profile', {
   profile_id: {
@@ -11,13 +10,7 @@ const Profile = sequelize.define('Profile', {
   },
   first_name: DataTypes.STRING,
   last_name: DataTypes.STRING,
-  document_id: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: DocumentType, 
-      key: 'document_id',
-    },
-  },
+  email: DataTypes.STRING,
   user_id: {
     type: DataTypes.INTEGER,
     references: {
@@ -25,7 +18,7 @@ const Profile = sequelize.define('Profile', {
       key: 'user_id',
     },
   },
-  document_number: DataTypes.INTEGER,
+
   phone: DataTypes.INTEGER,
   profile_picture: {
     type: DataTypes.TEXT,

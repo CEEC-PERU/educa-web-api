@@ -3,7 +3,6 @@ const Enterprise = require('./EnterpriseModel');
 const Role = require('./RolModel');
 const AppSession = require('./appSessionModel');
 const Profile = require('./profileModel');
-const DocumentType = require('./documentTypeModel');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');
 const Course = require('./courseModel');
@@ -21,10 +20,7 @@ Enterprise.hasMany(User, {
     as: 'enterpriseUsers'  // Alias único
 });
 
-// Un perfil tiene un tipo de documento
-DocumentType.hasOne(Profile, {
-    foreignKey: 'document_id'
-});
+
 
 // Una sesión de aplicación pertenece a un usuario
 AppSession.belongsTo(User, {
@@ -50,11 +46,7 @@ Profile.belongsTo(User, {
     as: 'profileUser'  // Alias único
 });
 
-// Un perfil pertenece a un tipo de documento
-Profile.belongsTo(DocumentType, {
-    foreignKey: 'document_id',
-    as: 'profileDocumentType'  // Alias único
-});
+
 
 // Un usuario puede tener varias sesiones de aplicación
 User.hasMany(AppSession, {

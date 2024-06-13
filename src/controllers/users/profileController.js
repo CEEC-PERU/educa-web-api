@@ -1,16 +1,35 @@
 const profileService = require('../../services/users/profileService');
 const { getUserById } = require('../../services/users/userService');
+const sendMail = require('../../services/users/sendMail');
+
 
 async function createProfile(req, res) {
   try {
     const { user_id } = req.params;
     const profile = await profileService.createProfile({ ...req.body, user_id: parseInt(user_id) });
+    await sendWelcomeEmail(profile); // Envía un correo de bienvenida al nuevo usuario
     res.status(201).json(profile);
   } catch (error) {
     console.error('Error creating profile:', error);
     res.status(500).json({ error: 'Error creating profile', details: error.message });
   }
 }
+
+async function sendWelcomeEmail(profile) {
+  const subject = 'Bienvenido a Educa-Web';
+  const text = `¡Hola ${profile.first_name} ${profile.last_name}! Bienvenido a Educa-Web.`;
+  const html = `<p>¡Hola ${profile.first_name} ${profile.last_name}! Bienvenido a Educa-Web.</p>`;
+
+  console.log(text , html , subject , profile.email)
+  try {
+    await sendMail({ email: profile.email , name: profile.last_name}, subject, text, html);
+    console.log('Correo de bienvenida enviado a:', profile.email);
+  } catch (error) {
+    console.error('Error sending welcome email:', error);
+    throw error;
+  }
+}
+
 
 async function getProfileById(req, res) {
   const { profileId } = req.params;
@@ -78,14 +97,7 @@ async function getAllUserProfileData(req, res) {
   }
 }
 
-async function getDocumentTypes(req, res) {
-  try {
-    const documentTypes = await profileService.getDocumetTypes();
-    res.json(documentTypes);
-  } catch (error) {
-    res.status(500).json({ error: 'Error fetching profiles' });
-  }
-}
+
 
 module.exports = {
   createProfile,
@@ -94,5 +106,5 @@ module.exports = {
   deleteProfile,
   getAllProfiles,
   getAllUserProfileData,
-  getDocumentTypes
+ 
 };

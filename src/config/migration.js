@@ -6,7 +6,6 @@ const Category = require('../models/categoryModel');
 const AppSession = require('../models/appSessionModel');
 const Profile = require('../models/profileModel');
 const Course = require('../models/courseModel');
-const DocumentType = require('../models/documentTypeModel');
 const Professor = require('../models/professorModel');
 const Level = require('../models/levelModel')
 

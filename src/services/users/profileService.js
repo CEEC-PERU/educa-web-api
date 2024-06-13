@@ -1,4 +1,3 @@
-const DocumentType = require('../../models/documentTypeModel');
 const Profile = require('../../models/profileModel');
 const User = require('../../models/UserModel');
 
@@ -22,9 +21,6 @@ async function getAllProfiles() {
   return Profile.findAll();
 }
 
-async function getDocumetTypes() {
-  return DocumentType.findAll();
-}
 
 async function getAllUserProfileDataService(userId) {
   try {
@@ -32,11 +28,9 @@ async function getAllUserProfileDataService(userId) {
       where: { user_id: userId },
       include: [{
         model: Profile,
+         as: 'userProfile',
         required: true,
-        include: [{
-          model: DocumentType,
-          required: true
-        }]
+       
       }]
     });
 
@@ -60,5 +54,5 @@ module.exports = {
   deleteProfile,
   getAllProfiles,
   getAllUserProfileDataService,
-  getDocumetTypes
+
 };
