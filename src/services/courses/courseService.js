@@ -2,22 +2,18 @@ const Course = require('../../models/courseModel');
 
 exports.getAllCourses = async () => {
   try {
-    return await Course.findAll({
-      attributes: ['course_id', 'image', 'name', 'description_short', 'duracion_curso'],
-    });
+    return await Course.findAll();
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching courses:', error);
     throw new Error('Error fetching courses');
   }
 };
 
 exports.getCourseById = async (courseId) => {
   try {
-    return await Course.findByPk(courseId, {
-      attributes: ['course_id', 'image', 'name', 'description_short', 'description_large', 'duracion_curso', 'intro_video']
-    });
+    return await Course.findByPk(courseId);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching course by ID:', error);
     throw new Error('Error fetching course by ID');
   }
 };
@@ -26,7 +22,7 @@ exports.createCourse = async (courseData) => {
   try {
     return await Course.create(courseData);
   } catch (error) {
-    console.error(error);
+    console.error('Error creating course:', error);
     throw new Error('Error creating course');
   }
 };
@@ -40,7 +36,7 @@ exports.updateCourse = async (courseId, courseData) => {
     }
     return null;
   } catch (error) {
-    console.error(error);
+    console.error('Error updating course:', error);
     throw new Error('Error updating course');
   }
 };
@@ -54,7 +50,7 @@ exports.deleteCourse = async (courseId) => {
     }
     return null;
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting course:', error);
     throw new Error('Error deleting course');
   }
 };

@@ -1,6 +1,50 @@
+const videoService = require('../../services/videos/videoService');
 const courseService = require('../../services/courses/courseService');
-const Course = require('../../models/courseModel');
-const Professor = require('../../models/professorModel');
+
+const fs = require('fs');
+
+exports.uploadCourseVideo = async (req, res) => {
+  try {
+    const videoPath = req.file.path;
+    const videoUrl = await videoService.uploadVideo(videoPath);
+    
+    // Elimina el archivo local después de subirlo a Cloudinary
+    fs.unlinkSync(videoPath);
+    
+    res.json({ url: videoUrl });
+  } catch (error) {
+    console.error('Error uploading video:', error);
+    res.status(400).json({ error: 'Error uploading video' });
+  }
+};
+
+exports.createCourse = async (req, res) => {
+  try {
+    const { name, description_short, description_large, category_id, professor_id, duration_video, image, duration_course, is_active } = req.body;
+    const intro_video = req.body.intro_video; // URL del video cargado
+
+    const newCourse = await courseService.createCourse({
+      name,
+      description_short,
+      description_large,
+      category_id,
+      professor_id,
+      intro_video,
+      duration_video,
+      image,
+      duration_course,
+      is_active
+    });
+
+    res.status(201).json({
+      message: "Curso creado exitosamente",
+      newCourse
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 
 exports.getAllCourses = async (req, res) => {
   try {
@@ -35,18 +79,6 @@ exports.getCourseById = async (req, res) => {
     } else {
       res.status(404).json({ error: 'Course not found' });
     }
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-exports.createCourse = async (req, res) => {
-  try {
-    const newCourse = await courseService.createCourse(req.body);
-    res.status(201).json({
-      message: "Curso creado exitosamente",
-      newCourse
-    });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

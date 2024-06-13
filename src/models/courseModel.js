@@ -15,15 +15,15 @@ const Course = sequelize.define('Course', {
     },
     description_short: {
         type: DataTypes.TEXT,
-        allowNull: true
+        allowNull: false
     },
     description_large: {
         type: DataTypes.TEXT,
-        allowNull: true
+        allowNull: false
     },
     category_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
             model: Category,
             key: 'category_id'
@@ -31,7 +31,7 @@ const Course = sequelize.define('Course', {
     },
     professor_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
             model: Professor,
             key: 'professor_id'
@@ -39,41 +39,30 @@ const Course = sequelize.define('Course', {
     },
     intro_video: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
+    },
+    duration_video: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     image: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
-    duracion_curso: {
+    duration_curso: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
     is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true
     },
-    created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    is_finish: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    },
-    limit_date: {
-        type: DataTypes.DATE,
-        allowNull: true
-    }
 }, {
     tableName: 'courses',
-    timestamps: false
-});
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  });
 
 module.exports = Course;

@@ -7,6 +7,42 @@ const Category = require('./categoryModel');
 const Professor = require('./professorModel');
 const Course = require('./courseModel');
 const Level = require('./levelModel');
+const Module = require('./moduleModel');
+const Session = require('./sessionModel');
+const Evaluation = require('./evaluationModel');
+const Question = require('./questionModel');
+const Option = require('./optionModel');
+const QuestionType = require('./questionTypeModel');
+
+// Relación entre Evaluation y Question
+Evaluation.hasMany(Question, {
+    foreignKey: 'evaluation_id',
+    as: 'questions'
+});
+Question.belongsTo(Evaluation, {
+    foreignKey: 'evaluation_id',
+    as: 'evaluation'
+});
+
+// Relación entre Question y Option
+Question.hasMany(Option, {
+    foreignKey: 'question_id',
+    as: 'options'
+});
+Option.belongsTo(Question, {
+    foreignKey: 'question_id',
+    as: 'question'
+});
+
+// Relación entre Question y QuestionType
+Question.belongsTo(QuestionType, {
+    foreignKey: 'question_type',
+    as: 'questionType'
+});
+QuestionType.hasMany(Question, {
+    foreignKey: 'question_type',
+    as: 'questions'
+});
 
 // Un usuario pertenece a una empresa
 User.belongsTo(Enterprise, {
@@ -17,7 +53,7 @@ User.belongsTo(Enterprise, {
 // Una empresa puede tener muchos usuarios
 Enterprise.hasMany(User, {
     foreignKey: 'enterprise_id',
-    as: 'enterpriseUsers'  // Alias único
+    as: 'enterpriseUsers'
 });
 
 
@@ -25,7 +61,7 @@ Enterprise.hasMany(User, {
 // Una sesión de aplicación pertenece a un usuario
 AppSession.belongsTo(User, {
     foreignKey: 'user_id',
-    as: 'userSession'  // Alias único
+    as: 'userSession'
 });
 
 // Un usuario pertenece a un rol
@@ -37,52 +73,71 @@ User.belongsTo(Role, {
 // Un rol puede tener muchos usuarios
 Role.hasMany(User, {
     foreignKey: 'role_id',
-    as: 'roleUsers'  // Alias único
+    as: 'roleUsers'
 });
 
 // Un perfil pertenece a un usuario
 Profile.belongsTo(User, {
     foreignKey: 'user_id',
-    as: 'profileUser'  // Alias único
+    as: 'profileUser'
 });
 
+
+// Un perfil pertenece a un tipo de documento
+Profile.belongsTo(DocumentType, {
+    foreignKey: 'document_id',
+    as: 'profileDocumentType'
+});
 
 
 // Un usuario puede tener varias sesiones de aplicación
 User.hasMany(AppSession, {
     foreignKey: 'user_id',
-    as: 'appSessions'  // Alias único
+    as: 'appSessions'
 });
 
 // Un usuario tiene un perfil
 User.hasOne(Profile, {
     foreignKey: 'user_id',
-    as: 'userProfile'  // Alias único
+    as: 'userProfile'
 });
 
 // Un curso pertenece a una categoría
 Course.belongsTo(Category, {
     foreignKey: 'category_id',
-    as: 'courseCategory'  // Alias único
+    as: 'courseCategory'
 });
 
 // Un curso pertenece a un profesor
 Course.belongsTo(Professor, {
     foreignKey: 'professor_id',
-    as: 'courseProfessor'  // Alias único
+    as: 'courseProfessor'
 });
 
 // Una categoría puede tener muchos cursos
 Category.hasMany(Course, {
     foreignKey: 'category_id',
-    as: 'categoryCourses'  // Alias único
+    as: 'categoryCourses'
 });
 
 // Un profesor puede tener muchos cursos
 Professor.hasMany(Course, {
     foreignKey: 'professor_id',
-    as: 'professorCourses'  // Alias único
+    as: 'professorCourses'
 });
 
 // Establecer la relación entre Professor y Level
-Professor.belongsTo(Level, { foreignKey: 'level_id' });
+Professor.belongsTo(Level, { foreignKey: 'level_id', as: 'professorLevel' });
+Level.hasMany(Professor, { foreignKey: 'level_id', as: 'levelProfessors' });
+
+// Un módulo pertenece a un curso
+Module.belongsTo(Course, { foreignKey: 'course_id', as: 'moduleCourse' });
+Course.hasMany(Module, { foreignKey: 'course_id', as: 'courseModules' });
+
+// Un módulo tiene una evaluación
+Module.belongsTo(Evaluation, { foreignKey: 'evaluation_id', as: 'moduleEvaluation' });
+Evaluation.hasMany(Module, { foreignKey: 'evaluation_id', as: 'evaluationModules' });
+
+// Una sesión pertenece a un módulo
+Session.belongsTo(Module, { foreignKey: 'modulo_id', as: 'sessionModule' });
+Module.hasMany(Session, { foreignKey: 'modulo_id', as: 'moduleSessions' });
