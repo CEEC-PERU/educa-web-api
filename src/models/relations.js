@@ -83,11 +83,7 @@ Profile.belongsTo(User, {
 });
 
 
-// Un perfil pertenece a un tipo de documento
-Profile.belongsTo(DocumentType, {
-    foreignKey: 'document_id',
-    as: 'profileDocumentType'
-});
+
 
 
 // Un usuario puede tener varias sesiones de aplicación
