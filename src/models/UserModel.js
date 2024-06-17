@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const Enterprise = require('./EnterpriseModel'); // Importar el modelo Enterprise
 const Role = require('./RolModel'); // Importar el modelo Role
 
+
 const User = sequelize.define('User', {
     user_id: {
         type: DataTypes.INTEGER,

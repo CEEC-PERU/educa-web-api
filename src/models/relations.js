@@ -13,6 +13,16 @@ const Evaluation = require('./evaluationModel');
 const Question = require('./questionModel');
 const Option = require('./optionModel');
 const QuestionType = require('./questionTypeModel');
+const CourseStudent = require('./courseStudent');
+
+
+// Relación entre CourseStudent y User
+CourseStudent.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(CourseStudent, { foreignKey: 'user_id' });
+
+// Relación entre CourseStudent y Course
+CourseStudent.belongsTo(Course, { foreignKey: 'course_id' });
+Course.hasMany(CourseStudent, { foreignKey: 'course_id' });
 
 // Relación entre Evaluation y Question
 Evaluation.hasMany(Question, {
