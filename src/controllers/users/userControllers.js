@@ -1,5 +1,4 @@
 const userService = require('../../services/users/userService');
-
 async function createUser(req, res) {
   try {
     const userData = req.body;
@@ -69,6 +68,20 @@ async function deleteUser(req, res) {
 }
 
 
+
+
+// Controlador para obtener la información del usuario por user_id
+async function getUserInfo(req, res, next) {
+  const userId = req.params.userId; 
+  try {
+    const userInfo = await userService.getUserInfo(userId);
+    res.json(userInfo);
+  } catch (error) {
+    next(error); // Pasar el error al middleware de manejo de errores
+  }
+}
+
+
 async function getAllUsers(req, res) {
   try {
     const users = await userService.getAllUsers();
@@ -80,4 +93,4 @@ async function getAllUsers(req, res) {
 }
 
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers }
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo }

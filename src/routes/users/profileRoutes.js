@@ -5,7 +5,7 @@ const authenticateToken = require('../../middlewares/authenticationMiddleware');
 
 router.post('/profiles/:user_id', authenticateToken, profileController.createProfile);
 router.get('/profiles/:profileId',authenticateToken  ,profileController.getProfileById);
-router.put('/profiles/:user_id', authenticateToken,  profileController.updateProfile);
+router.put('/:user_id', authenticateToken,  profileController.updateProfile);
 router.delete('/profiles/:profileId',authenticateToken,   profileController.deleteProfile);
 router.get('/profiles', authenticateToken,  profileController.getAllProfiles);
 //Queries customized
