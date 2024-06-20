@@ -6,7 +6,11 @@ const router = express.Router();
 
 router.post('/', authenticateToken, courseStudentController.create);
 router.get('/',authenticateToken, courseStudentController.getAll);
+router.get('/cursos/:user_id',authenticateToken, courseStudentController.getCourseStudentsByUserId);
 router.get('/:id',authenticateToken, courseStudentController.getById);
+
+//obtener todos los detalles del curso 
+router.get('/detailcourse/:course_id',authenticateToken, courseStudentController.getCourseDetailByCourseId);
 router.put('/:id',authenticateToken, courseStudentController.update);
 router.delete('/:id', authenticateToken,courseStudentController.delete);
 

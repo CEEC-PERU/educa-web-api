@@ -48,6 +48,36 @@ class CourseStudentController {
             res.status(500).json({ error: error.message });
         }
     }
+
+
+    async getCourseStudentsByUserId(req, res) {
+        const { user_id } = req.params;
+        try {
+            const courseStudent = await courseStudentService.getCourseStudentsByUserId(user_id);
+            if (!courseStudent) {
+                return res.status(404).json({ error: 'CourseStudent not found' });
+            }
+            res.status(200).json(courseStudent);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getCourseDetailByCourseId(req, res) {
+        const { course_id } = req.params;
+        try {
+            const courseStudent = await courseStudentService.getCourseDetailByCourseId(course_id);
+            if (!courseStudent) {
+                return res.status(404).json({ error: 'CourseStudent not found' });
+            }
+            res.status(200).json(courseStudent);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+
+
 }
 
 module.exports = new CourseStudentController();
