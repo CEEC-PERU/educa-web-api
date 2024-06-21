@@ -76,6 +76,18 @@ class CourseStudentController {
         }
     }
 
+    async getModulesByCourseId(req, res) {
+        const { course_id } = req.params;
+        try {
+            const courseStudent = await courseStudentService.getModulesByCourseId(course_id);
+            if (!courseStudent) {
+                return res.status(404).json({ error: 'CourseStudent not found' });
+            }
+            res.status(200).json(courseStudent);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 
 
 }

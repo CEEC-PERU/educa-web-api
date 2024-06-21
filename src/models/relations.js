@@ -46,11 +46,11 @@ Option.belongsTo(Question, {
 
 // Relación entre Question y QuestionType
 Question.belongsTo(QuestionType, {
-    foreignKey: 'question_type',
+    foreignKey: 'type_id',
     as: 'questionType'
 });
 QuestionType.hasMany(Question, {
-    foreignKey: 'question_type',
+    foreignKey: 'type_id',
     as: 'questions'
 });
 
@@ -145,5 +145,5 @@ Module.belongsTo(Evaluation, { foreignKey: 'evaluation_id', as: 'moduleEvaluatio
 Evaluation.hasMany(Module, { foreignKey: 'evaluation_id', as: 'evaluationModules' });
 
 // Una sesión pertenece a un módulo
-Session.belongsTo(Module, { foreignKey: 'modulo_id', as: 'sessionModule' });
-Module.hasMany(Session, { foreignKey: 'modulo_id', as: 'moduleSessions' });
+Session.belongsTo(Module, { foreignKey: 'module_id', as: 'sessionModule' });
+Module.hasMany(Session, { foreignKey: 'module_id', as: 'moduleSessions' });

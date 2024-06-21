@@ -11,6 +11,7 @@ router.get('/:id',authenticateToken, courseStudentController.getById);
 
 //obtener todos los detalles del curso 
 router.get('/detailcourse/:course_id',authenticateToken, courseStudentController.getCourseDetailByCourseId);
+router.get('/modules/:course_id',authenticateToken, courseStudentController.getModulesByCourseId);
 router.put('/:id',authenticateToken, courseStudentController.update);
 router.delete('/:id', authenticateToken,courseStudentController.delete);
 

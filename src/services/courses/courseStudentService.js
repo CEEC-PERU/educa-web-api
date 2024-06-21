@@ -5,6 +5,10 @@ const Profesor = require('../../models/professorModel');
 const Nivel = require('../../models/levelModel');
 const Module = require('../../models/moduleModel');
 const Session = require('../../models/sessionModel');
+const Evaluation = require('../../models/evaluationModel');
+const Question = require('../../models/questionModel');
+const Option = require('../../models/optionModel');
+const QuestionType = require('../../models/questionTypeModel');
 class CourseStudentService {
     async create(data) {
         return await CourseStudent.create(data);
@@ -45,7 +49,7 @@ class CourseStudentService {
               include: [
                 {
                   model: Course,
-                  attributes: [ 'name', 'description_short','image'],
+                  attributes: [ 'name', 'description_short','image', 'course_id'],
                   include : [
                     {
                       model: Category,
@@ -57,19 +61,6 @@ class CourseStudentService {
                       model: Profesor,
                       attributes: [ 'full_name'],
                       as: 'courseProfessor'
-                    },
-                    {
-                        model: Module,
-                        attributes: [ 'name' , 'is_active'],
-                        as: 'courseModules',
-                        include: [
-                            {
-                                model: Session,
-                                attributes: [ 'name' , 'is_active'],
-                               as: 'moduleSessions'
-                                
-                            }
-                        ]
                     }
                 ]
                 }
@@ -106,7 +97,20 @@ class CourseStudentService {
                           attributes: [ 'name'],
                           as: 'professorLevel'
                         },
-                  ],
+                      ]
+                    },
+                    {
+                        model: Module,
+                        attributes: [ 'name' , 'is_active','module_id'],
+                        as: 'courseModules',
+                        include: [
+                            {
+                                model: Session,
+                                attributes: [ 'name' ],
+                                as: 'moduleSessions' 
+                                
+                            }
+                        ]
                     }
               ],
             });
@@ -116,6 +120,61 @@ class CourseStudentService {
             throw error;
           }
     }
+
+
+    async getModulesByCourseId(course_id){
+      try {
+          const coursesByStudent = await Course.findAll({
+            where: { course_id: course_id },
+            attributes: [  'course_id','name', 
+             ],
+                include : [
+                  {
+                      model: Module,
+                      attributes: [ 'name' , 'is_active','module_id' , 'evaluation_id'],
+                      as: 'courseModules',
+                      include: [
+                          {
+                              model: Session,
+                              attributes: ['session_id', 'name', 'video_enlace' , 'duracion_minutos' , ],
+                              as: 'moduleSessions' 
+                          },
+                          {
+                            model: Evaluation,
+                            attributes: [ 'evaluation_id','name', 'description' ],
+                            as: 'moduleEvaluation',
+                            include: [
+                              {
+                                  model: Question,
+                                  attributes: [ 'question_id' , 'question_text','score', 'image','question_text',  'evaluation_id', 'type_id'],
+                                  as: 'questions' ,
+                                  include: [
+                                    {
+                                        model: QuestionType,
+                                        attributes: [ 'type_id','name' ],
+                                        as: 'questionType'
+                                        
+                                    },
+                                    {
+                                      model: Option,
+                                      attributes: [ 'option_id' , 'option_text' , 'is_correct',  ],
+                                      as: 'options' 
+                                      
+                                  }
+                                ]
+                              }
+                          ]
+                        }
+                      ]
+                  }
+            ],
+          });
+          return coursesByStudent
+        } catch (error) {
+          console.log(error)
+          throw error;
+        }
+  }
 
 
 }
