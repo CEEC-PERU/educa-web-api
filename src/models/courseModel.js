@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');  
-
+const Evaluation = require('./evaluationModel');  
 const Course = sequelize.define('Course', {
     course_id: {
         type: DataTypes.INTEGER,
@@ -35,6 +35,14 @@ const Course = sequelize.define('Course', {
         references: {
             model: Professor,
             key: 'professor_id'
+        }
+    },
+    evaluation_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Evaluation,
+            key: 'evaluation_id'
         }
     },
     intro_video: {

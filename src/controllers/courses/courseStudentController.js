@@ -77,9 +77,9 @@ class CourseStudentController {
     }
 
     async getModulesByCourseId(req, res) {
-        const { course_id } = req.params;
+        const { course_id , user_id} = req.params;
         try {
-            const courseStudent = await courseStudentService.getModulesByCourseId(course_id);
+            const courseStudent = await courseStudentService.getModulesByCourseId(course_id, user_id);
             if (!courseStudent) {
                 return res.status(404).json({ error: 'CourseStudent not found' });
             }

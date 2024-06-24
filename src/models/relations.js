@@ -14,7 +14,26 @@ const Question = require('./questionModel');
 const Option = require('./optionModel');
 const QuestionType = require('./questionTypeModel');
 const CourseStudent = require('./courseStudent');
+const UserModuleProgress = require('./UserModuleProgress');
+const UserSessionProgress = require('./UserSessionProgress');
+//Usuario con UserModuleProgress
+User.hasMany(UserModuleProgress, { foreignKey: 'user_id' });
+UserModuleProgress.belongsTo(User, { foreignKey: 'user_id' });
 
+Module.hasMany(UserModuleProgress, { foreignKey: 'module_id' ,  as: 'usermoduleprogress'});
+UserModuleProgress.belongsTo(Module, { foreignKey: 'module_id' });
+
+//User con SessionPregress
+
+User.hasMany(UserSessionProgress, { foreignKey: 'user_id' });
+UserSessionProgress.belongsTo(User, { foreignKey: 'user_id' });
+
+Session.hasMany(UserSessionProgress, { foreignKey: 'session_id' ,  as: 'usersessionprogress'});
+UserSessionProgress.belongsTo(Session, { foreignKey: 'session_id' });
+
+//Relacion entre evaluation y curso.
+Course.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
+Evaluation.hasOne(Course, { foreignKey: 'evaluation_id' });
 
 // Relación entre CourseStudent y User
 CourseStudent.belongsTo(User, { foreignKey: 'user_id' });

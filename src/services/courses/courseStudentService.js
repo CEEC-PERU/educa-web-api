@@ -8,6 +8,8 @@ const Session = require('../../models/sessionModel');
 const Evaluation = require('../../models/evaluationModel');
 const Question = require('../../models/questionModel');
 const Option = require('../../models/optionModel');
+const UserModuleProgress = require('../../models/UserModuleProgress');
+const UserSessionProgress = require('../../models/UserSessionProgress');
 const QuestionType = require('../../models/questionTypeModel');
 class CourseStudentService {
     async create(data) {
@@ -74,7 +76,7 @@ class CourseStudentService {
     }
 
 
-    async getCourseDetailByCourseId(course_id){
+    async getCourseDetailByCourseId(course_id , user_id){
         try {
             const coursesByStudent = await Course.findAll({
               where: { course_id: course_id },
@@ -108,7 +110,7 @@ class CourseStudentService {
                                 model: Session,
                                 attributes: [ 'name' ],
                                 as: 'moduleSessions' 
-                                
+                              
                             }
                         ]
                     }
@@ -121,60 +123,102 @@ class CourseStudentService {
           }
     }
 
-
-    async getModulesByCourseId(course_id){
+    async getModulesByCourseId(course_id, user_id) {
       try {
-          const coursesByStudent = await Course.findAll({
-            where: { course_id: course_id },
-            attributes: [  'course_id','name', 
-             ],
-                include : [
-                  {
-                      model: Module,
-                      attributes: [ 'name' , 'is_active','module_id' , 'evaluation_id'],
-                      as: 'courseModules',
+        const coursesByStudent = await Course.findAll({
+          where: { course_id: course_id },
+          attributes: ['course_id', 'name', 'evaluation_id'],
+          include: [
+            {
+              model: Module,
+              attributes: ['name', 'is_active', 'module_id', 'evaluation_id'],
+              as: 'courseModules',
+              include: [
+                {
+                  model: UserModuleProgress,
+                  attributes: ['is_completed', 'progress', 'user_id'],
+                  as: 'usermoduleprogress',
+                  where: { user_id: user_id },
+                  required: false  // Añadir required: false para evitar filtrar módulos
+                },
+                {
+                  model: Session,
+                  attributes: ['session_id', 'name', 'video_enlace', 'duracion_minutos'],
+                  as: 'moduleSessions',
+                  required: false ,
+                  include: [
+                    {
+                      model: UserSessionProgress,
+                      attributes: ['is_completed', 'progress', 'user_id'],
+                      as: 'usersessionprogress',
+                      where: { user_id: user_id },
+                      required: false  // Añadir required: false para evitar filtrar sesiones
+                    }
+                  ],
+                 
+                },
+                {
+                  model: Evaluation,
+                  attributes: ['evaluation_id', 'name', 'description'],
+                  as: 'moduleEvaluation',
+                  include: [
+                    {
+                      model: Question,
+                      attributes: ['question_id', 'question_text', 'score', 'image', 'question_text', 'evaluation_id', 'type_id'],
+                      as: 'questions',
                       include: [
-                          {
-                              model: Session,
-                              attributes: ['session_id', 'name', 'video_enlace' , 'duracion_minutos' , ],
-                              as: 'moduleSessions' 
-                          },
-                          {
-                            model: Evaluation,
-                            attributes: [ 'evaluation_id','name', 'description' ],
-                            as: 'moduleEvaluation',
-                            include: [
-                              {
-                                  model: Question,
-                                  attributes: [ 'question_id' , 'question_text','score', 'image','question_text',  'evaluation_id', 'type_id'],
-                                  as: 'questions' ,
-                                  include: [
-                                    {
-                                        model: QuestionType,
-                                        attributes: [ 'type_id','name' ],
-                                        as: 'questionType'
-                                        
-                                    },
-                                    {
-                                      model: Option,
-                                      attributes: [ 'option_id' , 'option_text' , 'is_correct',  ],
-                                      as: 'options' 
-                                      
-                                  }
-                                ]
-                              }
-                          ]
+                        {
+                          model: QuestionType,
+                          attributes: ['type_id', 'name'],
+                          as: 'questionType'
+                        },
+                        {
+                          model: Option,
+                          attributes: ['option_id', 'option_text', 'is_correct'],
+                          as: 'options'
                         }
                       ]
-                  }
-            ],
-          });
-          return coursesByStudent
-        } catch (error) {
-          console.log(error)
-          throw error;
-        }
-  }
+                    }
+                  ],
+                  required: false  // Añadir required: false para evitar filtrar módulos
+                }
+              ],
+              required: false  // Añadir required: false para evitar filtrar cursos
+            },
+            {
+              model: Evaluation,
+              attributes: ['evaluation_id', 'name', 'description'],
+              include: [
+                {
+                  model: Question,
+                  attributes: ['question_id', 'question_text', 'score', 'image', 'question_text', 'evaluation_id', 'type_id'],
+                  as: 'questions',
+                  include: [
+                    {
+                      model: QuestionType,
+                      attributes: ['type_id', 'name'],
+                      as: 'questionType'
+                    },
+                    {
+                      model: Option,
+                      attributes: ['option_id', 'option_text', 'is_correct'],
+                      as: 'options'
+                    }
+                  ]
+                }
+              ],
+              required: false  // Añadir required: false para evitar filtrar módulos
+            }
+          ],
+        });
+        return coursesByStudent;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
+    
+    
 
 
 }
