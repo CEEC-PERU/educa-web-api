@@ -10,5 +10,7 @@ router.put('/users/:id', authenticateToken, userController.updateUser);
 router.delete('/users/:id', authenticateToken, userController.deleteUser);
 router.post('/createuserAdmin', userController.createUserAdmin);
 
-// Exportar el enrutador
+//OBTENER INFO DE USUARIO CON EMPRESA Y PERFIL
+router.get('/enterprise/:userId', authenticateToken, userController.getUserInfo);
+
 module.exports = router;

@@ -13,17 +13,13 @@ const Enterprise = sequelize.define('Enterprise', {
         type: DataTypes.TEXT,
         allowNull: true
     },
+    image_fondo: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     name: {
         type: DataTypes.STRING(50),
         allowNull: false
-    },
-    role_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: Rol,
-            key: 'role_id'
-        }
     },
     created_at: {
         type: DataTypes.DATE,

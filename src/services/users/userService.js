@@ -1,5 +1,6 @@
 // userService.js
 const Role = require('../../models/RolModel');
+const Profile = require('../../models/profileModel');
 const User = require('../../models/UserModel');
 const bcrypt = require('bcrypt');
 const Enterprise = require('../../models/EnterpriseModel');
@@ -59,6 +60,20 @@ async function getAllUsers() {
   });
 }
 
+//obtener datos de l usuario con empresa
+async function getUserInfo(userId) {
+  return User.findOne({
+    where: { user_id: userId }, 
+    include: [
+    {
+      model: Enterprise,
+      attributes: ['image_log', 'image_fondo', 'name'],
+       as: 'enterprise'
+    }],
+    attributes: ['user_id', 'enterprise_id', 'role_id'],
+  });
+}
 
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers }
+
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo }
