@@ -1,15 +1,14 @@
 const videoService = require('../../services/videos/videoService');
+const imageService = require('../../services/images/imageService');
 const courseService = require('../../services/courses/courseService');
-
 const fs = require('fs');
 
 exports.uploadCourseVideo = async (req, res) => {
   try {
     const videoPath = req.file.path;
-    const videoUrl = await videoService.uploadVideo(videoPath);
+    const videoUrl = await videoService.uploadVideo(videoPath, 'Cursos/Videos');
     
-    // Elimina el archivo local después de subirlo a Cloudinary
-    fs.unlinkSync(videoPath);
+    fs.unlinkSync(videoPath); // Elimina el archivo local después de subirlo a Cloudinary
     
     res.json({ url: videoUrl });
   } catch (error) {
@@ -18,10 +17,25 @@ exports.uploadCourseVideo = async (req, res) => {
   }
 };
 
+exports.uploadCourseImage = async (req, res) => {
+  try {
+    const imagePath = req.file.path;
+    const imageUrl = await imageService.uploadImage(imagePath, 'Cursos/Images');
+    
+    fs.unlinkSync(imagePath); // Elimina el archivo local después de subirlo a Cloudinary
+    
+    res.json({ url: imageUrl });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(400).json({ error: 'Error uploading image' });
+  }
+};
+
 exports.createCourse = async (req, res) => {
   try {
-    const { name, description_short, description_large, category_id, professor_id, duration_video, image, duration_course, is_active } = req.body;
-    const intro_video = req.body.intro_video; // URL del video cargado
+    const { name, description_short, description_large, category_id, professor_id, duration_video, duration_course, is_active } = req.body;
+    let intro_video = req.body.intro_video; // URL del video cargado
+    let image = req.body.image; // URL de la imagen cargada
 
     const newCourse = await courseService.createCourse({
       name,
@@ -45,7 +59,6 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-
 exports.getAllCourses = async (req, res) => {
   try {
     const courses = await courseService.getAllCourses();
@@ -53,20 +66,6 @@ exports.getAllCourses = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-exports.getCursoDetalleById = async (req, res) => {
-  const courseId = req.params.id;
-  try {
-    const curso = await courseService.getCourseById(courseId);
-    if (curso) {
-      res.json(curso);
-    } else {
-      res.status(404).json({ error: 'Curso no encontrado' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
@@ -107,15 +106,6 @@ exports.deleteCourse = async (req, res) => {
     } else {
       res.status(404).json({ error: 'Course not found' });
     }
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-exports.getAllProfessors = async (req, res) => {
-  try {
-    const professors = await professorService.getAllProfessors();
-    res.json(professors);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

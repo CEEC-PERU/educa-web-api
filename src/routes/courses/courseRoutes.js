@@ -2,26 +2,25 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-const coursesController = require('../../controllers/courses/courseController');
+const courseController = require('../../controllers/courses/courseController');
 
-router.post('/upload', upload.single('video'), coursesController.uploadCourseVideo);
+router.post('/upload', upload.single('video'), courseController.uploadCourseVideo);
+router.post('/uploadImage', upload.single('image'), courseController.uploadCourseImage);
 
 // Todos los cursos
-router.get('/', coursesController.getAllCourses);
+router.get('/', courseController.getAllCourses);
 
-// Obtener detalle de un curso por su ID
-router.get('/:id/detalle', coursesController.getCursoDetalleById);
 
 // Info de curso por id_course
-router.get('/:id', coursesController.getCourseById);
+router.get('/:id', courseController.getCourseById);
 
 // Agregar un nuevo curso
-router.post('/', coursesController.createCourse);
+router.post('/', courseController.createCourse);
 
 // Actualizar un curso
-router.put('/:id', coursesController.updateCourse);  // Aquí asegurarse de que updateCourse es una función
+router.put('/:id', courseController.updateCourse);  // Aquí asegurarse de que updateCourse es una función
 
 // Eliminar un curso
-router.delete('/:id', coursesController.deleteCourse);
+router.delete('/:id', courseController.deleteCourse);
 
 module.exports = router;

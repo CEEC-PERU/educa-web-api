@@ -1,14 +1,14 @@
 const cloudinary = require('../../config/cloudinary');
 
-exports.uploadVideo = async (filePath, folder) => {
+exports.uploadImage = async (filePath, folder) => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
-      resource_type: 'video',
+      resource_type: 'image',
       folder: folder,
     });
     return result.url;
   } catch (error) {
-    console.error('Error uploading video to Cloudinary:', error);
-    throw new Error('Error uploading video');
+    console.error('Error uploading image to Cloudinary:', error);
+    throw new Error('Error uploading image');
   }
 };

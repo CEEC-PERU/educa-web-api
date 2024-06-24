@@ -23,7 +23,7 @@ const Module = sequelize.define('Module', {
     },
     evaluation_id: {
         type: DataTypes.INTEGER,
-        allowNull: true, // Permitir nulos
+        allowNull: true,
         references: {
             model: Evaluation,
             key: 'evaluation_id'

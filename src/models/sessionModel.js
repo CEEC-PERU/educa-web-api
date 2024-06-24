@@ -21,7 +21,7 @@ const Session = sequelize.define('Session', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
-    modulo_id: {
+    module_id: {
         type: DataTypes.INTEGER,
         references: {
             model: Module,

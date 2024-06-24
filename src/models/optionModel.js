@@ -22,7 +22,7 @@ const Option = sequelize.define('Option', {
     },
     is_correct: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        allowNull: true
     }
 }, {
     tableName: 'options',

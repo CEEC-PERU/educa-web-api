@@ -36,11 +36,11 @@ Option.belongsTo(Question, {
 
 // Relación entre Question y QuestionType
 Question.belongsTo(QuestionType, {
-    foreignKey: 'question_type',
+    foreignKey: 'type_id',
     as: 'questionType'
 });
 QuestionType.hasMany(Question, {
-    foreignKey: 'question_type',
+    foreignKey: 'type_id',
     as: 'questions'
 });
 
@@ -81,14 +81,6 @@ Profile.belongsTo(User, {
     foreignKey: 'user_id',
     as: 'profileUser'
 });
-
-
-// Un perfil pertenece a un tipo de documento
-Profile.belongsTo(DocumentType, {
-    foreignKey: 'document_id',
-    as: 'profileDocumentType'
-});
-
 
 // Un usuario puede tener varias sesiones de aplicación
 User.hasMany(AppSession, {
@@ -139,5 +131,11 @@ Module.belongsTo(Evaluation, { foreignKey: 'evaluation_id', as: 'moduleEvaluatio
 Evaluation.hasMany(Module, { foreignKey: 'evaluation_id', as: 'evaluationModules' });
 
 // Una sesión pertenece a un módulo
-Session.belongsTo(Module, { foreignKey: 'modulo_id', as: 'sessionModule' });
-Module.hasMany(Session, { foreignKey: 'modulo_id', as: 'moduleSessions' });
+Session.belongsTo(Module, { foreignKey: 'module_id', as: 'sessionModule' });
+Module.hasMany(Session, { foreignKey: 'module_id', as: 'moduleSessions' });
+
+Evaluation.hasMany(Question, { foreignKey: 'evaluation_id' });
+Question.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
+
+Question.hasMany(Option, { foreignKey: 'question_id' });
+Option.belongsTo(Question, { foreignKey: 'question_id' });

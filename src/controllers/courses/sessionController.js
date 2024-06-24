@@ -4,11 +4,10 @@ const videoService = require('../../services/videos/videoService');
 const fs = require('fs');
 
 
-
 exports.uploadSessionVideo = async (req, res) => {
   try {
     const videoPath = req.file.path;
-    const videoUrl = await videoService.uploadVideo(videoPath);
+    const videoUrl = await videoService.uploadVideo(videoPath, 'Sesiones'); // Especificar carpeta 'Sesiones'
     
     // Elimina el archivo local después de subirlo a Cloudinary
     fs.unlinkSync(videoPath);
@@ -24,7 +23,8 @@ exports.createSession = async (req, res) => {
   try {
     let videoUrl = '';
     if (req.file) {
-      videoUrl = await videoService.uploadVideo(req.file);
+      videoUrl = await videoService.uploadVideo(req.file.path, 'Sesiones'); // Especificar carpeta 'Sesiones'
+      fs.unlinkSync(req.file.path); // Elimina el archivo local después de subirlo
     }
     const newSession = await sessionService.createSession({ ...req.body, video_enlace: videoUrl });
     res.status(201).json(newSession);
@@ -33,7 +33,6 @@ exports.createSession = async (req, res) => {
     res.status(500).json({ error: 'Error creating session' });
   }
 };
-
 
 exports.getAllSessions = async (req, res) => {
   try {

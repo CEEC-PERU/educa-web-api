@@ -1,6 +1,4 @@
-// src/controllers/optionController.js
 const optionService = require('../../services/courses/optionService');
-
 
 exports.createOption = async (req, res) => {
   try {
@@ -11,6 +9,7 @@ exports.createOption = async (req, res) => {
     res.status(500).json({ error: 'Error creating option' });
   }
 };
+
 
 exports.getOptionsByQuestionId = async (req, res) => {
   try {

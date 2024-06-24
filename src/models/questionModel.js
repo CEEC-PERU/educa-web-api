@@ -17,6 +17,9 @@ const Question = sequelize.define('Question', {
         },
         allowNull: false
     },
+    score: {
+        type: DataTypes.INTEGER
+    },
     question_text: {
         type: DataTypes.TEXT,
         allowNull: false
@@ -28,7 +31,11 @@ const Question = sequelize.define('Question', {
             key: 'type_id'
         },
         allowNull: false
-    }
+    },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
 }, {
     tableName: 'questions',
     timestamps: true,

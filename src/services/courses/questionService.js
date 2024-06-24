@@ -1,9 +1,12 @@
 // src/services/questionService.js
 const Question = require('../../models/questionModel');
+const imageService = require('../../services/images/imageService');
+const fs = require('fs');
 
 exports.createQuestion = async (questionData) => {
   try {
-    return await Question.create(questionData);
+    const newQuestion = await Question.create(questionData);
+    return newQuestion;
   } catch (error) {
     console.error('Error creating question:', error);
     throw new Error('Error creating question');

@@ -36,9 +36,6 @@ app.use('/api/auth', require('./src/routes/auth/auth-route'));
 app.use('/api/profiles', require('./src/routes/users/profileRoutes'));
 app.use('/api/categories', require('./src/routes/courses/categoryRoutes'));
 app.use('/api/professors', require('./src/routes/courses/professorRoutes'));
-<<<<<<< HEAD
-SocketService(server);
-=======
 app.use('/api/modules', require('./src/routes/courses/moduleRoutes'));
 app.use('/api/sessions', require('./src/routes/courses/sessionRoutes'));
 app.use('/api/evaluations', require('./src/routes/courses/evaluationRoutes'));
@@ -46,8 +43,13 @@ app.use('/api/videos', require('./src/routes/videos/videoRoutes'));
 app.use('/api/evaluations', require('./src/routes/courses/evaluationRoutes'));
 app.use('/api/questions', require('./src/routes/courses/questionRoutes'));
 app.use('/api/options', require('./src/routes/courses/optionRoutes'));
+app.use('/api/images', require('./src/routes/images/imageRoutes'));
 
->>>>>>> evaluations
+
+SocketService(server);
+
+
+
 server.listen(PORT, () => {
   console.log(`Server is running 🚀`);
 });

@@ -10,7 +10,7 @@ const Professor = sequelize.define('Professor', {
     },
     image: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     especialitation: {
         type: DataTypes.STRING,
