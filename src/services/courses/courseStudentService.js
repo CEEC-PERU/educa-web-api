@@ -76,7 +76,7 @@ class CourseStudentService {
     }
 
 
-    async getCourseDetailByCourseId(course_id , user_id){
+    async getCourseDetailByCourseId(course_id ){
         try {
             const coursesByStudent = await Course.findAll({
               where: { course_id: course_id },
@@ -136,7 +136,7 @@ class CourseStudentService {
               include: [
                 {
                   model: UserModuleProgress,
-                  attributes: ['is_completed', 'progress', 'user_id'],
+                  attributes: ['is_completed', 'progress', 'user_id', 'user_module_progress_id'],
                   as: 'usermoduleprogress',
                   where: { user_id: user_id },
                   required: false  // Añadir required: false para evitar filtrar módulos
@@ -149,7 +149,6 @@ class CourseStudentService {
                   include: [
                     {
                       model: UserSessionProgress,
-                      attributes: ['is_completed', 'progress', 'user_id'],
                       as: 'usersessionprogress',
                       where: { user_id: user_id },
                       required: false  // Añadir required: false para evitar filtrar sesiones
