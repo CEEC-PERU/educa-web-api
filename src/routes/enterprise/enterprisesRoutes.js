@@ -10,4 +10,5 @@ router.get('/:id', authenticateToken, enterpriseController.getById);
 router.put('/:id', authenticateToken, enterpriseController.update);
 router.delete('/:id', authenticateToken, enterpriseController.delete);
 
+
 module.exports = router;
