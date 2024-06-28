@@ -16,9 +16,10 @@ const QuestionType = require('./questionTypeModel');
 const CourseStudent = require('./courseStudent');
 const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
-//Usuario con UserModuleProgress
-User.hasMany(UserModuleProgress, { foreignKey: 'user_id' });
-UserModuleProgress.belongsTo(User, { foreignKey: 'user_id' });
+const UserSessionProgress = require('./const/../UserSessionProgress');
+
+UserSessionProgress.hasMany(User, { foreignKey: 'user_id' });
+
 
 Module.hasMany(UserModuleProgress, { foreignKey: 'module_id' ,  as: 'usermoduleprogress'});
 UserModuleProgress.belongsTo(Module, { foreignKey: 'module_id' });

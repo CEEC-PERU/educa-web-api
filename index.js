@@ -41,7 +41,7 @@ app.use('/api/evaluations', require('./src/routes/courses/evaluationRoutes'));
 app.use('/api/questions', require('./src/routes/courses/questionRoutes'));
 app.use('/api/options', require('./src/routes/courses/optionRoutes'));
 app.use('/api/images', require('./src/routes/images/imageRoutes'));
-
+app.use('/api/courseresults', require('./src/routes/courses/courseResultRoutes'));
 
 SocketService(server);
 
