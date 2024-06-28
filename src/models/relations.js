@@ -18,7 +18,6 @@ const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
 const UserSessionProgress = require('./const/../UserSessionProgress');
 
-UserSessionProgress.hasMany(User, { foreignKey: 'user_id' });
 
 
 Module.hasMany(UserModuleProgress, { foreignKey: 'module_id' ,  as: 'usermoduleprogress'});
