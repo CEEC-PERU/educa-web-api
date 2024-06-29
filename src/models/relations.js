@@ -133,17 +133,17 @@ Professor.hasMany(Course, {
 Professor.belongsTo(Level, { foreignKey: 'level_id', as: 'professorLevel' });
 Level.hasMany(Professor, { foreignKey: 'level_id', as: 'levelProfessors' });
 
-// Un módulo pertenece a un curso
-Module.belongsTo(Course, { foreignKey: 'course_id', as: 'moduleCourse' });
+// Un curso tiene muchos módulos
 Course.hasMany(Module, { foreignKey: 'course_id', as: 'courseModules' });
+Module.belongsTo(Course, { foreignKey: 'course_id', as: 'moduleCourse' });
+
+// Un módulo tiene muchas sesiones
+Module.hasMany(Session, { foreignKey: 'module_id', as: 'moduleSessions' });
+Session.belongsTo(Module, { foreignKey: 'module_id', as: 'sessionModule' });
 
 // Un módulo tiene una evaluación
 Module.belongsTo(Evaluation, { foreignKey: 'evaluation_id', as: 'moduleEvaluation' });
 Evaluation.hasMany(Module, { foreignKey: 'evaluation_id', as: 'evaluationModules' });
-
-// Una sesión pertenece a un módulo
-Session.belongsTo(Module, { foreignKey: 'module_id', as: 'sessionModule' });
-Module.hasMany(Session, { foreignKey: 'module_id', as: 'moduleSessions' });
 
 Evaluation.hasMany(Question, { foreignKey: 'evaluation_id' });
 Question.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });

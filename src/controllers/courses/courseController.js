@@ -1,7 +1,10 @@
 const videoService = require('../../services/videos/videoService');
 const imageService = require('../../services/images/imageService');
 const courseService = require('../../services/courses/courseService');
+const moduleService = require('../../services/courses/moduleService'); // Añadir el servicio de módulos
 const fs = require('fs');
+
+// Otros controladores...
 
 exports.uploadCourseVideo = async (req, res) => {
   try {
@@ -33,7 +36,7 @@ exports.uploadCourseImage = async (req, res) => {
 
 exports.createCourse = async (req, res) => {
   try {
-    const { name, description_short, description_large, category_id, professor_id, duration_video, duration_course, is_active } = req.body;
+    const { name, description_short, description_large, category_id, professor_id, evaluation_id, duration_video, duration_course, is_active } = req.body;
     let intro_video = req.body.intro_video; // URL del video cargado
     let image = req.body.image; // URL de la imagen cargada
 
@@ -43,6 +46,7 @@ exports.createCourse = async (req, res) => {
       description_large,
       category_id,
       professor_id,
+      evaluation_id,
       intro_video,
       duration_video,
       image,
@@ -107,6 +111,19 @@ exports.deleteCourse = async (req, res) => {
       res.status(404).json({ error: 'Course not found' });
     }
   } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getModulesWithSessionsByCourse = async (req, res) => {
+  const courseId = parseInt(req.params.id, 10);
+  console.log(`Fetching modules for course ID: ${courseId}`); // Agregar mensaje de depuración
+  try {
+    const modules = await moduleService.getModulesByCourseId(courseId);
+    console.log(`Modules fetched: ${JSON.stringify(modules)}`); // Agregar mensaje de depuración
+    res.json(modules);
+  } catch (error) {
+    console.error('Error fetching modules by course ID:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

@@ -37,11 +37,11 @@ app.use('/api/modules', require('./src/routes/courses/moduleRoutes'));
 app.use('/api/sessions', require('./src/routes/courses/sessionRoutes'));
 app.use('/api/evaluations', require('./src/routes/courses/evaluationRoutes'));
 app.use('/api/videos', require('./src/routes/videos/videoRoutes'));
-app.use('/api/evaluations', require('./src/routes/courses/evaluationRoutes'));
 app.use('/api/questions', require('./src/routes/courses/questionRoutes'));
 app.use('/api/options', require('./src/routes/courses/optionRoutes'));
 app.use('/api/images', require('./src/routes/images/imageRoutes'));
 
+app.use('/api/superadmin', require('./src/routes/superadmin/userRoutes'));
 
 SocketService(server);
 
@@ -52,3 +52,6 @@ app.use('/api/coursestudents', require('./src/routes/courses/courseStudentRoutes
 server.listen(PORT, () => {
   console.log(`Server is running 🚀`);
 });
+
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);

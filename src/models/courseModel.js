@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');  
+const Evaluation = require('./evaluationModel'); // Importa el modelo Evaluation
 
 const Course = sequelize.define('Course', {
     course_id: {
@@ -58,11 +59,18 @@ const Course = sequelize.define('Course', {
         allowNull: false,
         defaultValue: true
     },
+    evaluation_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Evaluation,
+            key: 'evaluation_id'
+        },
+    }
 }, {
     tableName: 'courses',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
-  });
+});
 
 module.exports = Course;

@@ -1,56 +1,86 @@
 const Module = require('../../models/moduleModel');
+const Session = require('../../models/sessionModel');
+const { Op } = require('sequelize');
 
-exports.getAllModules = async () => {
-  try {
-    return await Module.findAll();
-  } catch (error) {
-    console.error('Error fetching modules:', error);
-    throw new Error('Error fetching modules');
-  }
+const getAllModules = async () => {
+  return await Module.findAll();
 };
 
-exports.getModuleById = async (moduleId) => {
-  try {
-    return await Module.findByPk(moduleId);
-  } catch (error) {
-    console.error('Error fetching module by ID:', error);
-    throw new Error('Error fetching module by ID');
+const validateCourseAndEvaluation = async (course_id, evaluation_id, module_id = null) => {
+  const whereClause = module_id 
+    ? { evaluation_id, module_id: { [Op.ne]: module_id } } 
+    : { evaluation_id };
+
+  const moduleWithSameEvaluation = await Module.findOne({ where: whereClause });
+  if (moduleWithSameEvaluation) {
+    return 'La evaluación ya está asignada a otro módulo';
   }
+  return null;
 };
 
-exports.createModule = async (moduleData) => {
-  try {
-    return await Module.create(moduleData);
-  } catch (error) {
-    console.error('Error creating module:', error);
-    throw new Error('Error creating module');
+const createModule = async (data) => {
+  const validationError = await validateCourseAndEvaluation(data.course_id, data.evaluation_id);
+  if (validationError) {
+    throw new Error(validationError);
   }
+  return await Module.create(data);
 };
 
-exports.updateModule = async (moduleId, moduleData) => {
-  try {
-    const module = await Module.findByPk(moduleId);
-    if (module) {
-      await module.update(moduleData);
-      return module;
+const getModuleById = async (id) => {
+  return await Module.findByPk(id);
+};
+
+const updateModule = async (id, moduleData) => {
+  const module = await Module.findByPk(id);
+  if (!module) {
+    throw new Error('Module not found');
+  }
+
+  // Verificar si la evaluación ha cambiado
+  if (module.evaluation_id !== moduleData.evaluation_id) {
+    const validationError = await validateCourseAndEvaluation(moduleData.course_id, moduleData.evaluation_id, id);
+    if (validationError) {
+      throw new Error(validationError);
     }
-    return null;
+  }
+
+  return await module.update(moduleData);
+};
+
+const deleteModule = async (id) => {
+  const module = await Module.findByPk(id);
+  if (!module) {
+    throw new Error('Module not found');
+  }
+  return await module.destroy();
+};
+
+const getModulesByCourseId = async (courseId) => {
+  try {
+    console.log(`Fetching modules for course ID: ${courseId}`); // Agregar mensaje de depuración
+    const modules = await Module.findAll({
+      where: { course_id: courseId },
+      include: [
+        {
+          model: Session,
+          as: 'moduleSessions'
+        }
+      ]
+    });
+    console.log(`Modules fetched: ${JSON.stringify(modules)}`); // Agregar mensaje de depuración
+    return modules;
   } catch (error) {
-    console.error('Error updating module:', error);
-    throw new Error('Error updating module');
+    console.error('Error fetching modules by course ID:', error);
+    throw new Error('Error fetching modules by course ID');
   }
 };
 
-exports.deleteModule = async (moduleId) => {
-  try {
-    const module = await Module.findByPk(moduleId);
-    if (module) {
-      await module.destroy();
-      return module;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error deleting module:', error);
-    throw new Error('Error deleting module');
-  }
+module.exports = {
+  getAllModules,
+  getModuleById,
+  createModule,
+  updateModule,
+  deleteModule,
+  getModulesByCourseId,
+  validateCourseAndEvaluation
 };
