@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Evaluation = require('./evaluationModel');  
 const Module = require('./moduleModel');
-
+const User = require('./UserModel');
 const ModuleResult = sequelize.define('ModuleResult', {
     module_result_id: {
         type: DataTypes.INTEGER,
@@ -23,6 +23,14 @@ const ModuleResult = sequelize.define('ModuleResult', {
         references: {
             model: Module,
             key: 'module_id'
+        }
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'user_id'
         }
     },
     puntaje: {

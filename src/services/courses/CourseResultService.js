@@ -13,6 +13,7 @@ async function getAllCourseResults() {
     });
     return results;
   } catch (error) {
+    console.log(error);
     throw new Error(`Error al obtener los resultados de cursos: ${error.message}`);
   }
 }
@@ -29,6 +30,7 @@ async function getCourseResultsByUserId(userId) {
     });
     return results;
   } catch (error) {
+   console.log(error);
     throw new Error(`Error al obtener los resultados de cursos por user_id: ${error.message}`);
   }
 }

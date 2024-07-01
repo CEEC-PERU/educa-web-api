@@ -42,6 +42,9 @@ app.use('/api/questions', require('./src/routes/courses/questionRoutes'));
 app.use('/api/options', require('./src/routes/courses/optionRoutes'));
 app.use('/api/images', require('./src/routes/images/imageRoutes'));
 app.use('/api/courseresults', require('./src/routes/courses/courseResultRoutes'));
+app.use('/api/moduleresults', require('./src/routes/courses/moduleResultRoutes'));
+app.use('/api/userModuleProgress', require('./src/routes/users/UserModuleProgress'));
+app.use('/api/userSessionProgress', require('./src/routes/users/UserSessionProgress'));
 
 SocketService(server);
 

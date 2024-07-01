@@ -1,8 +1,7 @@
-// src/models/userSessionProgressModel.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Session = require('./sessionModel');
-const User = require('./UserModel');  // Suponiendo que tienes un modelo de usuario
+const User = require('./UserModel');  
 
 const UserSessionProgress = sequelize.define('UserSessionProgress', {
     user_session_progress_id: {

@@ -1,80 +1,43 @@
-const Evaluation = require('../../models/evaluationModel');
-const Module = require('../../models/moduleModel');
-const Course = require('../../models/courseModel');
-const EvauationModuleResult= require('../../models/EvauationModuleResult');
-// Obtener todos los resultados de cursos
-async function getAllModulesResults() {
-  try {
-    const results = await EvauationModuleResult.findAll({
-      include: [
-        { model: Evaluation, attributes: ['evaluation_id', 'name'] },
-        { model: Course, attributes: ['course_id', 'name'] }
-      ]
-    });
-    return results;
-  } catch (error) {
-    throw new Error(`Error al obtener los resultados de cursos: ${error.message}`);
-  }
-}
+const ModuleResult = require('../../models/EvaluationModuleResult');
 
-// Obtener resultados de cursos por user_id (asumiendo que hay una relación que conecta CourseResult con User)
-async function getModuleResultsByUserId(userId) {
-  try {
-    const results = await EvauationModuleResult.findAll({
-      where: { user_id: userId },
-      include: [
-        { model: Evaluation, attributes: ['evaluation_id', 'name'] },
-        { model: Course, attributes: ['course_id', 'name'] }
-      ]
-    });
-    return results;
-  } catch (error) {
-    throw new Error(`Error al obtener los resultados de cursos por user_id: ${error.message}`);
-  }
-}
-
-// Crear un nuevo resultado de curso
-async function createModuleResult(data) {
-  try {
-    const result = await EvauationModuleResult.create(data);
-    return result;
-  } catch (error) {
-    throw new Error(`Error al crear el resultado de curso: ${error.message}`);
-  }
-}
-
-// Actualizar un resultado de curso existente
-async function updateeResultResult(courseResultId, data) {
-  try {
-    const result = await EvauationModuleResult.findByPk(courseResultId);
-    if (!result) {
-      throw new Error('Resultado de curso no encontrado');
+class ModuleResultService {
+    async create(data) {
+        return await ModuleResult.create(data);
     }
-    await result.update(data);
-    return result;
-  } catch (error) {
-    throw new Error(`Error al actualizar el resultado de curso: ${error.message}`);
-  }
-}
 
-// Eliminar un resultado de curso existente
-async function deleteCourseResult(courseResultId) {
-  try {
-    const result = await EvauationModuleResult.findByPk(courseResultId);
-    if (!result) {
-      throw new Error('Resultado de curso no encontrado');
+    async getAll(filters = {}) {
+        return await ModuleResult.findAll({ where: filters });
     }
-    await result.destroy();
-    return result;
-  } catch (error) {
-    throw new Error(`Error al eliminar el resultado de curso: ${error.message}`);
-  }
+
+    async getById(id) {
+        return await ModuleResult.findByPk(id);
+    }
+
+    async update(id, data) {
+        const moduleResult = await ModuleResult.findByPk(id);
+        if (moduleResult) {
+            return await moduleResult.update(data);
+        }
+        return null;
+    }
+
+    async delete(id) {
+        const moduleResult = await ModuleResult.findByPk(id);
+        if (moduleResult) {
+            await moduleResult.destroy();
+            return true;
+        }
+        return false;
+    }
+
+    // New methods for filtering
+    async getByModuleId(module_id) {
+        return await ModuleResult.findAll({ where: { module_id } });
+    }
+
+    async getByUserId(user_id) {
+        return await ModuleResult.findAll({ where: { user_id } });
+    }
 }
 
-module.exports = {
-  getAllModulesResults,
-  getModuleResultsByUserId,
-  updateeResultResult,
-  createModuleResult,
-  deleteCourseResult
-};
+module.exports = new ModuleResultService();
