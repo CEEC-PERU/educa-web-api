@@ -53,10 +53,44 @@ const deleteUserSessionProgress = async (id) => {
     }
 };
 
+//serviico para obtener por user_id y session_id
+
+const getUserSessionProgressByUserAndSession = async (userId, sessionId) => {
+    try {
+        return await UserSessionProgress.findOne({
+            where: {
+                user_id: userId,
+                session_id: sessionId
+            }
+        });
+    } catch (error) {
+        throw new Error('Error fetching UserSessionProgress: ' + error.message);
+    }
+};
+
+const updateUserSessionProgressByUserAndSession = async (userId, sessionId, data) => {
+    try {
+        const progress = await UserSessionProgress.findOne({
+            where: {
+                user_id: userId,
+                session_id: sessionId
+            }
+        });
+        if (progress) {
+            return await progress.update(data);
+        }
+        throw new Error('UserSessionProgress not found');
+    } catch (error) {
+        throw new Error('Error updating UserSessionProgress: ' + error.message);
+    }
+};
+
 module.exports = {
     createUserSessionProgress,
     getUserSessionProgressById,
     getAllUserSessionProgresses,
     updateUserSessionProgress,
-    deleteUserSessionProgress
+    deleteUserSessionProgress,
+    getUserSessionProgressByUserAndSession,
+    updateUserSessionProgressByUserAndSession
 };

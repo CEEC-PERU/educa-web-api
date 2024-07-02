@@ -62,10 +62,39 @@ const deleteUserSessionProgress = async (req, res) => {
     }
 };
 
+//controlador para obtener por user_id y session_id
+const getUserSessionProgressByUserAndSessionController = async (req, res) => {
+    const { userId, sessionId } = req.params;
+    try {
+        const progress = await getUserSessionProgressByUserAndSession(userId, sessionId);
+        if (progress) {
+            res.status(200).json(progress);
+        } else {
+            res.status(404).json({ message: 'UserSessionProgress not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching UserSessionProgress: ' + error.message });
+    }
+};
+
+const updateUserSessionProgressByUserAndSessionController = async (req, res) => {
+    const { userId, sessionId } = req.params;
+    const data = req.body;
+    try {
+        const updatedProgress = await updateUserSessionProgressByUserAndSession(userId, sessionId, data);
+        res.status(200).json(updatedProgress);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating UserSessionProgress: ' + error.message });
+    }
+};
+
+
 module.exports = {
     createUserSessionProgress,
     getUserSessionProgressById,
     getAllUserSessionProgresses,
     updateUserSessionProgress,
-    deleteUserSessionProgress
+    deleteUserSessionProgress,
+    getUserSessionProgressByUserAndSessionController,
+    updateUserSessionProgressByUserAndSessionController
 };
