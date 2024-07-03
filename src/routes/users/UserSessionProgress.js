@@ -10,5 +10,7 @@ router.put('/:id', authenticateToken,  userSessionProgressController.updateUserS
 router.delete('/:id',authenticateToken, userSessionProgressController.deleteUserSessionProgress);
 // Ruta para obtener el progreso de la sesión del usuario por user_id y session_id
 router.get('/progress/user/:userId/session/:sessionId', userSessionProgressController.getUserSessionProgressByUserAndSessionController);
+// Ruta para actualizar el progreso de la sesión del usuario por user_id y session_id
+router.put('/progress/user/:userId/session/:sessionId',userSessionProgressController.updateUserSessionProgress);
 
 module.exports = router;
