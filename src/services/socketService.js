@@ -39,7 +39,6 @@ const SocketService = (server) => {
       socket.on('session', async (data) => {
         const { session_id, progress, is_completed, user_id } = data;
         console.log("session-progress recibido en el servidor:", { session_id, progress, user_id, is_completed });
-      
         try {
           // Verificar si ya existe un progreso de sesión para el usuario y la sesión específica
           const existingProgress = await getUserSessionProgressByUserAndSession(user_id, session_id);
