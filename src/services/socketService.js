@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const AppSession = require('../models/appSessionModel');
 const { createAppSessionService } = require('./users/appSessionService');
 const { updateUserSessionProgressByUserAndSession , getUserSessionProgressByUserAndSession , createUserSessionProgress} = require('./users/UserSessionProgress');
+const { createUserModuleProgress , getUserModuleProgressByModuleAndUser , updateUserModuleProgressByModuleAndUser} = require('./users/UserModuleProgress');
 require('dotenv').config();
 
 const activeUsers = new Map();
@@ -57,6 +58,28 @@ const SocketService = (server) => {
         }
       });
       
+       
+      socket.on('module', async (data) => {
+        const { module_id, progress, is_completed, user_id } = data;
+        console.log("module-progress recibido en el servidor:", { module_id, progress, user_id, is_completed });
+        try {
+          // Verificar si ya existe un progreso de sesión para el usuario y la sesión específica
+          const existingProgress = await getUserModuleProgressByModuleAndUser( module_id ,user_id);
+      
+          if (existingProgress) {
+            // Si existe, actualizar el progreso de sesión existente
+            await updateUserModuleProgressByModuleAndUser( module_id, user_id , { progress, is_completed });
+            console.log("Progreso de modulo actualizado:", { module_id, progress, user_id, is_completed });
+          } else {
+            // Si no existe, crear un nuevo registro de progreso de sesión
+            await createUserModuleProgress({ user_id, module_id, progress, is_completed });
+            console.log("Nuevo progreso de modulo creado:", { module_id, progress, user_id, is_completed });
+          }
+        } catch (error) {
+          console.error('Error al manejar el progreso de la sesión:', error);
+        }
+      });
+
   
       socket.on('logout', async () => {
         if (user_id != 0) {

@@ -3,6 +3,7 @@ const { sequelize } = require('../config/database');
 const Module = require('./moduleModel');
 const User = require('./UserModel'); 
 
+
 const UserModuleProgress = sequelize.define('UserModuleProgress', {
     user_module_progress_id: {
         type: DataTypes.INTEGER,

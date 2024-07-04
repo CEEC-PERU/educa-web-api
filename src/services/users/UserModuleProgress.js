@@ -53,7 +53,43 @@ const deleteUserModuleProgress = async (id) => {
     }
 };
 
+
+// Actualizar un registro de progreso de módulo de usuario por module_id y user_id
+const updateUserModuleProgressByModuleAndUser = async (module_id, user_id, data) => {
+    try {
+        const progress = await UserModuleProgress.findOne({
+            where: {
+                module_id,
+                user_id
+            }
+        });
+        if (progress) {
+            return await progress.update(data);
+        }
+        throw new Error('UserModuleProgress not found');
+    } catch (error) {
+        throw new Error('Error updating UserModuleProgress by module_id and user_id: ' + error.message);
+    }
+};
+
+
+// Obtener un registro de progreso de módulo de usuario por module_id y user_id
+const getUserModuleProgressByModuleAndUser = async (module_id, user_id) => {
+    try {
+        return await UserModuleProgress.findOne({
+            where: {
+                module_id,
+                user_id
+            }
+        });
+    } catch (error) {
+        throw new Error('Error fetching UserModuleProgress by module_id and user_id: ' + error.message);
+    }
+};
+
 module.exports = {
+    updateUserModuleProgressByModuleAndUser,
+    getUserModuleProgressByModuleAndUser,
     createUserModuleProgress,
     getUserModuleProgressById,
     getAllUserModuleProgresses,

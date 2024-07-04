@@ -8,5 +8,10 @@ router.get('/:id', authenticateToken , userModuleProgressController.getUserModul
 router.get('/', authenticateToken , userModuleProgressController.getAllUserModuleProgresses);
 router.put('/:id', authenticateToken , userModuleProgressController.updateUserModuleProgress);
 router.delete('/:id',authenticateToken ,  userModuleProgressController.deleteUserModuleProgress);
+// Actualizar un registro de progreso de módulo de usuario por module_id y user_id
+router.put('/module/:module_id/user/:user_id', userModuleProgressController.updateByModuleAndUser);
+
+// Obtener un registro de progreso de módulo de usuario por module_id y user_id
+router.get('/module/:module_id/user/:user_id', userModuleProgressController.getByModuleAndUser);
 
 module.exports = router;

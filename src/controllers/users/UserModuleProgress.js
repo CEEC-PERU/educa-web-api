@@ -24,6 +24,7 @@ const getUserModuleProgressById = async (req, res) => {
     }
 };
 
+
 // Obtener todos los registros de progreso de módulo de usuario
 const getAllUserModuleProgresses = async (req, res) => {
     try {
@@ -62,7 +63,41 @@ const deleteUserModuleProgress = async (req, res) => {
     }
 };
 
+// Obtener un registro de progreso de módulo de usuario por module_id y user_id
+ const getByModuleAndUser = async (req, res) => {
+    try {
+        const { module_id, user_id } = req.params;
+        const progress = await userModuleProgressService.getUserModuleProgressByModuleAndUser(module_id, user_id);
+        if (progress) {
+            res.status(200).json(progress);
+        } else {
+            res.status(404).json({ error: 'UserModuleProgress not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+// Actualizar un registro de progreso de módulo de usuario por module_id y user_id
+const updateByModuleAndUser = async (req, res) => {
+    try {
+        const { module_id, user_id } = req.params;
+        const data = req.body;
+        const updatedProgress = await userModuleProgressService.updateUserModuleProgressByModuleAndUser(module_id, user_id, data);
+        if (updatedProgress) {
+            res.status(200).json(updatedProgress);
+        } else {
+            res.status(404).json({ error: 'UserModuleProgress not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 module.exports = {
+    getByModuleAndUser,
+    getAllUserModuleProgresses,
+    updateByModuleAndUser,
     createUserModuleProgress,
     getUserModuleProgressById,
     getAllUserModuleProgresses,
