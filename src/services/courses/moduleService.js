@@ -1,50 +1,34 @@
 const Module = require('../../models/moduleModel');
 const Session = require('../../models/sessionModel');
+const { isEvaluationAssigned } = require('./evaluationService');
 const { Op } = require('sequelize');
 
 const getAllModules = async () => {
   return await Module.findAll();
 };
 
-const validateCourseAndEvaluation = async (course_id, evaluation_id, module_id = null) => {
-  const whereClause = module_id 
-    ? { evaluation_id, module_id: { [Op.ne]: module_id } } 
-    : { evaluation_id };
-
-  const moduleWithSameEvaluation = await Module.findOne({ where: whereClause });
-  if (moduleWithSameEvaluation) {
-    return 'La evaluación ya está asignada a otro módulo';
-  }
-  return null;
-};
-
 const createModule = async (data) => {
-  const validationError = await validateCourseAndEvaluation(data.course_id, data.evaluation_id);
-  if (validationError) {
-    throw new Error(validationError);
+  if (await isEvaluationAssigned(data.evaluation_id)) {
+    throw new Error('La evaluación ya está asignada a otro curso o módulo');
   }
   return await Module.create(data);
 };
 
-const getModuleById = async (id) => {
-  return await Module.findByPk(id);
-};
-
-const updateModule = async (id, moduleData) => {
+const updateModule = async (id, data) => {
   const module = await Module.findByPk(id);
   if (!module) {
     throw new Error('Module not found');
   }
 
-  // Verificar si la evaluación ha cambiado
-  if (module.evaluation_id !== moduleData.evaluation_id) {
-    const validationError = await validateCourseAndEvaluation(moduleData.course_id, moduleData.evaluation_id, id);
-    if (validationError) {
-      throw new Error(validationError);
-    }
+  if (module.evaluation_id !== data.evaluation_id && await isEvaluationAssigned(data.evaluation_id, id)) {
+    throw new Error('La evaluación ya está asignada a otro curso o módulo');
   }
 
-  return await module.update(moduleData);
+  return await module.update(data);
+};
+
+const getModuleById = async (id) => {
+  return await Module.findByPk(id);
 };
 
 const deleteModule = async (id) => {
@@ -82,5 +66,4 @@ module.exports = {
   updateModule,
   deleteModule,
   getModulesByCourseId,
-  validateCourseAndEvaluation
 };

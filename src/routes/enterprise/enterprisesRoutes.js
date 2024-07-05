@@ -2,12 +2,11 @@ const express = require('express');
 const router = express.Router();
 const enterpriseController = require('../../controllers/enterprises/enterprisesController');
 
-const authenticateToken = require('../../middlewares/authenticationMiddleware');
 
-router.post('/', authenticateToken, enterpriseController.create);
+router.post('/', enterpriseController.create);
 router.get('/', enterpriseController.getAll);
-router.get('/:id', authenticateToken, enterpriseController.getById);
-router.put('/:id', authenticateToken, enterpriseController.update);
-router.delete('/:id', authenticateToken, enterpriseController.delete);
+router.get('/:id', enterpriseController.getById);
+router.put('/:id', enterpriseController.update);
+router.delete('/:id', enterpriseController.delete);
 
 module.exports = router;

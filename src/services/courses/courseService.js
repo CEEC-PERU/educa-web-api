@@ -1,4 +1,5 @@
 const Course = require('../../models/courseModel');
+const { isEvaluationAssigned } = require('./evaluationService');
 
 exports.getAllCourses = async () => {
   try {
@@ -19,26 +20,23 @@ exports.getCourseById = async (courseId) => {
 };
 
 exports.createCourse = async (courseData) => {
-  try {
-    return await Course.create(courseData);
-  } catch (error) {
-    console.error('Error creating course:', error);
-    throw new Error('Error creating course');
+  if (await isEvaluationAssigned(courseData.evaluation_id)) {
+    throw new Error('La evaluación ya está asignada a otro curso o módulo');
   }
+  return await Course.create(courseData);
 };
 
 exports.updateCourse = async (courseId, courseData) => {
-  try {
-    const course = await Course.findByPk(courseId);
-    if (course) {
-      await course.update(courseData);
-      return course;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error updating course:', error);
-    throw new Error('Error updating course');
+  const course = await Course.findByPk(courseId);
+  if (!course) {
+    throw new Error('Course not found');
   }
+
+  if (course.evaluation_id !== courseData.evaluation_id && await isEvaluationAssigned(courseData.evaluation_id, courseId)) {
+    throw new Error('La evaluación ya está asignada a otro curso o módulo');
+  }
+
+  return await course.update(courseData);
 };
 
 exports.deleteCourse = async (courseId) => {

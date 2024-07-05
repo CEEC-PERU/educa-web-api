@@ -1,6 +1,40 @@
 const Evaluation = require('../../models/evaluationModel');
 const Question = require('../../models/questionModel');
 const Option = require('../../models/optionModel');
+const Module = require('../../models/moduleModel');
+const Course = require('../../models/courseModel');
+const { Op } = require('sequelize');
+
+exports.isEvaluationAssigned = async (evaluation_id, exclude_id = null) => {
+  const whereClause = exclude_id
+    ? {
+        evaluation_id,
+        [Op.not]: [{ module_id: exclude_id }, { course_id: exclude_id }]
+      }
+    : { evaluation_id };
+
+  const moduleWithEvaluation = await Module.findOne({ where: whereClause });
+  const courseWithEvaluation = await Course.findOne({ where: whereClause });
+
+  if (moduleWithEvaluation || courseWithEvaluation) {
+    return true;
+  }
+  return false;
+};
+
+exports.getAvailableEvaluations = async () => {
+  const evaluations = await Evaluation.findAll({
+    where: {
+      evaluation_id: {
+        [Op.notIn]: [
+          ...await Module.findAll({ attributes: ['evaluation_id'], raw: true }),
+          ...await Course.findAll({ attributes: ['evaluation_id'], raw: true })
+        ].map(e => e.evaluation_id)
+      }
+    }
+  });
+  return evaluations;
+};
 
 exports.createEvaluation = async (evaluationData) => {
   try {

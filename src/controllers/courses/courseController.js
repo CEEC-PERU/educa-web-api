@@ -1,6 +1,7 @@
 const videoService = require('../../services/videos/videoService');
 const imageService = require('../../services/images/imageService');
 const courseService = require('../../services/courses/courseService');
+const { createCourse, updateCourse } = require('../../services/courses/courseService');
 const moduleService = require('../../services/courses/moduleService'); // Añadir el servicio de módulos
 const fs = require('fs');
 
@@ -36,30 +37,11 @@ exports.uploadCourseImage = async (req, res) => {
 
 exports.createCourse = async (req, res) => {
   try {
-    const { name, description_short, description_large, category_id, professor_id, evaluation_id, duration_video, duration_course, is_active } = req.body;
-    let intro_video = req.body.intro_video; // URL del video cargado
-    let image = req.body.image; // URL de la imagen cargada
-
-    const newCourse = await courseService.createCourse({
-      name,
-      description_short,
-      description_large,
-      category_id,
-      professor_id,
-      evaluation_id,
-      intro_video,
-      duration_video,
-      image,
-      duration_course,
-      is_active
-    });
-
-    res.status(201).json({
-      message: "Curso creado exitosamente",
-      newCourse
-    });
+    const newCourse = await createCourse(req.body);
+    res.status(201).json(newCourse);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error creating course:', error);
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -88,16 +70,12 @@ exports.getCourseById = async (req, res) => {
 };
 
 exports.updateCourse = async (req, res) => {
-  const courseId = req.params.id;
   try {
-    const updatedCourse = await courseService.updateCourse(courseId, req.body);
-    if (updatedCourse) {
-      res.json(updatedCourse);
-    } else {
-      res.status(404).json({ error: 'Course not found' });
-    }
+    const updatedCourse = await updateCourse(req.params.id, req.body);
+    res.status(200).json(updatedCourse);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error updating course:', error);
+    res.status(400).json({ error: error.message });
   }
 };
 

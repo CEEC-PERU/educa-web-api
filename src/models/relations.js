@@ -2,7 +2,7 @@ const User = require('./UserModel');
 const Enterprise = require('./EnterpriseModel');
 const Role = require('./RolModel');
 const AppSession = require('./appSessionModel');
-const Profile = require('./profileModel');
+const Profile = require('./ProfileModel');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');
 const Course = require('./courseModel');
@@ -14,6 +14,7 @@ const Question = require('./questionModel');
 const Option = require('./optionModel');
 const QuestionType = require('./questionTypeModel');
 const CourseStudent = require('./courseStudent');
+
 
 
 // Relación entre CourseStudent y User
