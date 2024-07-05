@@ -112,8 +112,9 @@ const getUsersByCompanyAndRoleId = async (req, res) => {
       console.log('Fetching users for company ID:', companyId, 'and role ID:', roleId); // Debugging line
       const users = await User.findAll({
           where: { enterprise_id: companyId, role_id: roleId },
-          include: [{ model: Profile, as: 'profile' }] // Utilizar alias 'profile'
+          include: [{ model: Profile, as: 'userProfile' }] // Utilizar alias 'userProfile'
       });
+      console.log('Fetched users:', users);
       res.status(200).json(users);
   } catch (error) {
       console.error('Error fetching users by company and role:', error); // Debugging line
