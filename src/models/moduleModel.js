@@ -29,7 +29,6 @@ const Module = sequelize.define('Module', {
             key: 'evaluation_id'
         }
     },
-
     is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false

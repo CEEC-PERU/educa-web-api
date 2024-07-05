@@ -6,6 +6,7 @@ const evaluationController = require('../../controllers/courses/evaluationContro
 
 router.post('/', evaluationController.createEvaluation);
 router.get('/', evaluationController.getEvaluations);
+router.get('/available', evaluationController.getAvailableEvaluationsController); 
 router.get('/:id', evaluationController.getEvaluationById);
 router.put('/:id', evaluationController.updateEvaluation);
 router.delete('/:id', evaluationController.deleteEvaluation);

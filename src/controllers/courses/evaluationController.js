@@ -1,5 +1,15 @@
 const evaluationService = require('../../services/courses/evaluationService');
 
+exports.getAvailableEvaluationsController = async (req, res) => {
+  try {
+    const evaluations = await evaluationService.getAvailableEvaluations();
+    res.status(200).json(evaluations);
+  } catch (error) {
+    console.error('Error fetching available evaluations:', error);
+    res.status(500).json({ error: 'Error fetching available evaluations' });
+  }
+};
+
 exports.createEvaluation = async (req, res) => {
   try {
     const newEvaluation = await evaluationService.createEvaluation(req.body);
