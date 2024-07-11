@@ -1,7 +1,6 @@
 const Module = require('../../models/moduleModel');
 const Session = require('../../models/sessionModel');
 const { isEvaluationAssigned } = require('./evaluationService');
-const { Op } = require('sequelize');
 
 const getAllModules = async () => {
   return await Module.findAll();
@@ -41,7 +40,7 @@ const deleteModule = async (id) => {
 
 const getModulesByCourseId = async (courseId) => {
   try {
-    console.log(`Fetching modules for course ID: ${courseId}`); // Agregar mensaje de depuración
+    console.log(`Fetching modules for course ID: ${courseId}`);
     const modules = await Module.findAll({
       where: { course_id: courseId },
       include: [
@@ -51,7 +50,7 @@ const getModulesByCourseId = async (courseId) => {
         }
       ]
     });
-    console.log(`Modules fetched: ${JSON.stringify(modules)}`); // Agregar mensaje de depuración
+    console.log(`Modules fetched: ${JSON.stringify(modules)}`);
     return modules;
   } catch (error) {
     console.error('Error fetching modules by course ID:', error);

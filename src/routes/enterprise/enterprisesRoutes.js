@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const enterpriseController = require('../../controllers/enterprises/enterprisesController');
+const enterprisesController = require('../../controllers/enterprises/enterprisesController');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
-
-router.post('/', enterpriseController.create);
-router.get('/', enterpriseController.getAll);
-router.get('/:id', enterpriseController.getById);
-router.put('/:id', enterpriseController.update);
-router.delete('/:id', enterpriseController.delete);
+router.post('/uploadImage', upload.fields([{ name: 'image_log' }, { name: 'image_fondo' }]), enterprisesController.uploadEnterpriseImage);
+router.post('/', upload.fields([{ name: 'image_log' }, { name: 'image_fondo' }]), enterprisesController.createEnterprise);
+router.get('/', enterprisesController.getAllEnterprises);
+router.get('/:id', enterprisesController.getEnterpriseById);
+router.put('/:id', upload.fields([{ name: 'image_log' }, { name: 'image_fondo' }]), enterprisesController.updateEnterprise);
+router.delete('/:id', enterprisesController.deleteEnterprise);
 
 module.exports = router;

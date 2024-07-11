@@ -1,10 +1,21 @@
 const User = require('../../models/UserModel');
 const Role = require('../../models/RolModel');
 const Enterprise = require('../../models/EnterpriseModel');
-const Profile = require('../../models/ProfileModel');
-const { getSuperAdminEmails } = require('../../services/superadmin/userService');
+const Profile = require('../../models/profileModel');
+const { getSuperAdminEmails, createIndividualUser } = require('../../services/superadmin/userService');
 const { importUsersFromExcel } = require('../../services/excelService');
 const { sendMail } = require('../../utils/mailer');
+
+const createIndividualUserController = async (req, res) => {
+  try {
+      console.log('Datos recibidos para crear usuario:', req.body);
+      const newUser = await createIndividualUser(req.body);
+      res.status(201).json(newUser);
+  } catch (error) {
+      console.error('Error creando el usuario:', error);
+      res.status(500).json({ error: 'Error creando el usuario' });
+  }
+};
 
 const createUser = async (req, res) => {
     try {
@@ -123,6 +134,7 @@ const getUsersByCompanyAndRoleId = async (req, res) => {
 };
 
 module.exports = {
+    createIndividualUserController,
     createUser,
     importUsers,
     getUsersByEnterprise,

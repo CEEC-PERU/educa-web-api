@@ -1,5 +1,6 @@
 // src/services/superadmin/userService.js
 const User = require('../../models/UserModel');
+const bcrypt = require('bcrypt');
 
 const getSuperAdminEmails = async () => {
     try {
@@ -14,6 +15,20 @@ const getSuperAdminEmails = async () => {
     }
 };
 
+async function createIndividualUser(userData) {
+    try {
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+        userData.password = hashedPassword;
+        const newUser = await User.create(userData);
+
+        return newUser;
+    } catch (error) {
+        console.error('Error en createIndividualUser:', error);
+        throw new Error('Error al crear el usuario');
+    }
+};
+
 module.exports = {
-    getSuperAdminEmails
+    getSuperAdminEmails,
+    createIndividualUser
 };

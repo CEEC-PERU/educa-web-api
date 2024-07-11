@@ -1,25 +1,64 @@
 const Enterprise = require('../../models/EnterpriseModel');
-const sequelize = require('sequelize');
-const enterpriseService = {
-  create: async (data) => {
-    return await Enterprise.create(data);
-  },
 
-  getAll: async () => {
-    return await Enterprise.findAll();
-  },
-
-  getById: async (id) => {
-    return await Enterprise.findByPk(id);
-  },
-
-  update: async (id, data) => {
-    return await Enterprise.update(data, { where: { enterprise_id: id } });
-  },
-
-  delete: async (id) => {
-    return await Enterprise.destroy({ where: { enterprise_id: id } });
+const createEnterprise = async (enterpriseData) => {
+  try {
+    return await Enterprise.create(enterpriseData);
+  } catch (error) {
+    console.error('Error creating enterprise:', error);
+    throw new Error('Error creating enterprise');
   }
 };
 
-module.exports = enterpriseService;
+const getAllEnterprises = async () => {
+  try {
+    return await Enterprise.findAll();
+  } catch (error) {
+    console.error('Error fetching enterprises:', error);
+    throw new Error('Error fetching enterprises');
+  }
+};
+
+const getEnterpriseById = async (enterpriseId) => {
+  try {
+    return await Enterprise.findByPk(enterpriseId);
+  } catch (error) {
+    console.error('Error fetching enterprise by ID:', error);
+    throw new Error('Error fetching enterprise by ID');
+  }
+};
+
+const updateEnterprise = async (enterpriseId, enterpriseData) => {
+  try {
+    const enterprise = await Enterprise.findByPk(enterpriseId);
+    if (enterprise) {
+      await enterprise.update(enterpriseData);
+      return enterprise;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error updating enterprise:', error);
+    throw new Error('Error updating enterprise');
+  }
+};
+
+const deleteEnterprise = async (enterpriseId) => {
+  try {
+    const enterprise = await Enterprise.findByPk(enterpriseId);
+    if (enterprise) {
+      await enterprise.destroy();
+      return enterprise;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error deleting enterprise:', error);
+    throw new Error('Error deleting enterprise');
+  }
+};
+
+module.exports = {
+  createEnterprise,
+  getAllEnterprises,
+  getEnterpriseById,
+  updateEnterprise,
+  deleteEnterprise,
+};

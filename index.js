@@ -42,6 +42,7 @@ app.use('/api/options', require('./src/routes/courses/optionRoutes'));
 app.use('/api/images', require('./src/routes/images/imageRoutes'));
 
 app.use('/api/superadmin', require('./src/routes/superadmin/userRoutes'));
+app.use('/api/requirements', require('./src/routes/superadmin/requirementRoutes'));
 
 SocketService(server);
 

@@ -5,21 +5,34 @@ const Module = require('../../models/moduleModel');
 const Course = require('../../models/courseModel');
 const { Op } = require('sequelize');
 
-exports.isEvaluationAssigned = async (evaluation_id, exclude_id = null) => {
-  const whereClause = exclude_id
-    ? {
-        evaluation_id,
-        [Op.not]: [{ module_id: exclude_id }, { course_id: exclude_id }]
+exports.isEvaluationAssigned = async (evaluationId, currentCourseId = null) => {
+  try {
+    // Check if the evaluation is assigned to any course, excluding the current course being updated
+    const courseCondition = currentCourseId ? { course_id: { [Op.ne]: currentCourseId } } : {};
+
+    const courseAssigned = await Course.findOne({
+      where: {
+        evaluation_id: evaluationId,
+        ...courseCondition
       }
-    : { evaluation_id };
+    });
 
-  const moduleWithEvaluation = await Module.findOne({ where: whereClause });
-  const courseWithEvaluation = await Course.findOne({ where: whereClause });
+    if (courseAssigned) {
+      return true;
+    }
 
-  if (moduleWithEvaluation || courseWithEvaluation) {
-    return true;
+    // Check if the evaluation is assigned to any module
+    const moduleAssigned = await Module.findOne({
+      where: {
+        evaluation_id: evaluationId
+      }
+    });
+
+    return !!moduleAssigned;
+  } catch (error) {
+    console.error('Error checking if evaluation is assigned:', error);
+    throw new Error('Error checking if evaluation is assigned');
   }
-  return false;
 };
 
 exports.getAvailableEvaluations = async () => {

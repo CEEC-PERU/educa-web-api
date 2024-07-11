@@ -80,6 +80,7 @@ exports.updateSession = async (req, res) => {
   }
 };
 
+
 exports.deleteSession = async (req, res) => {
   const id = req.params.id;
   try {
@@ -90,6 +91,7 @@ exports.deleteSession = async (req, res) => {
       res.status(404).json({ error: 'Session not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error deleting session:', error);
+    res.status(500).json({ error: 'Error deleting session' });
   }
 };
