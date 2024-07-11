@@ -38,6 +38,14 @@ const Course = sequelize.define('Course', {
             key: 'professor_id'
         }
     },
+    evaluation_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Evaluation,
+            key: 'evaluation_id'
+        }
+    },
     intro_video: {
         type: DataTypes.STRING,
         allowNull: false

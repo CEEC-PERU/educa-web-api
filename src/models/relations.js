@@ -15,6 +15,10 @@ const Question = require('./questionModel');
 const Option = require('./optionModel');
 const QuestionType = require('./questionTypeModel');
 const CourseStudent = require('./courseStudent');
+const UserModuleProgress = require('./UserModuleProgress');
+const UserSessionProgress = require('./UserSessionProgress');
+const EvaluationCourseResult  = require('./EvaluationCourseResult');
+const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 
 // Relación entre User y Profile
 User.hasOne(Profile, { foreignKey: 'user_id', as: 'userProfile' });
@@ -31,6 +35,45 @@ Role.hasMany(User, { foreignKey: 'role_id', as: 'roleUsers' });
 // Relación entre User y AppSession
 User.hasMany(AppSession, { foreignKey: 'user_id', as: 'appSessions' });
 AppSession.belongsTo(User, { foreignKey: 'user_id', as: 'userSession' });
+
+//EvaluationModuleResult
+
+Evaluation.hasMany(EvaluationModuleResult, { foreignKey: 'evaluation_id' });
+Module.hasMany(EvaluationModuleResult, { foreignKey: 'module_id' });
+User.hasMany(EvaluationModuleResult, { foreignKey: 'user_id' });
+
+EvaluationModuleResult.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
+EvaluationModuleResult.belongsTo(Module, { foreignKey: 'module_id' });
+EvaluationModuleResult.belongsTo(User, { foreignKey: 'user_id' });
+
+//EvalationCourseResult
+
+Evaluation.hasMany(EvaluationCourseResult, { foreignKey: 'evaluation_id' });
+Course.hasMany(EvaluationCourseResult, { foreignKey: 'course_id' });
+User.hasMany(EvaluationCourseResult, { foreignKey: 'user_id' });
+
+EvaluationCourseResult.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
+EvaluationCourseResult.belongsTo(Course, { foreignKey: 'course_id' });
+EvaluationCourseResult.belongsTo(User, { foreignKey: 'user_id' });
+
+
+// UserModuleProgress
+Module.hasMany(UserModuleProgress, { foreignKey: 'module_id' ,  as: 'usermoduleprogress'});
+UserModuleProgress.belongsTo(Module, { foreignKey: 'module_id' });
+
+User.hasMany(UserModuleProgress , { foreignKey: 'user_id' } );
+UserModuleProgress.belongsTo(User, { foreignKey: 'user_id' });
+
+//UserSessionPregress
+User.hasMany(UserSessionProgress, { foreignKey: 'user_id' });
+UserSessionProgress.belongsTo(User, { foreignKey: 'user_id' });
+
+Session.hasMany(UserSessionProgress, { foreignKey: 'session_id' ,  as: 'usersessionprogress'});
+UserSessionProgress.belongsTo(Session, { foreignKey: 'session_id' });
+
+//Relacion entre evaluation y curso.
+Course.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
+Evaluation.hasOne(Course, { foreignKey: 'evaluation_id' });
 
 // Relación entre CourseStudent y User
 CourseStudent.belongsTo(User, { foreignKey: 'user_id' });
