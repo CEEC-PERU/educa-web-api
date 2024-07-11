@@ -63,6 +63,7 @@ const User = sequelize.define('User', {
     updatedAt: 'updated_at',
 });
 
+
 module.exports = User;
 
 User.comparePassword = async (password, hashedPassword) => {

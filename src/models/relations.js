@@ -3,11 +3,12 @@ const User = require('./UserModel');
 const Enterprise = require('./EnterpriseModel');
 const Role = require('./RolModel');
 const AppSession = require('./appSessionModel');
-const Profile = require('./ProfileModel');
+const Profile = require('./profileModel');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');
 const Course = require('./courseModel');
 const Level = require('./levelModel');
+const Requirement = require('./Requirement');
 const Module = require('./moduleModel');
 const Session = require('./sessionModel');
 const Evaluation = require('./evaluationModel');
@@ -19,6 +20,8 @@ const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
+
+Requirement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 // Relación entre User y Profile
 User.hasOne(Profile, { foreignKey: 'user_id', as: 'userProfile' });

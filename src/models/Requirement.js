@@ -44,6 +44,5 @@ const Requirement = sequelize.define('Requirement', {
   updatedAt: 'updated_at'
 });
 
-Requirement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 module.exports = Requirement;
