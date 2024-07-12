@@ -14,6 +14,10 @@ const QuestionType = require('../../models/questionTypeModel');
 const User = require('../../models/UserModel');
 const Enterprise = require('../../models/EnterpriseModel'); 
 
+const ModuleResult = require('../../models/EvaluationModuleResult');
+const CourseResult = require('../../models/EvaluationCourseResult');
+
+
 class CourseStudentService {
     async create(data) {
         return await CourseStudent.create(data);
@@ -180,9 +184,27 @@ class CourseStudentService {
                           as: 'options'
                         }
                       ]
-                    }
+                  
+                  }
+                 
+                 
                   ],
                   required: false  // Añadir required: false para evitar filtrar módulos
+                },
+                {
+                  model: ModuleResult,
+                  attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
+                  where: { user_id: user_id ,
+              
+                  },
+                  
+                  include: [
+                    {
+                      model: Evaluation,
+                      attributes: ['evaluation_id', 'name', 'description'],
+                      
+                    }
+                  ]
                 }
               ],
               required: false  // Añadir required: false para evitar filtrar cursos
