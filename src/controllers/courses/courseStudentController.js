@@ -89,7 +89,16 @@ class CourseStudentController {
         }
     }
 
-
+    async assignStudentsToCourseByEnterprise(req, res) {
+        const { enterprise_id, course_id } = req.body;
+        try {
+            const courseStudents = await courseStudentService.assignStudentsToCourseByEnterprise(enterprise_id, course_id);
+            res.status(201).json(courseStudents);
+        } catch (error) {
+            console.error('Error assigning students to course:', error);
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = new CourseStudentController();

@@ -11,6 +11,9 @@ const Option = require('../../models/optionModel');
 const UserModuleProgress = require('../../models/UserModuleProgress');
 const UserSessionProgress = require('../../models/UserSessionProgress');
 const QuestionType = require('../../models/questionTypeModel');
+const User = require('../../models/UserModel');
+const Enterprise = require('../../models/EnterpriseModel'); 
+
 class CourseStudentService {
     async create(data) {
         return await CourseStudent.create(data);
@@ -217,9 +220,64 @@ class CourseStudentService {
       }
     }
     
-    
+    async assignStudentsToCourseByEnterprise(enterprise_id, course_id) {
+      try {
+          // Verificar que la empresa exista
+          const enterpriseExists = await Enterprise.findByPk(enterprise_id);
+          if (!enterpriseExists) {
+              throw new Error('Enterprise not found');
+          }
 
+          // Verificar que el curso exista
+          const courseExists = await Course.findByPk(course_id);
+          if (!courseExists) {
+              throw new Error('Course not found');
+          }
 
+          // Obtener todos los estudiantes de la empresa
+          const students = await User.findAll({
+              where: { enterprise_id: enterprise_id, role_id: 1 },
+              attributes: ['user_id']
+          });
+
+          if (students.length === 0) {
+              throw new Error('No students found for the given enterprise');
+          }
+
+          // Verificar si ya están asignados al curso
+          const existingAssignments = await CourseStudent.findAll({
+              where: {
+                  course_id: course_id,
+                  user_id: students.map(student => student.user_id)
+              },
+              attributes: ['user_id']
+          });
+
+          const existingUserIds = existingAssignments.map(assignment => assignment.user_id);
+
+          const courseStudents = students
+              .filter(student => !existingUserIds.includes(student.user_id))
+              .map(student => ({
+                  course_id: course_id,
+                  user_id: student.user_id,
+                  is_approved: true
+              }));
+
+          if (courseStudents.length === 0) {
+              throw new Error('All students are already assigned to the course');
+          }
+
+          // Crear las asignaciones en la tabla CourseStudent
+          await CourseStudent.bulkCreate(courseStudents);
+
+          return {
+              assigned: courseStudents,
+              alreadyAssigned: existingUserIds
+          };
+      } catch (error) {
+          console.error('Error in assignStudentsToCourseByEnterprise service:', error);
+          throw error;
+      }
+  }
 }
-
 module.exports = new CourseStudentService();

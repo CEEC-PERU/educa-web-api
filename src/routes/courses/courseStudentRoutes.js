@@ -15,4 +15,7 @@ router.get('/modules/:course_id/:user_id',authenticateToken, courseStudentContro
 router.put('/:id',authenticateToken, courseStudentController.update);
 router.delete('/:id', authenticateToken,courseStudentController.delete);
 
+//Asignar cursos a estudiantes por empresa
+router.post('/assign', courseStudentController.assignStudentsToCourseByEnterprise);
+
 module.exports = router;

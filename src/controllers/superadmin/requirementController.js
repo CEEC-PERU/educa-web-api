@@ -3,17 +3,40 @@ const User = require('../../models/UserModel');
 const requirementService = require('../../services/superadmin/requirementService');
 const Profile = require('../../models/profileModel');
 const Enterprise = require('../../models/EnterpriseModel');
+const cloudinaryService = require('../../services/superadmin/fileService');
 
 const createRequirement = async (req, res) => {
-    try {
-      const requirement = await requirementService.createRequirement(req.body);
-      res.status(201).json(requirement);
-    } catch (error) {
-      res.status(500).json({ error: 'Error creating requirement' });
-    }
-  };
-  
+  try {
+    const { user_id, proposed_date, course_name, message, course_duration, is_active } = req.body;
 
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const materialsUrls = await Promise.all(
+      req.files.map(async (file) => {
+        const filename = `${file.originalname}`;
+        const result = await cloudinaryService.uploadBuffer(file.buffer, 'requirements', filename);
+        return result.secure_url;
+      })
+    );
+
+    const requirement = await requirementService.createRequirement({
+      user_id,
+      proposed_date,
+      course_name,
+      message,
+      course_duration,
+      material: JSON.stringify(materialsUrls),
+      is_active: is_active === 'true' // Convierte el valor a booleano
+    });
+
+    res.status(201).json(requirement);
+  } catch (error) {
+    console.error('Error creating requirement:', error);
+    res.status(500).json({ error: 'Error creating requirement' });
+  }
+};
   const getAllRequirements = async (req, res) => {
     try {
       const requirements = await Requirement.findAll({

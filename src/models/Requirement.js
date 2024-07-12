@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const User = require('./UserModel'); // Importar el modelo Role
+const User = require('./UserModel');
 
 const Requirement = sequelize.define('Requirement', {
   requirement_id: {
@@ -10,12 +10,12 @@ const Requirement = sequelize.define('Requirement', {
     primaryKey: true,
   },
   user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: 'user_id'
-        }
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'user_id'
+    }
   },
   proposed_date: {
     type: DataTypes.DATE,
@@ -25,8 +25,8 @@ const Requirement = sequelize.define('Requirement', {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  material: {
-    type: DataTypes.TEXT,
+  materials: {
+    type: DataTypes.ARRAY(DataTypes.TEXT), // Cambiado a ARRAY de TEXT para almacenar múltiples enlaces
     allowNull: true,
   },
   message: {
@@ -36,6 +36,10 @@ const Requirement = sequelize.define('Requirement', {
   course_duration: {
     type: DataTypes.STRING(50),
     allowNull: false,
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false
   }
 }, {
   tableName: 'requirements',
@@ -43,6 +47,5 @@ const Requirement = sequelize.define('Requirement', {
   createdAt: 'created_at',
   updatedAt: 'updated_at'
 });
-
 
 module.exports = Requirement;
