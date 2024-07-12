@@ -1,6 +1,7 @@
 const AppSession = require("../../models/appSessionModel")
 const User = require('../../models/UserModel');
 const Profile = require('../../models/UserModel');
+const Enterprise = require('../../models/EnterpriseModel');
 const { Op } = require('sequelize'); 
 const { sequelize } = require('../../config/database');
 const { startOfWeek, endOfWeek, startOfMonth, endOfMonth ,  subWeeks} = require('date-fns');
@@ -60,53 +61,53 @@ const getSessionStatistics = async ({ startDate, endDate }) => {
 //MODIFICAR SERVICIO Y QUE UTILIZARE EL INCLUDE DE OTRA TABLA que sera usuario y me quiero evitar errores
 //explicar cada linea de codigo
 // Declara una función asíncrona llamada getSessionStatistics2 que acepta un objeto destructurado con las propiedades startDate y endDate.
-const getSessionStatistics2 = async ({ startDate, endDate , enterpriseId}) => {
+const getSessionStatistics2 = async ({ startDate, endDate, enterpriseId }) => {
     try {
         const sessions = await AppSession.findAll({
             include: [
                 {
                     model: User,
-                    as: 'usersession',
-                    attributes: [],
-                    where: { enterprise_id : enterpriseId},
+                    as: 'userSession',
+                    attributes: [],  // No necesitamos atributos adicionales de User aquí
+                    where: { enterprise_id: enterpriseId },
                 },
             ],
             attributes: [
                 'AppSession.user_id',
                 [
-                    AppSession.sequelize.fn(
+                    sequelize.fn(
                         'date_trunc',
                         'day',
-                        AppSession.sequelize.col('start_time')
+                        sequelize.col('AppSession.start_time')
                     ),
                     'session_day'
                 ],
                 [
-                    AppSession.sequelize.fn('COUNT', AppSession.sequelize.col('appsession_id')),
+                    sequelize.fn('COUNT', sequelize.col('AppSession.appsession_id')),
                     'sessions'
                 ],
                 [
-                    AppSession.sequelize.fn(
+                    sequelize.fn(
                         'AVG',
-                        AppSession.sequelize.literal(
+                        sequelize.literal(
                             'EXTRACT(EPOCH FROM ("end_time" - "start_time")) / 60'
                         )
                     ),
                     'average_duration_minutes'
                 ],
-                // Agregar enterprise_id en la función de agregación GROUP BY
-                'usersession.enterprise_id',
+                'userSession.enterprise_id',
             ],
             group: [
-                AppSession.sequelize.col('AppSession.user_id'),
-                AppSession.sequelize.fn('date_trunc', 'day', AppSession.sequelize.col('start_time')),
-                'usersession.enterprise_id', // Agregar enterprise_id al GROUP BY
+                'AppSession.user_id',
+                sequelize.fn('date_trunc', 'day', sequelize.col('AppSession.start_time')),
+                'userSession.enterprise_id', // Agregar enterprise_id al GROUP BY
             ],
             where: {
                 start_time: {
                     [Op.between]: [startDate, endDate],
                 },
             },
+            order: [[sequelize.fn('date_trunc', 'day', sequelize.col('AppSession.start_time')), 'DESC']],
             raw: true,
         });
         return sessions;
@@ -115,6 +116,7 @@ const getSessionStatistics2 = async ({ startDate, endDate , enterpriseId}) => {
         throw error;
     }
 };
+
 
 
 

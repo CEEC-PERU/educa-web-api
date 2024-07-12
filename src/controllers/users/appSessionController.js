@@ -231,13 +231,14 @@ const getLastLoginController = async (req, res) => {
 
 const getUsersActivityCountController = async (req, res) => {
     try {
-        const { date } = req.params;
-        const activityCounts = await getUsersActivityCount(new Date(date));
+        const { startDate, endDate, enterpriseId } = req.query;
+        const activityCounts = await getSessionStatistics2({ startDate: new Date(startDate), endDate: new Date(endDate), enterpriseId });
         res.status(200).json(activityCounts);
     } catch (error) {
-        console.error(error);
-        res.status(500).json(error);
+        console.error('Error getting users activity count:', error);
+        res.status(500).json({ error: 'Error getting users activity count' });
     }
 }
+
 
 module.exports = { appSessionController, getAppSessions2 ,getAppSessionsByUser ,getAppSessions, getInactiveUsersController, getLastLoginController, getUsersActivityCountController };

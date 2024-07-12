@@ -5,4 +5,4 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // Limita el tamaño del archivo a 10 MB
 });
 
-module.exports = upload.array('materials', 10); // Cambiado de fields a array
+module.exports = upload.fields([{ name: 'materials', maxCount: 10 }]);
