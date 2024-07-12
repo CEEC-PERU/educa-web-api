@@ -181,21 +181,26 @@ class CourseStudentService {
                         }
                       ]
                   
-                  },
-                  {
-                    model: ModuleResult,
-                    attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
-                     where: { user_id: user_id },
-                    include: [
-                      {
-                        model: Evaluation,
-                        attributes: ['evaluation_id', 'name', 'description'],
-                        
-                      }
-                    ]
                   }
+                 
+                 
                   ],
                   required: false  // Añadir required: false para evitar filtrar módulos
+                },
+                {
+                  model: ModuleResult,
+                  attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
+                  where: { user_id: user_id ,
+              
+                  },
+                  
+                  include: [
+                    {
+                      model: Evaluation,
+                      attributes: ['evaluation_id', 'name', 'description'],
+                      
+                    }
+                  ]
                 }
               ],
               required: false  // Añadir required: false para evitar filtrar cursos
