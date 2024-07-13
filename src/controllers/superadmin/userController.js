@@ -1,7 +1,7 @@
 const User = require('../../models/UserModel');
+const Profile = require('../../models/profileModel');
 const Role = require('../../models/RolModel');
 const Enterprise = require('../../models/EnterpriseModel');
-const Profile = require('../../models/profileModel');
 const { getSuperAdminEmails, createIndividualUser } = require('../../services/superadmin/userService');
 const { importUsersFromExcel } = require('../../services/excelService');
 const { sendMail } = require('../../utils/mailer');
@@ -80,6 +80,37 @@ const importUsers = async (req, res) => {
     }
   };
 
+  const updateUser = async (req, res) => {
+    const { userId } = req.params;
+    const { userProfile, ...userData } = req.body;
+  
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Actualizar los datos del usuario
+      await user.update(userData);
+  
+      // Actualizar el perfil del usuario
+      if (userProfile) {
+        const profile = await Profile.findOne({ where: { user_id: userId } });
+        if (profile) {
+          await profile.update(userProfile);
+        } else {
+          await Profile.create({ ...userProfile, user_id: userId });
+        }
+      }
+  
+      res.status(200).json({ message: 'User updated successfully' });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Error updating user' });
+    }
+  };
+  
+
 // Obtener todos los roles
 const getRoles = async (req, res) => {
   try {
@@ -133,13 +164,31 @@ const getUsersByCompanyAndRoleId = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findByPk(userId, {
+      include: [{ model: Profile, as: 'userProfile' }]
+    });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    res.status(500).json({ error: 'Error fetching user by ID' });
+  }
+};
+
 module.exports = {
     createIndividualUserController,
     createUser,
+    getUserById,
     importUsers,
     getUsersByEnterprise,
     getRoles,
     getUsersByRoleId,
     getCompanies,
-    getUsersByCompanyAndRoleId
+    getUsersByCompanyAndRoleId,
+    updateUser
 };

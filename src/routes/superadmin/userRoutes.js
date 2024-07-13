@@ -18,4 +18,7 @@ router.get('/roles', getRoles);
 router.get('/users/role/:roleId', getUsersByRoleId);
 router.get('/companies', getCompanies);
 router.get('/users/company/:companyId/role/:roleId', getUsersByCompanyAndRoleId);
+router.get('/users/:userId', userController.getUserById);
+router.put('/update/:userId', userController.updateUser);
+
 module.exports = router;
