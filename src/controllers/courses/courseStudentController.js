@@ -99,6 +99,58 @@ class CourseStudentController {
             res.status(500).json({ error: error.message });
         }
     }
+    async getAssignedStudents(req, res) {
+        const { course_id } = req.params;
+        try {
+            const assignedStudents = await courseStudentService.getAssignedStudentsByCourseId(course_id);
+            res.status(200).json(assignedStudents);
+        } catch (error) {
+            console.error('Error fetching assigned students:', error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getUnassignedStudents(req, res) {
+        const { course_id, enterprise_id } = req.params;
+        try {
+          const unassignedStudents = await courseStudentService.getUnassignedStudents(course_id, enterprise_id);
+          res.status(200).json(unassignedStudents);
+        } catch (error) {
+          console.error('Error fetching unassigned students:', error);
+          res.status(500).json({ error: error.message });
+        }
+    }
+    async getCoursesByEnterprise(req, res) {
+        const { enterprise_id } = req.params;
+        try {
+            const courses = await courseStudentService.getCoursesByEnterprise(enterprise_id);
+            res.status(200).json(courses);
+        } catch (error) {
+            console.error('Error fetching courses by enterprise:', error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getUsersByEnterpriseWithSessions(req, res) {
+        try {
+          const { startDate, endDate, enterpriseId } = req.query;
+      
+          console.log('Received query parameters:', { startDate, endDate, enterpriseId });
+      
+          if (!startDate || !endDate || !enterpriseId) {
+            return res.status(400).json({ error: 'Start date, end date, and enterprise ID are required' });
+          }
+      
+          const usersWithSessions = await courseStudentService.getUsersByEnterpriseWithSessions(parseInt(enterpriseId), new Date(startDate), new Date(endDate));
+      
+          res.status(200).json(usersWithSessions);
+        } catch (error) {
+          console.error('Error fetching users by enterprise:', error);
+          res.status(500).json({ error: error.message });
+        }
+      }
+      
+    
 }
 
 module.exports = new CourseStudentController();

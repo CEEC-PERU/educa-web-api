@@ -15,7 +15,20 @@ router.get('/modules/:course_id/:user_id',authenticateToken, courseStudentContro
 router.put('/:id',authenticateToken, courseStudentController.update);
 router.delete('/:id', authenticateToken,courseStudentController.delete);
 
+// Nueva ruta para obtener estudiantes asignados
+router.get('/assigned/:course_id', courseStudentController.getAssignedStudents);
+
+
 //Asignar cursos a estudiantes por empresa
 router.post('/assign', courseStudentController.assignStudentsToCourseByEnterprise);
+
+// Obtener estudiantes no asignados
+router.get('/assigned/:course_id/:enterprise_id', courseStudentController.getUnassignedStudents);
+
+// Nueva ruta para obtener cursos por empresa
+router.get('/enterprise/:enterprise_id', courseStudentController.getCoursesByEnterprise);
+
+// Nueva ruta para obtener usuarios con sesiones por empresa
+router.get('/enterprise/users/sessions', courseStudentController.getUsersByEnterpriseWithSessions);
 
 module.exports = router;

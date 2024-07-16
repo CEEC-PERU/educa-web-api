@@ -13,9 +13,10 @@ const UserSessionProgress = require('../../models/UserSessionProgress');
 const QuestionType = require('../../models/questionTypeModel');
 const User = require('../../models/UserModel');
 const Enterprise = require('../../models/EnterpriseModel'); 
-
+const { Op, fn, col, literal, Sequelize } = require('sequelize');
 const ModuleResult = require('../../models/EvaluationModuleResult');
-const CourseResult = require('../../models/EvaluationCourseResult');
+const AppSession = require('../../models/appSessionModel');
+const Profile = require('../../models/profileModel'); // Importar el modelo Profile
 
 
 class CourseStudentService {
@@ -300,6 +301,125 @@ class CourseStudentService {
           console.error('Error in assignStudentsToCourseByEnterprise service:', error);
           throw error;
       }
+      
   }
+
+  async getAssignedStudentsByCourseId(course_id) {
+    try {
+        const assignedStudents = await CourseStudent.findAll({
+            where: { course_id },
+            include: [{
+                model: User,
+                attributes: ['user_id'],
+                include: [{
+                    model: Profile,
+                    attributes: ['first_name', 'last_name', 'email'],
+                    as: 'userProfile'
+                }]
+            }]
+        });
+        return assignedStudents.map(cs => cs.user);
+    } catch (error) {
+        console.error('Error fetching assigned students:', error);
+        throw error;
+    }
+  }
+
+  async getUnassignedStudents(course_id, enterprise_id) {
+    // Obtener los estudiantes asignados
+    const assignedStudents = await CourseStudent.findAll({
+        where: { course_id },
+        attributes: ['user_id']
+    });
+    const assignedStudentIds = assignedStudents.map(student => student.user_id);
+
+    // Obtener los estudiantes no asignados
+    const unassignedStudents = await User.findAll({
+        where: {
+            enterprise_id,
+            role_id: 1, // role_id para estudiantes
+            user_id: {
+                [Op.notIn]: assignedStudentIds
+            }
+        },
+        include: [{
+            model: Profile,
+            as: 'userProfile'
+        }]
+    });
+
+    return unassignedStudents;
+  }
+    async getCoursesByEnterprise(enterprise_id) {
+      try {
+          const courses = await Course.findAll({
+              include: [
+                  {
+                      model: CourseStudent,
+                      attributes: [
+                          [Sequelize.fn('avg', Sequelize.col('CourseStudents.progress')), 'avgProgress']
+                      ],
+                      include: [
+                          {
+                              model: User,
+                              where: { enterprise_id }
+                          }
+                      ]
+                  }
+              ],
+              group: ['Course.course_id', 'CourseStudents.coursestudent_id', 'CourseStudents.User.user_id']
+          });
+
+          return courses.map(course => ({
+              course_id: course.course_id,
+              name: course.name,
+              description_short: course.description_short,
+              progressPercentage: course.CourseStudents[0] ? parseInt(course.CourseStudents[0].dataValues.avgProgress, 10) : 0
+          }));
+      } catch (error) {
+          console.error('Error fetching courses by enterprise:', error);
+          throw error;
+      }
+  }
+
+  async getUsersByEnterpriseWithSessions(enterpriseId, startDate, endDate) {
+    try {
+      const users = await User.findAll({
+        where: { enterprise_id: enterpriseId, role_id: 1 },
+        include: [
+          {
+            model: AppSession,
+            as: 'appSessions',
+            attributes: [],
+            where: {
+              start_time: {
+                [Op.gte]: startDate,
+                [Op.lte]: endDate
+              }
+            },
+            required: false
+          }
+        ],
+        attributes: {
+          include: [
+            'dni',
+            [Sequelize.fn('COUNT', Sequelize.col('appSessions.appsession_id')), 'loginCount']
+          ]
+        },
+        group: ['User.user_id']
+      });
+  
+      return users.map(user => ({
+        id: user.user_id,
+        dni: user.dni,
+        loginCount: user.dataValues.loginCount
+      }));
+    } catch (error) {
+      console.error('Error fetching users by enterprise:', error);
+      throw error;
+    }
+  }
+  
 }
+
 module.exports = new CourseStudentService();
