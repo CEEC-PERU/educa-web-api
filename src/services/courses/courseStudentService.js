@@ -350,37 +350,60 @@ class CourseStudentService {
 
     return unassignedStudents;
   }
-    async getCoursesByEnterprise(enterprise_id) {
-      try {
-          const courses = await Course.findAll({
-              include: [
-                  {
-                      model: CourseStudent,
-                      attributes: [
-                          [Sequelize.fn('avg', Sequelize.col('CourseStudents.progress')), 'avgProgress']
-                      ],
-                      include: [
-                          {
-                              model: User,
-                              where: { enterprise_id }
-                          }
-                      ]
-                  }
-              ],
-              group: ['Course.course_id', 'CourseStudents.coursestudent_id', 'CourseStudents.User.user_id']
-          });
+  
+  async getCoursesByEnterprise(enterprise_id) {
+    try {
+        const courses = await Course.findAll({
+            include: [
+                {
+                    model: CourseStudent,
+                    attributes: [],
+                    include: [
+                        {
+                            model: User,
+                            where: { enterprise_id },
+                            attributes: []
+                        }
+                    ],
+                    required: true
+                }
+            ],
+            attributes: [
+                'course_id',
+                'name',
+                'description_short',
+                [Sequelize.fn('COUNT', Sequelize.col('CourseStudents.user_id')), 'studentCount'],
+                [Sequelize.fn('AVG', Sequelize.col('CourseStudents.progress')), 'avgProgress'],
+                [Sequelize.fn('COUNT', Sequelize.col('CourseStudents.finished_date')), 'completedCount'],
+                [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN "CourseStudents".is_approved = true THEN 1 ELSE NULL END')), 'approvedCount']
+            ],
+            group: ['Course.course_id']
+        });
 
-          return courses.map(course => ({
-              course_id: course.course_id,
-              name: course.name,
-              description_short: course.description_short,
-              progressPercentage: course.CourseStudents[0] ? parseInt(course.CourseStudents[0].dataValues.avgProgress, 10) : 0
-          }));
-      } catch (error) {
-          console.error('Error fetching courses by enterprise:', error);
-          throw error;
-      }
-  }
+        console.log('Fetched courses:', courses);  // Agregar este console.log para verificar los datos
+
+        return courses.map(course => {
+            const studentCount = parseInt(course.dataValues.studentCount, 10) || 0;
+            const avgProgress = parseFloat(course.dataValues.avgProgress) || 0;
+            const completedCount = parseInt(course.dataValues.completedCount, 10) || 0;
+            const approvedCount = parseInt(course.dataValues.approvedCount, 10) || 0;
+
+            return {
+                course_id: course.course_id,
+                name: course.name,
+                description_short: course.description_short,
+                studentCount,
+                progressPercentage: Math.min(avgProgress, 99),
+                completedPercentage: studentCount > 0 ? Math.min((completedCount / studentCount) * 100, 100) : 0,
+                approvedPercentage: studentCount > 0 ? Math.min((approvedCount / studentCount) * 100, 100) : 0
+            };
+        });
+    } catch (error) {
+        console.error('Error fetching courses by enterprise:', error);
+        throw error;
+    }
+}
+
 
   async getUsersByEnterpriseWithSessions(enterpriseId, startDate, endDate) {
     try {
@@ -419,6 +442,55 @@ class CourseStudentService {
       throw error;
     }
   }
+
+  async getStudentsByEnterprise(enterprise_id) {
+    try {
+        const students = await User.findAll({
+            where: { enterprise_id, role_id: 1 },
+            include: [
+                {
+                    model: Profile,
+                    attributes: ['first_name', 'last_name', 'email'],
+                    as: 'userProfile'
+                }
+            ]
+        });
+
+        return students.map(student => ({
+            user_id: student.user_id,
+            first_name: student.userProfile?.first_name,
+            last_name: student.userProfile?.last_name,
+            email: student.userProfile?.email
+        }));
+    } catch (error) {
+        console.error('Error fetching students by enterprise:', error);
+        throw error;
+    }
+}
+
+async getCoursesWithGradesByStudent(user_id) {
+    try {
+        const courses = await Course.findAll({
+            include: [{
+                model: CourseStudent,
+                where: { user_id },
+                attributes: ['progress', 'finished_date', 'is_approved']
+            }]
+        });
+
+        return courses.map(course => ({
+            course_id: course.course_id,
+            name: course.name,
+            progress: course.CourseStudents[0].progress,
+            finished_date: course.CourseStudents[0].finished_date,
+            is_approved: course.CourseStudents[0].is_approved
+        }));
+    } catch (error) {
+        console.error('Error fetching courses with grades by student:', error);
+        throw error;
+    }
+}
+  
   
 }
 
