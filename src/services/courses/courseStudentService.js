@@ -372,9 +372,10 @@ class CourseStudentService {
                 'course_id',
                 'name',
                 'description_short',
+                'image', // Incluir el atributo 'image'
                 [Sequelize.fn('COUNT', Sequelize.col('CourseStudents.user_id')), 'studentCount'],
                 [Sequelize.fn('AVG', Sequelize.col('CourseStudents.progress')), 'avgProgress'],
-                [Sequelize.fn('COUNT', Sequelize.col('CourseStudents.finished_date')), 'completedCount'],
+                [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN "CourseStudents".progress = 100 THEN 1 ELSE NULL END')), 'completedCount'],
                 [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN "CourseStudents".is_approved = true THEN 1 ELSE NULL END')), 'approvedCount']
             ],
             group: ['Course.course_id']
@@ -392,6 +393,7 @@ class CourseStudentService {
                 course_id: course.course_id,
                 name: course.name,
                 description_short: course.description_short,
+                image: course.image, // Incluir el atributo 'image' en el resultado
                 studentCount,
                 progressPercentage: Math.min(avgProgress, 99),
                 completedPercentage: studentCount > 0 ? Math.min((completedCount / studentCount) * 100, 100) : 0,
@@ -403,6 +405,8 @@ class CourseStudentService {
         throw error;
     }
 }
+
+
 
 
   async getUsersByEnterpriseWithSessions(enterpriseId, startDate, endDate) {
@@ -450,7 +454,7 @@ class CourseStudentService {
             include: [
                 {
                     model: Profile,
-                    attributes: ['first_name', 'last_name', 'email'],
+                    attributes: ['first_name', 'last_name', 'email', 'profile_picture'],
                     as: 'userProfile'
                 }
             ]
@@ -460,7 +464,8 @@ class CourseStudentService {
             user_id: student.user_id,
             first_name: student.userProfile?.first_name,
             last_name: student.userProfile?.last_name,
-            email: student.userProfile?.email
+            email: student.userProfile?.email,
+            profile_picture: student.userProfile?.profile_picture
         }));
     } catch (error) {
         console.error('Error fetching students by enterprise:', error);
@@ -469,27 +474,31 @@ class CourseStudentService {
 }
 
 async getCoursesWithGradesByStudent(user_id) {
-    try {
-        const courses = await Course.findAll({
-            include: [{
-                model: CourseStudent,
-                where: { user_id },
-                attributes: ['progress', 'finished_date', 'is_approved']
-            }]
-        });
+  try {
+      const courses = await Course.findAll({
+          include: [{
+              model: CourseStudent,
+              where: { user_id },
+              attributes: ['progress', 'finished_date', 'is_approved']
+          }],
+          attributes: ['course_id', 'name', 'description_short', 'image']
+      });
 
-        return courses.map(course => ({
-            course_id: course.course_id,
-            name: course.name,
-            progress: course.CourseStudents[0].progress,
-            finished_date: course.CourseStudents[0].finished_date,
-            is_approved: course.CourseStudents[0].is_approved
-        }));
-    } catch (error) {
-        console.error('Error fetching courses with grades by student:', error);
-        throw error;
-    }
+      return courses.map(course => ({
+          course_id: course.course_id,
+          name: course.name,
+          description_short: course.description_short,
+          image: course.image,  // Asegúrate de incluir la imagen aquí
+          progress: course.CourseStudents[0].progress,
+          finished_date: course.CourseStudents[0].finished_date,
+          is_approved: course.CourseStudents[0].is_approved
+      }));
+  } catch (error) {
+      console.error('Error fetching courses with grades by student:', error);
+      throw error;
+  }
 }
+
   
   
 }
