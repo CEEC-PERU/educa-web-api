@@ -1,7 +1,10 @@
+const { Op } = require('sequelize');
 const User = require('../../models/UserModel');
 const Profile = require('../../models/profileModel');
 const Role = require('../../models/RolModel');
+const AppSession = require("../../models/appSessionModel");
 const Enterprise = require('../../models/EnterpriseModel');
+const { sequelize } = require('../../config/database');
 const { getSuperAdminEmails, createIndividualUser } = require('../../services/superadmin/userService');
 const { importUsersFromExcel } = require('../../services/excelService');
 const { sendMail } = require('../../utils/mailer');
@@ -128,7 +131,10 @@ const getUsersByRoleId = async (req, res) => {
       console.log('Fetching users for role ID:', roleId); // Debugging line
       const users = await User.findAll({
           where: { role_id: roleId },
-          include: [{ model: Profile, as: 'profile' }] // Utilizar alias 'profile'
+          include: [
+              { model: Profile, as: 'userProfile' },
+              { model: Enterprise, as: 'enterprise' } // Incluir la relación con Enterprise
+          ]
       });
       res.status(200).json(users);
   } catch (error) {
@@ -136,6 +142,7 @@ const getUsersByRoleId = async (req, res) => {
       res.status(500).json({ error: 'Error fetching users by role' });
   }
 };
+
 
 // Obtener todas las empresas
 const getCompanies = async (req, res) => {
@@ -151,18 +158,42 @@ const getCompanies = async (req, res) => {
 const getUsersByCompanyAndRoleId = async (req, res) => {
   const { companyId, roleId } = req.params;
   try {
-      console.log('Fetching users for company ID:', companyId, 'and role ID:', roleId); // Debugging line
-      const users = await User.findAll({
-          where: { enterprise_id: companyId, role_id: roleId },
-          include: [{ model: Profile, as: 'userProfile' }] // Utilizar alias 'userProfile'
-      });
-      console.log('Fetched users:', users);
-      res.status(200).json(users);
+    console.log('Fetching users for company ID:', companyId, 'and role ID:', roleId);
+    const users = await User.findAll({
+      where: { enterprise_id: companyId, role_id: roleId },
+      attributes: {
+        include: [
+          [
+            sequelize.fn('COUNT', sequelize.col('appSessions.appsession_id')),
+            'session_count'
+          ]
+        ]
+      },
+      include: [
+        { model: Profile, as: 'userProfile' },
+        {
+          model: AppSession,
+          as: 'appSessions',
+          attributes: [],  // No necesitamos atributos adicionales de AppSession aquí
+          where: {
+            start_time: {
+              [Op.gte]: sequelize.fn('date_trunc', 'month', sequelize.fn('NOW'))
+            }
+          },
+          required: false
+        },
+        { model: Enterprise, as: 'enterprise', attributes: ['name'] }
+      ],
+      group: ['User.user_id', 'userProfile.profile_id', 'enterprise.enterprise_id']
+    });
+    res.status(200).json(users);
   } catch (error) {
-      console.error('Error fetching users by company and role:', error); // Debugging line
-      res.status(500).json({ error: 'Error fetching users by company and role' });
+    console.error('Error fetching users by company and role:', error);
+    res.status(500).json({ error: 'Error fetching users by company and role' });
   }
 };
+
+
 
 const getUserById = async (req, res) => {
   const { userId } = req.params;

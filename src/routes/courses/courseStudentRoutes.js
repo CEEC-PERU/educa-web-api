@@ -31,4 +31,7 @@ router.get('/enterprise/:enterprise_id', courseStudentController.getCoursesByEnt
 // Nueva ruta para obtener usuarios con sesiones por empresa
 router.get('/enterprise/users/sessions', courseStudentController.getUsersByEnterpriseWithSessions);
 
+router.get('/enterprise/:enterprise_id/students', courseStudentController.getStudentsByEnterprise);
+router.get('/students/:user_id/grades', courseStudentController.getCoursesWithGradesByStudent);
+
 module.exports = router;

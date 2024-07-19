@@ -123,13 +123,13 @@ class CourseStudentController {
     async getCoursesByEnterprise(req, res) {
         const { enterprise_id } = req.params;
         try {
-            const courses = await courseStudentService.getCoursesByEnterprise(enterprise_id);
-            res.status(200).json(courses);
+          const courses = await courseStudentService.getCoursesByEnterprise(enterprise_id);
+          res.status(200).json(courses);
         } catch (error) {
-            console.error('Error fetching courses by enterprise:', error);
-            res.status(500).json({ error: error.message });
+          console.error('Error fetching courses by enterprise:', error);
+          res.status(500).json({ error: 'Error fetching courses by enterprise' });
         }
-    }
+      }
 
     async getUsersByEnterpriseWithSessions(req, res) {
         try {
@@ -149,7 +149,28 @@ class CourseStudentController {
           res.status(500).json({ error: error.message });
         }
       }
-      
+    
+    async getStudentsByEnterprise(req, res) {
+        const { enterprise_id } = req.params;
+        try {
+            const students = await courseStudentService.getStudentsByEnterprise(enterprise_id);
+            res.status(200).json(students);
+        } catch (error) {
+            console.error('Error fetching students by enterprise:', error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getCoursesWithGradesByStudent(req, res) {
+        const { user_id } = req.params;
+        try {
+            const courses = await courseStudentService.getCoursesWithGradesByStudent(user_id);
+            res.status(200).json(courses);
+        } catch (error) {
+            console.error('Error fetching courses with grades by student:', error);
+            res.status(500).json({ error: error.message });
+        }
+    }
     
 }
 
