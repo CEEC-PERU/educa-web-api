@@ -50,87 +50,86 @@ class CourseStudentService {
         return courseStudent;
     }
 
-    
     async getCourseStudentsByUserId(user_id){
-        try {
-            const coursesByStudent = await CourseStudent.findAll({
-              where: { user_id: user_id },
-              attributes: [  'course_id','deadline'],
-              include: [
-                {
-                  model: Course,
-                  attributes: [ 'name', 'description_short','image', 'course_id'],
-                  include : [
-                    {
-                      model: Category,
-                      attributes: [ 'name'],
-                      as: 'courseCategory'
-                     
-                    },
-                    {
-                      model: Profesor,
-                      attributes: [ 'full_name'],
-                      as: 'courseProfessor'
-                    }
-                ]
-                }
-              ],
-            });
-            return coursesByStudent
-          } catch (error) {
-            console.log(error)
-            throw error;
-          }
-    }
+      try {
+          const coursesByStudent = await CourseStudent.findAll({
+            where: { user_id: user_id },
+            attributes: [  'course_id','deadline'],
+            include: [
+              {
+                model: Course,
+                attributes: [ 'name', 'description_short','image', 'course_id'],
+                include : [
+                  {
+                    model: Category,
+                    attributes: [ 'name'],
+                    as: 'courseCategory'
+                   
+                  },
+                  {
+                    model: Profesor,
+                    attributes: [ 'full_name'],
+                    as: 'courseProfessor'
+                  }
+              ]
+              }
+            ],
+          });
+          return coursesByStudent
+        } catch (error) {
+          console.log(error)
+          throw error;
+        }
+  }
 
 
-    async getCourseDetailByCourseId(course_id ){
-        try {
-            const coursesByStudent = await Course.findAll({
-              where: { course_id: course_id },
-              attributes: [  'course_id','name', 'description_short', 'description_large', 'intro_video', 'duration_video', 'image', 'duration_course', 'is_active'
-               ],
-                  include : [
-                    {
-                      model: Category,
-                      attributes: [ 'name'],
-                      as: 'courseCategory'
-                     
-                    },
-                    {
-                      model: Profesor,
-                      attributes: [ 'full_name', 'image' , 'especialitation', 'description',],
-                      as: 'courseProfessor',
-                      include : [
-                        {
-                          model: Nivel,
-                          attributes: [ 'name'],
-                          as: 'professorLevel'
-                        },
+  async getCourseDetailByCourseId(course_id ){
+      try {
+          const coursesByStudent = await Course.findAll({
+            where: { course_id: course_id },
+            attributes: [  'course_id','name', 'description_short', 'description_large', 'intro_video', 'duration_video', 'image', 'duration_course', 'is_active'
+             ],
+                include : [
+                  {
+                    model: Category,
+                    attributes: [ 'name'],
+                    as: 'courseCategory'
+                   
+                  },
+                  {
+                    model: Profesor,
+                    attributes: [ 'full_name', 'image' , 'especialitation', 'description',],
+                    as: 'courseProfessor',
+                    include : [
+                      {
+                        model: Nivel,
+                        attributes: [ 'name'],
+                        as: 'professorLevel'
+                      },
+                    ]
+                  },
+                  {
+                      model: Module,
+                      attributes: [ 'name' , 'is_active','module_id'],
+                      as: 'courseModules',
+                      include: [
+                          {
+                              model: Session,
+                              attributes: [ 'name' ],
+                              as: 'moduleSessions' 
+                            
+                          }
                       ]
-                    },
-                    {
-                        model: Module,
-                        attributes: [ 'name' , 'is_active','module_id'],
-                        as: 'courseModules',
-                        include: [
-                            {
-                                model: Session,
-                                attributes: [ 'name' ],
-                                as: 'moduleSessions' 
-                              
-                            }
-                        ]
-                    }
-              ],
-            });
-            return coursesByStudent
-          } catch (error) {
-            console.log(error)
-            throw error;
-          }
-    }
-
+                  }
+            ],
+          });
+          return coursesByStudent
+        } catch (error) {
+          console.log(error)
+          throw error;
+        }
+  }
+  
     async getModulesByCourseId(course_id, user_id) {
       try {
         const coursesByStudent = await Course.findAll({
@@ -139,7 +138,7 @@ class CourseStudentService {
           include: [
             {
               model: Module,
-              attributes: ['name', 'is_active', 'module_id', 'evaluation_id'],
+              attributes: ['name', 'is_active', 'module_id', 'evaluation_id', 'created_at'],
               as: 'courseModules',
               include: [
                 {
@@ -147,22 +146,21 @@ class CourseStudentService {
                   attributes: ['is_completed', 'progress', 'user_id', 'user_module_progress_id'],
                   as: 'usermoduleprogress',
                   where: { user_id: user_id },
-                  required: false  // Añadir required: false para evitar filtrar módulos
+                  required: false
                 },
                 {
                   model: Session,
-                  attributes: ['session_id', 'name', 'video_enlace', 'duracion_minutos'],
+                  attributes: ['session_id', 'name', 'video_enlace', 'duracion_minutos', 'created_at'],
                   as: 'moduleSessions',
-                  required: false ,
+                  required: false,
                   include: [
                     {
                       model: UserSessionProgress,
                       as: 'usersessionprogress',
                       where: { user_id: user_id },
-                      required: false  // Añadir required: false para evitar filtrar sesiones
+                      required: false
                     }
-                  ],
-                 
+                  ]
                 },
                 {
                   model: Evaluation,
@@ -185,30 +183,25 @@ class CourseStudentService {
                           as: 'options'
                         }
                       ]
-                  
-                  }
-                 
-                 
+                    }
                   ],
-                  required: false  // Añadir required: false para evitar filtrar módulos
+                  required: false
                 },
                 {
                   model: ModuleResult,
                   attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
-                  where: { user_id: user_id ,
-              
-                  },
-                  
+                  where: { user_id: user_id },
+                  required: false,
                   include: [
                     {
                       model: Evaluation,
                       attributes: ['evaluation_id', 'name', 'description'],
-                      
+                      required: false
                     }
                   ]
                 }
               ],
-              required: false  // Añadir required: false para evitar filtrar cursos
+              required: false
             },
             {
               model: Evaluation,
@@ -232,10 +225,23 @@ class CourseStudentService {
                   ]
                 }
               ],
-              required: false  // Añadir required: false para evitar filtrar módulos
+              required: false
             }
           ],
         });
+    
+        // Sorting the modules and sessions by created_at field
+        coursesByStudent.forEach(course => {
+          if (course.courseModules) {
+            course.courseModules.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            course.courseModules.forEach(module => {
+              if (module.moduleSessions) {
+                module.moduleSessions.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+              }
+            });
+          }
+        });
+    
         return coursesByStudent;
       } catch (error) {
         console.log(error);
@@ -243,6 +249,8 @@ class CourseStudentService {
       }
     }
     
+
+   
     async assignStudentsToCourseByEnterprise(enterprise_id, course_id) {
       try {
           // Verificar que la empresa exista
