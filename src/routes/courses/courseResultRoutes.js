@@ -1,7 +1,6 @@
 const express = require('express');
 const courseResultController = require('../../controllers/courses/courseResultController');
 const authenticateToken = require('../../middlewares/authenticationMiddleware');
-
 const router = express.Router();
 
 router.post('/', authenticateToken, courseResultController.createCourseResult);

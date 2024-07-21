@@ -4,6 +4,7 @@ const Evaluation = require('./evaluationModel');
 const Course = require('./courseModel');
 const User = require('./UserModel');
 
+
 const CourseResult = sequelize.define('CourseResult', {
     course_result_id: {
         type: DataTypes.INTEGER,
@@ -35,9 +36,15 @@ const CourseResult = sequelize.define('CourseResult', {
         }
     },
     puntaje: {
-        type: DataTypes.TEXT,
+        type: DataTypes.INTEGER,
         allowNull: false
+    },
+    second_chance: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true
     }
+
+
 }, {
     tableName: 'coursesresults',
     timestamps: true,

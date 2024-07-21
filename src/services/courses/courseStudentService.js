@@ -15,6 +15,7 @@ const User = require('../../models/UserModel');
 const Enterprise = require('../../models/EnterpriseModel'); 
 const { Op, fn, col, literal, Sequelize } = require('sequelize');
 const ModuleResult = require('../../models/EvaluationModuleResult');
+const CourseResult = require('../../models/EvaluationCourseResult');
 const AppSession = require('../../models/appSessionModel');
 const Profile = require('../../models/profileModel'); // Importar el modelo Profile
 
@@ -176,6 +177,7 @@ class CourseStudentService {
                           model: QuestionType,
                           attributes: ['type_id', 'name'],
                           as: 'questionType'
+
                         },
                         {
                           model: Option,
@@ -203,6 +205,21 @@ class CourseStudentService {
               ],
               required: false
             },
+            
+            {
+              model: CourseResult,
+              attributes: ['evaluation_id', 'course_id', 'puntaje',  'user_id', 'second_chance' ],
+              where: { user_id: user_id },
+              include: [
+                {
+                  model: Evaluation,
+                  attributes: ['evaluation_id', 'name', 'description'],
+                  required: false
+                }
+              ],
+              required: false
+            }
+            ,
             {
               model: Evaluation,
               attributes: ['evaluation_id', 'name', 'description'],
