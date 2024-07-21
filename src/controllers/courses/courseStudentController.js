@@ -131,7 +131,7 @@ class CourseStudentController {
         }
       }
 
-    async getUsersByEnterpriseWithSessions(req, res) {
+      async getUsersByEnterpriseWithSessions(req, res) {
         try {
           const { startDate, endDate, enterpriseId } = req.query;
       
@@ -149,6 +149,7 @@ class CourseStudentController {
           res.status(500).json({ error: error.message });
         }
       }
+      
     
     async getStudentsByEnterprise(req, res) {
         const { enterprise_id } = req.params;

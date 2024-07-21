@@ -431,46 +431,51 @@ class CourseStudentService {
     }
 }
 
-
-
-
-  async getUsersByEnterpriseWithSessions(enterpriseId, startDate, endDate) {
-    try {
-      const users = await User.findAll({
-        where: { enterprise_id: enterpriseId, role_id: 1 },
-        include: [
-          {
-            model: AppSession,
-            as: 'appSessions',
-            attributes: [],
-            where: {
-              start_time: {
-                [Op.gte]: startDate,
-                [Op.lte]: endDate
-              }
-            },
-            required: false
-          }
-        ],
-        attributes: {
-          include: [
-            'dni',
-            [Sequelize.fn('COUNT', Sequelize.col('appSessions.appsession_id')), 'loginCount']
-          ]
+async getUsersByEnterpriseWithSessions(enterpriseId, startDate, endDate) {
+  try {
+    const users = await User.findAll({
+      where: { enterprise_id: enterpriseId, role_id: 1 },
+      include: [
+        {
+          model: Profile,
+          attributes: ['profile_id', 'first_name', 'last_name', 'email', 'profile_picture'],
+          as: 'userProfile'
         },
-        group: ['User.user_id']
-      });
-  
-      return users.map(user => ({
-        id: user.user_id,
-        dni: user.dni,
-        loginCount: user.dataValues.loginCount
-      }));
-    } catch (error) {
-      console.error('Error fetching users by enterprise:', error);
-      throw error;
-    }
+        {
+          model: AppSession,
+          as: 'appSessions',
+          attributes: [],
+          where: {
+            start_time: {
+              [Op.gte]: startDate,
+              [Op.lte]: endDate
+            }
+          },
+          required: false
+        }
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn('COUNT', Sequelize.col('appSessions.appsession_id')), 'loginCount']
+        ]
+      },
+      group: ['User.user_id', 'userProfile.profile_id', 'userProfile.first_name', 'userProfile.last_name', 'userProfile.email', 'userProfile.profile_picture']
+    });
+
+    return users.map(user => ({
+      id: user.user_id,
+      loginCount: user.dataValues.loginCount,
+      first_name: user.userProfile?.first_name,
+      last_name: user.userProfile?.last_name,
+      email: user.userProfile?.email,
+      profile_picture: user.userProfile?.profile_picture
+    }));
+  } catch (error) {
+    console.error('Error fetching users by enterprise:', error);
+    throw error;
   }
+}
+
 
   async getStudentsByEnterprise(enterprise_id) {
     try {
