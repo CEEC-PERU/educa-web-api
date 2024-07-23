@@ -33,5 +33,7 @@ router.get('/enterprise/users/sessions', courseStudentController.getUsersByEnter
 
 router.get('/enterprise/:enterprise_id/students', courseStudentController.getStudentsByEnterprise);
 router.get('/students/:user_id/grades', courseStudentController.getCoursesWithGradesByStudent);
+router.get('/modules2/:course_id/:user_id', courseStudentController.getModulesByCourseId2);
+
 
 module.exports = router;
