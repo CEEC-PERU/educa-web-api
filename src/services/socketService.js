@@ -12,7 +12,7 @@ let start_time = ""
 const SocketService = (server) => {
     const io = new Server(server, {
       cors: {
-        origin: "http://localhost:3000",
+        origin: "https://educa-web-api.onrender.com",
         methods: ["GET", "POST", "PUT"]
       }
     });
