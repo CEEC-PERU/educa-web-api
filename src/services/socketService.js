@@ -16,7 +16,8 @@ const SocketService = (server) => {
         methods: ["GET", "POST", "PUT"]
       }
     });
-  
+
+   
     io.on('connection', (socket) => {
       let user_id = 0;
       socket.on('login', async (data) => {
