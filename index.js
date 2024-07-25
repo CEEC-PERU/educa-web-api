@@ -12,7 +12,18 @@ authenticateDatabase();
 const SocketService = require('./src/services/socketService');
 require('./src/models/relations');
 require('dotenv').config();
-app.use(cors());
+
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'https://educa-web-seven.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use((req, res, next) => {
