@@ -10,13 +10,17 @@ const activeUsers = new Map();
 
 let start_time = ""
 const SocketService = (server) => {
-    const io = new Server(server, {
-      cors: {
-        origin: "https://educa-web-api.onrender.com",
-        methods: ["GET", "POST", "PUT"]
-      }
-    });
-
+      const io = new Server(server, {
+        cors: {
+          origin: [
+            "http://localhost:3000",
+            "https://educa-web-seven.vercel.app"
+          ],
+          methods: ["GET", "POST", "PUT"]
+        }
+      });
+   
+    
    
     io.on('connection', (socket) => {
       let user_id = 0;
