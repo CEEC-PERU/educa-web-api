@@ -18,7 +18,7 @@ const ModuleResult = require('../../models/EvaluationModuleResult');
 const CourseResult = require('../../models/EvaluationCourseResult');
 const AppSession = require('../../models/appSessionModel');
 const Profile = require('../../models/profileModel'); // Importar el modelo Profile
-
+const Videos= require('../../models/videoModel'); 
 
 class CourseStudentService {
     async create(data) {
@@ -151,10 +151,14 @@ class CourseStudentService {
                 },
                 {
                   model: Session,
-                  attributes: ['session_id', 'name', 'video_enlace', 'duracion_minutos', 'created_at'],
+                  attributes: ['session_id', 'name',  'duracion_minutos', 'created_at'],
                   as: 'moduleSessions',
                   required: false,
                   include: [
+                    {
+                      model: Videos,
+                      required: false
+                    },
                     {
                       model: UserSessionProgress,
                       as: 'usersessionprogress',
@@ -254,6 +258,11 @@ class CourseStudentService {
             course.courseModules.forEach(module => {
               if (module.moduleSessions) {
                 module.moduleSessions.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                module.moduleSessions.forEach(session => {
+                  if (session.Videos) {
+                    session.Videos.sort((a, b) => a.orden - b.orden);
+                  }
+                });
               }
             });
           }

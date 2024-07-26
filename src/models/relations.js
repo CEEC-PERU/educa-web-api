@@ -20,6 +20,14 @@ const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
+const Video = require('./videoModel'); 
+
+
+
+// Asociación
+Video.belongsTo(Session, {foreignKey: 'session_id' });
+Session.hasMany(Video, {foreignKey: 'session_id'});
+
 
 Requirement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 

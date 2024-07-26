@@ -3,15 +3,12 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Module = require('./moduleModel');
 
+//una session tiene varios videos
 const Session = sequelize.define('Session', {
     session_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    },
-    video_enlace: {
-        type: DataTypes.STRING,
-        allowNull: false
     },
     duracion_minutos: {
         type: DataTypes.STRING,
