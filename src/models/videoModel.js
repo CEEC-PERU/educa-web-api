@@ -5,7 +5,6 @@ const Session = require('./sessionModel');
 
 //varios videos pertenecen a un session
 
-
 const Video = sequelize.define('Video', {
     video_id: {
         type: DataTypes.INTEGER,
@@ -29,6 +28,10 @@ const Video = sequelize.define('Video', {
     },
     incorrect_answer:{
         type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     session_id: {
         type: DataTypes.INTEGER,
