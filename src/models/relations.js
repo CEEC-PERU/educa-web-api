@@ -21,7 +21,22 @@ const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 const Video = require('./videoModel'); 
+const FlashCard = require('./FlashcardModel'); 
 
+
+
+
+// Un Curso puede tener varios FlashCards
+Course.hasMany(FlashCard, {
+    foreignKey: 'course_id',
+    as: 'flashcards'
+  });
+  
+  // Un FlashCard pertenece a un Curso
+  FlashCard.belongsTo(Course, {
+    foreignKey: 'course_id',
+    as: 'course'
+  });
 
 
 // Asociación

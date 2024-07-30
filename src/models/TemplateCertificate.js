@@ -3,8 +3,8 @@ const { sequelize } = require('../config/database');
 const User = require('./UserModel');
 const Course = require('./CourseModel');
 
-const Certificado = sequelize.define('Certificado', {
-  certificado_id: {
+const TemplateCertificate= sequelize.define('TemplateCertidicate', {
+  template_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
@@ -24,23 +24,23 @@ const Certificado = sequelize.define('Certificado', {
         key: 'course_id',
     }
   },
-  issued_date: {
+ active: {
     type: DataTypes.DATE,
    
   },
-  certificate_url : {
+  name : {
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  status : {
+  template_url : {
     type: DataTypes.STRING(100),
     allowNull: false
   },
 }, {
-  tableName: 'certificados',
+  tableName: 'categories',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at'
 });
 
-module.exports = Certificado;
+module.exports = TemplateCertificate;
