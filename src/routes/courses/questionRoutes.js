@@ -1,4 +1,3 @@
-// src/routes/questionRoutes.js
 const express = require('express');
 const router = express.Router();
 const questionController = require('../../controllers/courses/questionController');
@@ -7,7 +6,8 @@ const multer = require('multer');
 
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/', upload.single('image'), questionController.createQuestion);
+router.post('/uploadImage', upload.single('image'), questionController.uploadQuestionImage);
+router.post('/', questionController.createQuestion);
 router.get('/evaluation/:evaluationId', questionController.getQuestionsByEvaluationId);
 router.get('/types', questionTypeController.getQuestionTypes);
 

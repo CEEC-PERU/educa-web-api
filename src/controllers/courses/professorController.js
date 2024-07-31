@@ -2,46 +2,41 @@ const professorService = require('../../services/courses/professorService');
 const imageService = require('../../services/images/imageService');
 const fs = require('fs');
 
-exports.uploadProfessorImage = async (req, res) => {
+exports.createProfessor = async (req, res) => {
   try {
-    const imagePath = req.file.path;
-    const imageUrl = await imageService.uploadImage(imagePath, 'Profesores');
-    
-    fs.unlinkSync(imagePath); // Elimina el archivo local después de subirlo a Cloudinary
-    
-    res.json({ url: imageUrl });
+    const imageFile = req.files['image'][0];
+    const imageUrl = await imageService.uploadImage(imageFile.path, 'Profesores');
+
+    const newProfessorData = {
+      ...req.body,
+      image: imageUrl
+    };
+
+    const newProfessor = await professorService.createProfessor(newProfessorData);
+    res.status(201).json(newProfessor);
   } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(400).json({ error: 'Error uploading image' });
+    console.error('Error creating professor:', error);
+    res.status(400).json({ error: error.message });
   }
 };
 
-exports.createProfessor = async (req, res) => {
+exports.updateProfessor = async (req, res) => {
   try {
-    const { full_name, especialitation, description, level_id } = req.body;
-    let imageUrl = req.body.image; // URL de la imagen cargada
+    const imageFile = req.files ? req.files['image'][0] : null;
+    const imageUrl = imageFile ? await imageService.uploadImage(imageFile.path, 'Profesores') : req.body.image;
+    if (imageFile) fs.unlinkSync(imageFile.path); // Elimina el archivo local después de subirlo
 
-    if (req.file) {
-      const imagePath = req.file.path;
-      imageUrl = await imageService.uploadImage(imagePath, 'Profesores');
-      fs.unlinkSync(imagePath); // Elimina el archivo local después de subirlo
+    const updatedProfessorData = { ...req.body, image: imageUrl };
+    const updatedProfessor = await professorService.updateProfessor(req.params.id, updatedProfessorData);
+
+    if (updatedProfessor) {
+      res.json(updatedProfessor);
+    } else {
+      res.status(404).json({ error: 'Professor not found' });
     }
-
-    const newProfessor = await professorService.createProfessor({
-      full_name,
-      especialitation,
-      description,
-      level_id,
-      image: imageUrl,
-    });
-
-    res.status(201).json({
-      message: "Profesor creado exitosamente",
-      newProfessor
-    });
   } catch (error) {
-    console.error('Error creating professor:', error);
-    res.status(500).json({ error: 'Error creating professor' });
+    console.error('Error updating professor:', error);
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -68,7 +63,7 @@ exports.getProfessorById = async (req, res) => {
   }
 };
 
-exports.updateProfessor = async (req, res) => {
+/*exports.updateProfessor = async (req, res) => {
   try {
     const imagePath = req.file ? req.file.path : null;
     const imageUrl = imagePath ? await imageService.uploadImage(imagePath, 'Profesores') : req.body.image;
@@ -83,7 +78,7 @@ exports.updateProfessor = async (req, res) => {
     console.error('Error updating professor:', error);
     res.status(500).json({ error: 'Error updating professor' });
   }
-};
+};*/
 
 exports.deleteProfessor = async (req, res) => {
   try {

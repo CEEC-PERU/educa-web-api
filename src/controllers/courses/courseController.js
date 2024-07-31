@@ -1,43 +1,24 @@
 const videoService = require('../../services/videos/videoService');
 const imageService = require('../../services/images/imageService');
 const courseService = require('../../services/courses/courseService');
-const { createCourse, updateCourse } = require('../../services/courses/courseService');
 const moduleService = require('../../services/courses/moduleService'); // Añadir el servicio de módulos
 const fs = require('fs');
 
-// Otros controladores...
-
-exports.uploadCourseVideo = async (req, res) => {
-  try {
-    const videoPath = req.file.path;
-    const videoUrl = await videoService.uploadVideo(videoPath, 'Cursos/Videos');
-    
-    fs.unlinkSync(videoPath); // Elimina el archivo local después de subirlo a Cloudinary
-    
-    res.json({ url: videoUrl });
-  } catch (error) {
-    console.error('Error uploading video:', error);
-    res.status(400).json({ error: 'Error uploading video' });
-  }
-};
-
-exports.uploadCourseImage = async (req, res) => {
-  try {
-    const imagePath = req.file.path;
-    const imageUrl = await imageService.uploadImage(imagePath, 'Cursos/Images');
-    
-    fs.unlinkSync(imagePath); // Elimina el archivo local después de subirlo a Cloudinary
-    
-    res.json({ url: imageUrl });
-  } catch (error) {
-    console.error('Error uploading image:', error);
-    res.status(400).json({ error: 'Error uploading image' });
-  }
-};
-
 exports.createCourse = async (req, res) => {
   try {
-    const newCourse = await createCourse(req.body);
+    const videoFile = req.files['video'][0];
+    const imageFile = req.files['image'][0];
+
+    const videoUrl = await videoService.uploadVideo(videoFile.path, 'Cursos/Videos');
+    const imageUrl = await imageService.uploadImage(imageFile.path, 'Cursos/Images');
+
+    const newCourseData = {
+      ...req.body,
+      intro_video: videoUrl,
+      image: imageUrl
+    };
+
+    const newCourse = await courseService.createCourse(newCourseData);
     res.status(201).json(newCourse);
   } catch (error) {
     console.error('Error creating course:', error);

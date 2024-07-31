@@ -31,7 +31,9 @@ const getModuleById = async (id) => {
 };
 
 const deleteModule = async (id) => {
-  const module = await Module.findByPk(id);
+  const module = await Module.findByPk(id, {
+    include: ['sessions'] // Incluye las sesiones para eliminarlas en cascada
+  });
   if (!module) {
     throw new Error('Module not found');
   }
