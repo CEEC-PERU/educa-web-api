@@ -1,6 +1,8 @@
 const Course = require('../../models/courseModel');
-
 const Module = require('../../models/moduleModel');
+const Session = require('../../models/sessionModel');
+
+const EvaluationCourseResult = require('../../models/EvaluationCourseResult');
 const { isEvaluationAssigned } = require('./evaluationService');
 
 exports.getAllCourses = async () => {
@@ -44,17 +46,29 @@ exports.updateCourse = async (courseId, courseData) => {
 exports.deleteCourse = async (courseId) => {
   try {
     const course = await Course.findByPk(courseId, {
-      include: [{
-        model: Module,
-        include: ['sessions'] // Incluye las sesiones para eliminarlas en cascada
-      }]
+      include: [
+        {
+          model: Module,
+          as: 'courseModules',
+          include: [
+            {
+              model: Session,
+              as: 'moduleSessions'
+            }
+          ]
+        },
+        {
+          model: EvaluationCourseResult
+        }
+      ]
     });
 
-    if (course) {
-      await course.destroy();
-      return course;
+    if (!course) {
+      throw new Error('Course not found');
     }
-    return null;
+
+    await course.destroy();
+    return course;
   } catch (error) {
     console.error('Error deleting course:', error);
     throw new Error('Error deleting course');
