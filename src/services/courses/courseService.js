@@ -45,30 +45,21 @@ exports.updateCourse = async (courseId, courseData) => {
 
 exports.deleteCourse = async (courseId) => {
   try {
-    const course = await Course.findByPk(courseId, {
-      include: [
-        {
-          model: Module,
-          as: 'courseModules',
-          include: [
-            {
-              model: Session,
-              as: 'moduleSessions'
-            }
-          ]
-        },
-        {
-          model: EvaluationCourseResult
-        }
-      ]
-    });
-
-    if (!course) {
-      throw new Error('Course not found');
+    // Encuentra los módulos asociados al curso
+    const modules = await Module.findAll({ where: { course_id: courseId } });
+    
+    // Elimina todas las sesiones de los módulos asociados
+    for (const module of modules) {
+      await Session.destroy({ where: { module_id: module.module_id } });
     }
-
-    await course.destroy();
-    return course;
+    
+    // Elimina los módulos asociados
+    await Module.destroy({ where: { course_id: courseId } });
+    
+    // Finalmente, elimina el curso
+    await Course.destroy({ where: { course_id: courseId } });
+    
+    return true;
   } catch (error) {
     console.error('Error deleting course:', error);
     throw new Error('Error deleting course');

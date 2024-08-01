@@ -10,9 +10,7 @@ router.post('/', upload.fields([
 ]), professorController.createProfessor);
 
 // Actualizar un profesor con subida de imagen
-router.put('/:id', upload.fields([
-  { name: 'image', maxCount: 1 }
-]), professorController.updateProfessor);
+router.put('/:id', upload.single('image'), professorController.updateProfessor);
 
 // Todos los profesores
 router.get('/', professorController.getAllProfessors);

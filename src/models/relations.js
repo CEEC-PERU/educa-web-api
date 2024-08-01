@@ -19,6 +19,7 @@ const CourseStudent = require('./courseStudent');
 const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
+const Video = require('./videoModel'); 
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 
 Requirement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
@@ -38,6 +39,10 @@ Role.hasMany(User, { foreignKey: 'role_id', as: 'roleUsers' });
 // Relación entre User y AppSession
 User.hasMany(AppSession, { foreignKey: 'user_id', as: 'appSessions' });
 AppSession.belongsTo(User, { foreignKey: 'user_id', as: 'userSession' });
+
+// Asociación
+Video.belongsTo(Session, {foreignKey: 'session_id' });
+Session.hasMany(Video, {foreignKey: 'session_id'});
 
 //EvaluationModuleResult
 
@@ -111,11 +116,11 @@ Professor.belongsTo(Level, { foreignKey: 'level_id', as: 'professorLevel' });
 Level.hasMany(Professor, { foreignKey: 'level_id', as: 'levelProfessors' });
 
 // Relación entre Course y Module
-Course.hasMany(Module, { foreignKey: 'course_id', as: 'courseModules' });
+Course.hasMany(Module, { foreignKey: 'course_id', as: 'courseModules', onDelete: 'CASCADE', hooks: true});
 Module.belongsTo(Course, { foreignKey: 'course_id', as: 'moduleCourse' });
 
 // Relación entre Module y Session
-Module.hasMany(Session, { foreignKey: 'module_id', as: 'moduleSessions' });
+Module.hasMany(Session, { foreignKey: 'module_id', as: 'moduleSessions', onDelete: 'CASCADE', hooks: true });
 Session.belongsTo(Module, { foreignKey: 'module_id', as: 'sessionModule' });
 
 // Relación entre Module y Evaluation
@@ -129,8 +134,3 @@ Question.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
 // Relación entre Question y Option
 Question.hasMany(Option, { foreignKey: 'question_id' });
 Option.belongsTo(Question, { foreignKey: 'question_id' });
-
-// Relación entre EvaluationModuleResult y otros modelos
-Evaluation.hasMany(EvaluationModuleResult, { foreignKey: 'evaluation_id', onDelete: 'CASCADE' });
-Module.hasMany(EvaluationModuleResult, { foreignKey: 'module_id', onDelete: 'CASCADE' });
-User.hasMany(EvaluationModuleResult, { foreignKey: 'user_id', onDelete: 'CASCADE' });

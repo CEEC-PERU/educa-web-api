@@ -22,9 +22,9 @@ exports.createProfessor = async (req, res) => {
 
 exports.updateProfessor = async (req, res) => {
   try {
-    const imageFile = req.files ? req.files['image'][0] : null;
+    const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
     const imageUrl = imageFile ? await imageService.uploadImage(imageFile.path, 'Profesores') : req.body.image;
-    if (imageFile) fs.unlinkSync(imageFile.path); // Elimina el archivo local después de subirlo
+    if (imageFile) fs.unlinkSync(imageFile.path);
 
     const updatedProfessorData = { ...req.body, image: imageUrl };
     const updatedProfessor = await professorService.updateProfessor(req.params.id, updatedProfessorData);

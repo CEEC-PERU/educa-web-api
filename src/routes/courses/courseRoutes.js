@@ -20,7 +20,10 @@ router.get('/:id', courseController.getCourseById);
 router.get('/:id/modules', courseController.getModulesWithSessionsByCourse);
 
 // Actualizar un curso
-router.put('/:id', courseController.updateCourse);
+router.put('/:id', upload.fields([
+  { name: 'video', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]), courseController.updateCourse);
 
 // Eliminar un curso
 router.delete('/:id', courseController.deleteCourse);

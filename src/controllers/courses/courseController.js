@@ -52,8 +52,30 @@ exports.getCourseById = async (req, res) => {
 
 exports.updateCourse = async (req, res) => {
   try {
-    const updatedCourse = await updateCourse(req.params.id, req.body);
-    res.status(200).json(updatedCourse);
+    const imageFile = req.files ? req.files['image'][0] : null;
+    const videoFile = req.files ? req.files['video'][0] : null;
+
+    let imageUrl = req.body.image;
+    let videoUrl = req.body.intro_video;
+
+    if (imageFile) {
+      imageUrl = await imageService.uploadImage(imageFile.path, 'Cursos/Images');
+      fs.unlinkSync(imageFile.path);
+    }
+
+    if (videoFile) {
+      videoUrl = await videoService.uploadVideo(videoFile.path, 'Cursos/Videos');
+      fs.unlinkSync(videoFile.path);
+    }
+
+    const updatedCourseData = { ...req.body, image: imageUrl, intro_video: videoUrl };
+    const updatedCourse = await courseService.updateCourse(req.params.id, updatedCourseData);
+
+    if (updatedCourse) {
+      res.json(updatedCourse);
+    } else {
+      res.status(404).json({ error: 'Course not found' });
+    }
   } catch (error) {
     console.error('Error updating course:', error);
     res.status(400).json({ error: error.message });

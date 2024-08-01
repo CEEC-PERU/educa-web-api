@@ -1,3 +1,4 @@
+// src/services/courses/sessionService.js
 const Session = require('../../models/sessionModel');
 
 exports.getAllSessions = async () => {
