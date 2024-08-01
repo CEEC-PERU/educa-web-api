@@ -16,7 +16,6 @@ const Enterprise = require('../../models/EnterpriseModel');
 const CourseResult = require('../../models/EvaluationCourseResult'); // Asegúrate de que la ruta es correcta
 const { Op, fn, col, literal, Sequelize } = require('sequelize');
 const ModuleResult = require('../../models/EvaluationModuleResult');
-const CourseResult = require('../../models/EvaluationCourseResult');
 const AppSession = require('../../models/appSessionModel');
 const Profile = require('../../models/profileModel'); // Importar el modelo Profile
 const Videos= require('../../models/videoModel'); 
