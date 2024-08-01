@@ -21,7 +21,6 @@ const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
 const Video = require('./videoModel'); 
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
-const Video = require('./videoModel'); 
 const FlashCard = require('./FlashcardModel'); 
 
 
