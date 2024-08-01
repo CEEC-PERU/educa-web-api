@@ -1,4 +1,5 @@
 const cloudinary = require('../../config/cloudinary');
+const fs = require('fs');
 
 exports.uploadVideo = async (filePath, folder) => {
   try {
@@ -6,7 +7,8 @@ exports.uploadVideo = async (filePath, folder) => {
       resource_type: 'video',
       folder: folder,
     });
-    return result.url;
+    fs.unlinkSync(filePath); // Elimina el archivo local después de subirlo a Cloudinary
+    return result.secure_url;
   } catch (error) {
     console.error('Error uploading video to Cloudinary:', error);
     throw new Error('Error uploading video');

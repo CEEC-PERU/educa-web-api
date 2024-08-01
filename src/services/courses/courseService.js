@@ -1,4 +1,8 @@
 const Course = require('../../models/courseModel');
+const Module = require('../../models/moduleModel');
+const Session = require('../../models/sessionModel');
+
+const EvaluationCourseResult = require('../../models/EvaluationCourseResult');
 const { isEvaluationAssigned } = require('./evaluationService');
 
 exports.getAllCourses = async () => {
@@ -41,12 +45,21 @@ exports.updateCourse = async (courseId, courseData) => {
 
 exports.deleteCourse = async (courseId) => {
   try {
-    const course = await Course.findByPk(courseId);
-    if (course) {
-      await course.destroy();
-      return course;
+    // Encuentra los módulos asociados al curso
+    const modules = await Module.findAll({ where: { course_id: courseId } });
+    
+    // Elimina todas las sesiones de los módulos asociados
+    for (const module of modules) {
+      await Session.destroy({ where: { module_id: module.module_id } });
     }
-    return null;
+    
+    // Elimina los módulos asociados
+    await Module.destroy({ where: { course_id: courseId } });
+    
+    // Finalmente, elimina el curso
+    await Course.destroy({ where: { course_id: courseId } });
+    
+    return true;
   } catch (error) {
     console.error('Error deleting course:', error);
     throw new Error('Error deleting course');

@@ -89,6 +89,19 @@ class CourseStudentController {
         }
     }
 
+    async getModulesByCourseId2(req, res) {
+        const { course_id, user_id } = req.params;
+        try {
+          const courseStudent = await courseStudentService.getModulesByCourseId2(course_id, user_id);
+          if (!courseStudent) {
+            return res.status(404).json({ error: 'CourseStudent not found' });
+          }
+          res.status(200).json(courseStudent);
+        } catch (error) {
+          res.status(500).json({ error: error.message });
+        }
+      }
+
     async assignStudentsToCourseByEnterprise(req, res) {
         const { enterprise_id, course_id } = req.body;
         try {

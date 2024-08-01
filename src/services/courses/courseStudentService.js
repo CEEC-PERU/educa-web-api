@@ -13,6 +13,7 @@ const UserSessionProgress = require('../../models/UserSessionProgress');
 const QuestionType = require('../../models/questionTypeModel');
 const User = require('../../models/UserModel');
 const Enterprise = require('../../models/EnterpriseModel'); 
+const CourseResult = require('../../models/EvaluationCourseResult'); // Asegúrate de que la ruta es correcta
 const { Op, fn, col, literal, Sequelize } = require('sequelize');
 const ModuleResult = require('../../models/EvaluationModuleResult');
 const CourseResult = require('../../models/EvaluationCourseResult');
@@ -275,6 +276,57 @@ class CourseStudentService {
       }
     }
     
+// calificaciones de modulos y cursos
+async getModulesByCourseId2(course_id, user_id) {
+  try {
+      const coursesByStudent = await Course.findAll({
+          where: { course_id: course_id },
+          attributes: ['course_id', 'name', 'evaluation_id'],
+          include: [
+              {
+                  model: Module,
+                  attributes: ['name', 'is_active', 'module_id', 'evaluation_id', 'created_at'],
+                  as: 'courseModules',
+                  include: [
+                      {
+                          model: ModuleResult,
+                          attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
+                          where: { user_id: user_id },
+                          required: false,
+                          include: [
+                              {
+                                  model: Evaluation,
+                                  attributes: ['evaluation_id', 'name', 'description'],
+                                  required: false
+                              }
+                          ]
+                      }
+                  ],
+                  required: false
+              },
+              {
+                  model: Evaluation,
+                  attributes: ['evaluation_id', 'name', 'description'],
+                  include: [
+                      {
+                          model: CourseResult,
+                          attributes: ['evaluation_id', 'course_id', 'puntaje', 'user_id'],
+                          where: { user_id: user_id },
+                          required: false
+                      }
+                  ],
+                  required: false
+              }
+          ],
+      });
+
+
+      return coursesByStudent;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}
 
    
     async assignStudentsToCourseByEnterprise(enterprise_id, course_id) {

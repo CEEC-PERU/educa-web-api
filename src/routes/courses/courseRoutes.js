@@ -4,8 +4,11 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const courseController = require('../../controllers/courses/courseController');
 
-router.post('/upload', upload.single('video'), courseController.uploadCourseVideo);
-router.post('/uploadImage', upload.single('image'), courseController.uploadCourseImage);
+// Ruta para crear un curso con subida de video e imagen
+router.post('/', upload.fields([
+  { name: 'video', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]), courseController.createCourse);
 
 // Todos los cursos
 router.get('/', courseController.getAllCourses);
@@ -16,11 +19,11 @@ router.get('/:id', courseController.getCourseById);
 // Obtener módulos y sesiones por ID de curso
 router.get('/:id/modules', courseController.getModulesWithSessionsByCourse);
 
-// Agregar un nuevo curso
-router.post('/', courseController.createCourse);
-
 // Actualizar un curso
-router.put('/:id', courseController.updateCourse);
+router.put('/:id', upload.fields([
+  { name: 'video', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]), courseController.updateCourse);
 
 // Eliminar un curso
 router.delete('/:id', courseController.deleteCourse);

@@ -1,23 +1,16 @@
-// src/controllers/questionController.js
 const questionService = require('../../services/courses/questionService');
-
 const imageService = require('../../services/images/imageService');
-const fs = require('fs');
 
 exports.uploadQuestionImage = async (req, res) => {
   try {
     const imagePath = req.file.path;
     const imageUrl = await imageService.uploadImage(imagePath, 'Preguntas'); // Especificar carpeta 'Preguntas'
-    
-    fs.unlinkSync(imagePath); // Elimina el archivo local después de subirlo a Cloudinary
-    
     res.json({ url: imageUrl });
   } catch (error) {
     console.error('Error uploading image:', error);
     res.status(400).json({ error: 'Error uploading image' });
   }
 };
-
 
 exports.createQuestion = async (req, res) => {
   try {
@@ -29,7 +22,6 @@ exports.createQuestion = async (req, res) => {
     res.status(500).json({ error: 'Error creating question' });
   }
 };
-
 
 exports.getQuestionsByEvaluationId = async (req, res) => {
   try {

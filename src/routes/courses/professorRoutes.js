@@ -4,8 +4,13 @@ const professorController = require('../../controllers/courses/professorControll
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/uploadImage', upload.single('image'), professorController.uploadProfessorImage);
+// Agregar un nuevo profesor con subida de imagen
+router.post('/', upload.fields([
+  { name: 'image', maxCount: 1 }
+]), professorController.createProfessor);
 
+// Actualizar un profesor con subida de imagen
+router.put('/:id', upload.single('image'), professorController.updateProfessor);
 
 // Todos los profesores
 router.get('/', professorController.getAllProfessors);
@@ -15,12 +20,6 @@ router.get('/levels', professorController.getAllLevels);
 
 // Obtener detalle de un profesor por su ID
 router.get('/:id', professorController.getProfessorById);
-
-// Agregar un nuevo profesor
-router.post('/', upload.single('image'), professorController.createProfessor);
-
-// Actualizar un profesor
-router.put('/:id', upload.single('image'), professorController.updateProfessor);
 
 // Eliminar un profesor
 router.delete('/:id', professorController.deleteProfessor);
