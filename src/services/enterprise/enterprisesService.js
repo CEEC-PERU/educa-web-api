@@ -1,4 +1,5 @@
 const Enterprise = require('../../models/EnterpriseModel');
+const User = require('../../models/UserModel');
 
 const createEnterprise = async (enterpriseData) => {
   try {
@@ -43,15 +44,16 @@ const updateEnterprise = async (enterpriseId, enterpriseData) => {
 
 const deleteEnterprise = async (enterpriseId) => {
   try {
-    const enterprise = await Enterprise.findByPk(enterpriseId);
-    if (enterprise) {
-      await enterprise.destroy();
-      return enterprise;
-    }
-    return null;
+    // Primero, elimina todos los usuarios que están ligados a esta empresa
+    await User.destroy({ where: { enterprise_id: enterpriseId } });
+
+    // Luego, elimina la empresa
+    const result = await Enterprise.destroy({ where: { enterprise_id: enterpriseId } });
+
+    return result;
   } catch (error) {
     console.error('Error deleting enterprise:', error);
-    throw new Error('Error deleting enterprise');
+    throw error;
   }
 };
 
