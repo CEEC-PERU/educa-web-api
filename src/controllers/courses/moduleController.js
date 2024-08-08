@@ -21,6 +21,21 @@ const updateModule = async (req, res) => {
   }
 };
 
+const updateModuleStatus = async (req, res) => {
+  try {
+    const { moduleId } = req.params;
+    const { is_active } = req.body;
+    console.log(`Updating module status: moduleId=${moduleId}, is_active=${is_active}`);
+
+    const updatedModule = await moduleService.updateModuleStatus(moduleId, is_active);
+    res.status(200).json(updatedModule);
+  } catch (error) {
+    console.error('Error updating module status:', error);
+    res.status(500).json({ message: 'Error updating module status', error });
+  }
+};
+
+
 const getAllModules = async (req, res) => {
   try {
     const modules = await moduleService.getAllModules();
@@ -33,7 +48,6 @@ const getAllModules = async (req, res) => {
 
 const getModuleById = async (req, res) => {
   try {
-    const module = await moduleService.getModuleById(req.params.id);
     if (!module) {
       return res.status(404).json({ error: 'Module not found' });
     }
@@ -59,5 +73,6 @@ module.exports = {
   getModuleById,
   createModule,
   updateModule,
-  deleteModule
+  deleteModule,
+  updateModuleStatus
 };
