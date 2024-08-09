@@ -80,16 +80,21 @@ exports.getProfessorById = async (req, res) => {
   }
 };*/
 
+
 exports.deleteProfessor = async (req, res) => {
   try {
     const deleted = await professorService.deleteProfessor(req.params.id);
     if (deleted) {
-      res.json({ message: 'Professor deleted' });
+      res.json({ message: 'Profesor eliminado correctamente' });
     } else {
-      res.status(404).json({ error: 'Professor not found' });
+      res.status(404).json({ error: 'Profesor no encontrado' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (error.message === 'No se puede eliminar este profesor porque está asignado a un curso') {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Error eliminando profesor' });
+    }
   }
 };
 

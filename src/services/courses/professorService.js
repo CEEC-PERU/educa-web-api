@@ -1,4 +1,5 @@
 const Professor = require('../../models/professorModel');
+const Course  = require('../../models/courseModel');
 const Level = require('../../models/levelModel');
 
 exports.getAllProfessors = async () => {
@@ -48,7 +49,14 @@ exports.updateProfessor = async (professorId, professorData) => {
 
 exports.deleteProfessor = async (professorId) => {
   try {
-    const professor = await Professor.findByPk(professorId);
+    const professor = await Professor.findByPk(professorId, {
+      include: [{ model: Course, as: 'professorCourses' }]
+    });
+
+    if (professor && professor.professorCourses && professor.professorCourses.length > 0) {
+      throw new Error('No se puede eliminar este profesor porque está asignado a un curso');
+    }
+
     if (professor) {
       await professor.destroy();
       return professor;

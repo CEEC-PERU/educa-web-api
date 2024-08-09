@@ -26,6 +26,16 @@ const updateModule = async (id, data) => {
   return await module.update(data);
 };
 
+const updateModuleStatus = async (id, isActive) => {
+  const module = await Module.findByPk(id);
+  if (!module) {
+    throw new Error('Module not found');
+  }
+  module.is_active = isActive;
+  await module.save();
+  return module;
+};
+
 const getModuleById = async (id) => {
   return await Module.findByPk(id);
 };
@@ -42,7 +52,6 @@ const deleteModule = async (id) => {
 
 const getModulesByCourseId = async (courseId) => {
   try {
-    console.log(`Fetching modules for course ID: ${courseId}`);
     const modules = await Module.findAll({
       where: { course_id: courseId },
       include: [
@@ -52,7 +61,6 @@ const getModulesByCourseId = async (courseId) => {
         }
       ]
     });
-    console.log(`Modules fetched: ${JSON.stringify(modules)}`);
     return modules;
   } catch (error) {
     console.error('Error fetching modules by course ID:', error);
@@ -67,4 +75,5 @@ module.exports = {
   updateModule,
   deleteModule,
   getModulesByCourseId,
+  updateModuleStatus
 };
