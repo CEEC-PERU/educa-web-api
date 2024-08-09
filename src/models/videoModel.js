@@ -4,8 +4,6 @@ const { sequelize } = require('../config/database');
 const Session = require('./sessionModel');
 
 //varios videos pertenecen a un session
-
-
 const Video = sequelize.define('Video', {
     video_id: {
         type: DataTypes.INTEGER,
@@ -37,9 +35,11 @@ const Video = sequelize.define('Video', {
             key: 'session_id'
         },
         allowNull: false
-    },
-    
-    
+    }, 
+    image :{
+        type: DataTypes.STRING,
+        allowNull: false
+    },  
 }, {
     tableName: 'videos',
     timestamps: true,

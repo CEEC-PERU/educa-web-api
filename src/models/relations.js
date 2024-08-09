@@ -22,7 +22,15 @@ const EvaluationCourseResult  = require('./EvaluationCourseResult');
 const Video = require('./videoModel'); 
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 const FlashCard = require('./FlashcardModel'); 
+const AdminCorporateEnterprise = require('./EnterpriseAdmin'); 
 
+// Relación entre `User` y `AdminCorporateEnterprise`
+User.hasMany(AdminCorporateEnterprise, { foreignKey: 'user_id' });
+AdminCorporateEnterprise.belongsTo(User, { foreignKey: 'user_id' });
+
+
+AdminCorporateEnterprise.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
+Enterprise.hasMany(AdminCorporateEnterprise, { foreignKey: 'enterprise_id' });
 
 
 
@@ -53,6 +61,9 @@ Profile.belongsTo(User, { foreignKey: 'user_id', as: 'userProfile' });
 // Relación entre User y Enterprise
 User.belongsTo(Enterprise, { foreignKey: 'enterprise_id', as: 'enterprise' });
 Enterprise.hasMany(User, { foreignKey: 'enterprise_id', as: 'enterpriseUsers' });
+
+
+
 
 // Relación entre User y Role
 User.belongsTo(Role, { foreignKey: 'role_id', as: 'role' });

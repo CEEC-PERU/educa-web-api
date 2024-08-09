@@ -118,8 +118,6 @@ const getSessionStatistics2 = async ({ startDate, endDate, enterpriseId }) => {
 };
 
 
-
-
 // Definición de la función getSessionStatisticsbyUser
 // Esta función es asincrónica, lo que significa que devuelve una promesa
 const getSessionStatisticsByUser = async ({ startDate, endDate, userId }) => {
