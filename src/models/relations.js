@@ -23,6 +23,20 @@ const Video = require('./videoModel');
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 const FlashCard = require('./FlashcardModel'); 
 const AdminCorporateEnterprise = require('./EnterpriseAdmin'); 
+const Cuestionario = require('./cuestionarioModel'); 
+const QuestionCuestionario = require('./QuestionCuestionario');
+const OptionCuestionario = require('./optionCuestionario');
+const ResultCuestionario = require('./ResultCuestionario');
+
+//Course.belongsToMany(Cuestionario, { through: CourseCuestionario, foreignKey: 'course_id' });
+//Cuestionario.belongsToMany(Course, { through: CourseCuestionario, foreignKey: 'cuestionario_id' });
+
+Cuestionario.hasMany(QuestionCuestionario, { foreignKey: 'cuestionario_id' });
+QuestionCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });
+
+QuestionCuestionario.hasMany(OptionCuestionario, { foreignKey: 'cquestion_id' });
+OptionCuestionario.belongsTo(QuestionCuestionario, { foreignKey: 'cquestion_id' });
+
 
 // Relación entre `User` y `AdminCorporateEnterprise`
 User.hasMany(AdminCorporateEnterprise, { foreignKey: 'user_id' });
@@ -31,6 +45,8 @@ AdminCorporateEnterprise.belongsTo(User, { foreignKey: 'user_id' });
 
 AdminCorporateEnterprise.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
 Enterprise.hasMany(AdminCorporateEnterprise, { foreignKey: 'enterprise_id' });
+
+
 
 
 
