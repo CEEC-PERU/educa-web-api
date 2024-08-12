@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Cuestionario = require('./cuestionarioModel');
 
-const Question = sequelize.define('Question', {
+const QuestionCuestionario = sequelize.define('QuestionCuestionario', {
   cquestion_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -28,4 +28,4 @@ const Question = sequelize.define('Question', {
   updatedAt: 'updated_at'
 });
 
-module.exports = Question;
+module.exports = QuestionCuestionario;

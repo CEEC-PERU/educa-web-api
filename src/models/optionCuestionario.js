@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Question = require('./questionModel');
+const QuestionCuestionario = require('./QuestionCuestionario');
 
 const Option = sequelize.define('Option', {
   option_id: {
@@ -12,7 +12,7 @@ const Option = sequelize.define('Option', {
   cquestion_id: {
     type: DataTypes.INTEGER,
     references: {
-        model: Question,
+        model: QuestionCuestionario,
         key: 'cquestion_id',
     },
     allowNull: false
