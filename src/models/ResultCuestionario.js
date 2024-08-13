@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const User = require('./UserModel');
 const Cuestionario = require('./cuestionarioModel');
-//modificar
+
 const Result = sequelize.define('Result', {
   result_id: {
     type: DataTypes.INTEGER,
@@ -27,7 +27,7 @@ const Result = sequelize.define('Result', {
     allowNull: false
   },
   score: {
-    type: DataTypes.INTEGER, // o cualquier otro tipo según tus necesidades
+    type: DataTypes.INTEGER, // o cualquier otro tipo según tus necesidades , evaluaciones
     allowNull: true
   }
 }, {

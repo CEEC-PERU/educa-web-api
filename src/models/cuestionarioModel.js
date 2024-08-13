@@ -21,7 +21,7 @@ const Cuestionario = sequelize.define('Cuestionario', {
     allowNull: false
   },
   type: {
-    type: DataTypes.STRING, // 'NPS', 'Effort', 'Satisfaction', etc.//colocar en frontend definidos
+    type: DataTypes.STRING, // 'NPS', 'Effort', 'Satisfaction', VPE(valoracion estrellas) etc.//colocar en frontend definidos
     allowNull: false
   },
 }, {
