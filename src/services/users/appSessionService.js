@@ -118,6 +118,7 @@ const getSessionStatistics2 = async ({ startDate, endDate, enterpriseId }) => {
 };
 
 
+
 // Definición de la función getSessionStatisticsbyUser
 // Esta función es asincrónica, lo que significa que devuelve una promesa
 const getSessionStatisticsByUser = async ({ startDate, endDate, userId }) => {
@@ -193,4 +194,46 @@ const findLastLoginDate = async (userId) => {
         throw error;
     }
 };
-module.exports = { createAppSessionService, getSessionStatistics2 ,getSessionStatisticsByUser , getSessionStatistics, findLastLoginDate, findUsersWithoutSessions };
+
+
+
+const getAverageSessionTimePerDay = async (enterpriseId, startDate, endDate) => {
+    const sessions = await AppSession.findAll({
+        include: [{
+            model: User,
+            as: 'userSession',
+            where: {
+                enterprise_id: enterpriseId
+            }
+        }],
+        where: {
+            start_time: {
+                [Op.between]: [startDate, endDate]
+            }
+        }
+    });
+
+    const sessionTimes = sessions.reduce((acc, session) => {
+        const date = session.start_time.toISOString().split('T')[0];
+        const duration = (new Date(session.end_time) - new Date(session.start_time)) / 1000 / 60; // Convert to minutes
+        
+        if (!acc[date]) {
+            acc[date] = { total: 0, count: 0 };
+        }
+
+        acc[date].total += duration;
+        acc[date].count += 1;
+
+        return acc;
+    }, {});
+
+    const averageTimes = Object.keys(sessionTimes).map(date => ({
+        date,
+        average: sessionTimes[date].total / sessionTimes[date].count
+    }));
+
+    return averageTimes;
+}
+
+
+module.exports = { createAppSessionService, getSessionStatistics2 ,getSessionStatisticsByUser , getSessionStatistics, findLastLoginDate, findUsersWithoutSessions , getAverageSessionTimePerDay };

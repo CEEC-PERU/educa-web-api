@@ -9,5 +9,7 @@ router.get('/user/:userId', authenticateToken, appSessionController.getAppSessio
 router.get('/inactive', authenticateToken, appSessionController.getInactiveUsersController);
 router.get('/last-login/:userId', authenticateToken, appSessionController.getLastLoginController);
 router.get('/activity-count', appSessionController.getUsersActivityCountController); // Cambiar aquí
-//realizar el control de las sesiones
+
+router.get('/average-session-time/:enterpriseId', appSessionController.getAverageSessionTime);
+
 module.exports = router;

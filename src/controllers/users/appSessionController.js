@@ -1,7 +1,22 @@
-const {getSessionStatistics2,  createAppSessionService, getSessionStatistics  , getInactiveUsers , getLastLogin , getUsersActivityCount, getSessionStatisticsByUser} = require("../../services/users/appSessionService");
+const {getAverageSessionTimePerDay,getSessionStatistics2,  createAppSessionService, getSessionStatistics  , getInactiveUsers , getLastLogin , getUsersActivityCount, getSessionStatisticsByUser} = require("../../services/users/appSessionService");
 const { startOfWeek, subWeeks, endOfWeek, startOfMonth, endOfMonth , parseISO} = require('date-fns');
 const Profile = require('../../models/profileModel');
 const User = require('./../../models/UserModel');
+
+
+const getAverageSessionTime = async (req, res) => {
+    try {
+        const { enterpriseId } = req.params;
+        const { startDate, endDate } = req.query;
+
+        const averageTimes = await getAverageSessionTimePerDay(enterpriseId, startDate, endDate);
+
+        res.json({ success: true, data: averageTimes });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 const appSessionController = async (req, res) => {
     try {
         const {
@@ -241,4 +256,4 @@ const getUsersActivityCountController = async (req, res) => {
 }
 
 
-module.exports = { appSessionController, getAppSessions2 ,getAppSessionsByUser ,getAppSessions, getInactiveUsersController, getLastLoginController, getUsersActivityCountController };
+module.exports = {getAverageSessionTime, appSessionController, getAppSessions2 ,getAppSessionsByUser ,getAppSessions, getInactiveUsersController, getLastLoginController, getUsersActivityCountController };
