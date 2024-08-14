@@ -31,11 +31,11 @@ async function getStudentCountByCourse(enterprise_id) {
     
     return {
       labels: results.map(result => result['Course.name']),
-      datasets: [{
+      datasets: {
         data: results.map(result => parseInt(result.student_count)),
         backgroundColor: colors,
         hoverBackgroundColor: colors,
-      }]
+      }
     };
   } catch (error) {
     console.error(error);
