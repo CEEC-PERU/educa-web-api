@@ -1,4 +1,3 @@
-// Importación de modelos
 const User = require('./UserModel');
 const Enterprise = require('./EnterpriseModel');
 const Role = require('./RolModel');
@@ -27,9 +26,19 @@ const Cuestionario = require('./cuestionarioModel');
 const QuestionCuestionario = require('./QuestionCuestionario');
 const OptionCuestionario = require('./optionCuestionario');
 const ResultCuestionario = require('./ResultCuestionario');
+const VideoInteractivo = require('./videoInteractivo');
 
 //Course.belongsToMany(Cuestionario, { through: CourseCuestionario, foreignKey: 'course_id' });
 //Cuestionario.belongsToMany(Course, { through: CourseCuestionario, foreignKey: 'cuestionario_id' });
+
+VideoInteractivo.belongsTo(Session, {
+  foreignKey: 'interactivo_id'
+});
+
+Session.hasMany(VideoInteractivo, 
+  {foreignKey: 'interactivo_id'
+});
+
 
 Cuestionario.hasMany(QuestionCuestionario, { foreignKey: 'cuestionario_id' });
 QuestionCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });

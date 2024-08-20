@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/', authenticateToken, courseStudentController.create);
 router.get('/',authenticateToken, courseStudentController.getAll);
-router.get('/cursos/:user_id',authenticateToken, courseStudentController.getCourseStudentsByUserId);
+router.get('/cursos/:user_id', authenticateToken, courseStudentController.getCourseStudentsByUserId);
 router.get('/:id',authenticateToken, courseStudentController.getById);
 
 //obtener todos los detalles del curso 

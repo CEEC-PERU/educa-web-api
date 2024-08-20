@@ -19,6 +19,7 @@ const ModuleResult = require('../../models/EvaluationModuleResult');
 const AppSession = require('../../models/appSessionModel');
 const Profile = require('../../models/profileModel'); // Importar el modelo Profile
 const Videos= require('../../models/videoModel'); 
+const VideoInteractivo= require('../../models/videoInteractivo');
 
 class CourseStudentService {
     async create(data) {
@@ -158,6 +159,10 @@ class CourseStudentService {
                     {
                       model: Videos,
                       required: false
+                    },
+                    {
+                      model : VideoInteractivo,
+                      required: false,
                     },
                     {
                       model: UserSessionProgress,
