@@ -18,6 +18,10 @@ const Session = sequelize.define('Session', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
+    video_enlace: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     module_id: {
         type: DataTypes.INTEGER,
         references: {

@@ -18,7 +18,7 @@ const CourseStudent = require('./courseStudent');
 const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
-const Video = require('./videoModel'); 
+
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 const FlashCard = require('./FlashcardModel'); 
 const AdminCorporateEnterprise = require('./EnterpriseAdmin'); 
@@ -73,8 +73,7 @@ Course.hasMany(FlashCard, {
 
 
 // Asociación
-Video.belongsTo(Session, {foreignKey: 'session_id' });
-Session.hasMany(Video, {foreignKey: 'session_id'});
+
 
 
 Requirement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
@@ -99,8 +98,7 @@ User.hasMany(AppSession, { foreignKey: 'user_id', as: 'appSessions' });
 AppSession.belongsTo(User, { foreignKey: 'user_id', as: 'userSession' });
 
 // Asociación
-Video.belongsTo(Session, {foreignKey: 'session_id' });
-Session.hasMany(Video, {foreignKey: 'session_id'});
+
 
 //EvaluationModuleResult
 

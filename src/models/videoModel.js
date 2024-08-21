@@ -1,5 +1,5 @@
 // src/models/sessionModel.js
-const { DataTypes } = require('sequelize');
+/*const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Session = require('./sessionModel');
 
@@ -10,23 +10,9 @@ const Video = sequelize.define('Video', {
         primaryKey: true,
         autoIncrement: true
     },
-    orden: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
     video_enlace: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    question :{
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    correct_answer:{
-        type: DataTypes.TEXT, 
-    },
-    incorrect_answer:{
-        type: DataTypes.ARRAY(DataTypes.STRING),
     },
     session_id: {
         type: DataTypes.INTEGER,
@@ -35,11 +21,7 @@ const Video = sequelize.define('Video', {
             key: 'session_id'
         },
         allowNull: false
-    }, 
-    image :{
-        type: DataTypes.STRING,
-        allowNull: false
-    },  
+    }  
 }, {
     tableName: 'videos',
     timestamps: true,
@@ -48,3 +30,4 @@ const Video = sequelize.define('Video', {
 });
 
 module.exports = Video;
+*/
