@@ -18,7 +18,6 @@ router.delete('/:id', authenticateToken,courseStudentController.delete);
 // Nueva ruta para obtener estudiantes asignados
 router.get('/assigned/:course_id', courseStudentController.getAssignedStudents);
 
-
 //Asignar cursos a estudiantes por empresa
 router.post('/assign', courseStudentController.assignStudentsToCourseByEnterprise);
 

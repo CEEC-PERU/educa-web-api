@@ -18,6 +18,8 @@ const { Op, fn, col, literal, Sequelize } = require('sequelize');
 const ModuleResult = require('../../models/EvaluationModuleResult');
 const AppSession = require('../../models/appSessionModel');
 const Profile = require('../../models/profileModel'); // Importar el modelo Profile
+const Content = require('../../models/ContenidoModel');
+const Level = require('../../models/levelModel');
 
 const VideoInteractivo= require('../../models/videoInteractivo');
 
@@ -64,9 +66,13 @@ class CourseStudentService {
                 include : [
                   {
                     model: Category,
-                    attributes: [ 'name'],
+                    attributes: [ 'name' , 'category_id'],
                     as: 'courseCategory'
                    
+                  },
+                  {
+                    model: Content,
+                    attributes: [  'content_id' , 'name' ],
                   },
                   {
                     model: Profesor,

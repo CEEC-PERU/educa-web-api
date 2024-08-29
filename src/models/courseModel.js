@@ -3,7 +3,7 @@ const { sequelize } = require('../config/database');
 const Category = require('./categoryModel');
 const Professor = require('./professorModel');  
 const Evaluation = require('./evaluationModel'); // Importa el modelo Evaluation
-
+const Content = require('./ContenidoModel');
 const Course = sequelize.define('Course', {
     course_id: {
         type: DataTypes.INTEGER,
@@ -28,6 +28,14 @@ const Course = sequelize.define('Course', {
         references: {
             model: Category,
             key: 'category_id'
+        }
+    },
+    content_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: Content,
+            key: 'content_id'
         }
     },
     professor_id: {

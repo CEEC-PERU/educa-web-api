@@ -1,4 +1,3 @@
-// src/models/sessionModel.js
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Session = require('./sessionModel');
@@ -20,7 +19,7 @@ const VideoInteractivo = sequelize.define('VideoInteractivo', {
             model: Session,
             key: 'session_id'
         },
-        allowNull: false
+        allowNull: true
     },  
 }, {
     tableName: 'videosinteractivo',

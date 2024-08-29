@@ -49,7 +49,6 @@ class CourseStudentController {
         }
     }
 
-
     async getCourseStudentsByUserId(req, res) {
         const { user_id } = req.params;
         try {

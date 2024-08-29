@@ -18,7 +18,7 @@ const CourseStudent = require('./courseStudent');
 const UserModuleProgress = require('./UserModuleProgress');
 const UserSessionProgress = require('./UserSessionProgress');
 const EvaluationCourseResult  = require('./EvaluationCourseResult');
-
+const Content = require('./ContenidoModel');
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 const FlashCard = require('./FlashcardModel'); 
 const AdminCorporateEnterprise = require('./EnterpriseAdmin'); 
@@ -28,6 +28,13 @@ const OptionCuestionario = require('./optionCuestionario');
 const ResultCuestionario = require('./ResultCuestionario');
 const VideoInteractivo = require('./videoInteractivo');
 
+
+
+Course.belongsTo(Content, { foreignKey: 'content_id'});
+
+Content.hasMany(Course, { foreignKey: 'content_id'});
+
+
 //Course.belongsToMany(Cuestionario, { through: CourseCuestionario, foreignKey: 'course_id' });
 //Cuestionario.belongsToMany(Course, { through: CourseCuestionario, foreignKey: 'cuestionario_id' });
 
@@ -35,10 +42,7 @@ VideoInteractivo.belongsTo(Session, {
   foreignKey: 'interactivo_id'
 });
 
-Session.hasMany(VideoInteractivo, 
-  {foreignKey: 'interactivo_id'
-});
-
+Session.hasMany(VideoInteractivo,{foreignKey: 'interactivo_id'});
 
 Cuestionario.hasMany(QuestionCuestionario, { foreignKey: 'cuestionario_id' });
 QuestionCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });
@@ -46,11 +50,9 @@ QuestionCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });
 QuestionCuestionario.hasMany(OptionCuestionario, { foreignKey: 'cquestion_id' });
 OptionCuestionario.belongsTo(QuestionCuestionario, { foreignKey: 'cquestion_id' });
 
-
 // Relación entre `User` y `AdminCorporateEnterprise`
 User.hasMany(AdminCorporateEnterprise, { foreignKey: 'user_id' });
 AdminCorporateEnterprise.belongsTo(User, { foreignKey: 'user_id' });
-
 
 AdminCorporateEnterprise.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
 Enterprise.hasMany(AdminCorporateEnterprise, { foreignKey: 'enterprise_id' });
@@ -66,15 +68,12 @@ Course.hasMany(FlashCard, {
   });
   
   // Un FlashCard pertenece a un Curso
-  FlashCard.belongsTo(Course, {
+FlashCard.belongsTo(Course, {
     foreignKey: 'course_id',
     as: 'course'
-  });
-
+});
 
 // Asociación
-
-
 
 Requirement.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
@@ -190,3 +189,4 @@ Question.belongsTo(Evaluation, { foreignKey: 'evaluation_id' });
 // Relación entre Question y Option
 Question.hasMany(Option, { foreignKey: 'question_id' });
 Option.belongsTo(Question, { foreignKey: 'question_id' });
+
