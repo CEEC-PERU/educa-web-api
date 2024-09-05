@@ -50,6 +50,9 @@ app.use('/api/userSessionProgress', require('./src/routes/users/UserSessionProgr
 app.use('/api/superadmin', require('./src/routes/superadmin/userRoutes'));
 app.use('/api/requirements', require('./src/routes/superadmin/requirementRoutes'));
 app.use('/api/metricascorporate', require('./src/routes/courses/metricasRoutes'));
+app.use('/api/notas', require('./src/routes/courses/NotasRoutes'));
+
+
 
 SocketService(server);
 

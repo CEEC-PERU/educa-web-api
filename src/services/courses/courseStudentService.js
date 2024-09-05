@@ -20,7 +20,6 @@ const AppSession = require('../../models/appSessionModel');
 const Profile = require('../../models/profileModel'); // Importar el modelo Profile
 const Content = require('../../models/ContenidoModel');
 const Level = require('../../models/levelModel');
-
 const VideoInteractivo= require('../../models/videoInteractivo');
 
 class CourseStudentService {
