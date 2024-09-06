@@ -1,6 +1,6 @@
 const Enterprise = require('../../models/EnterpriseModel');
 const User = require('../../models/UserModel');
-
+const Role = require('../../models/RolModel');
 const createEnterprise = async (enterpriseData) => {
   try {
     return await Enterprise.create(enterpriseData);
@@ -57,10 +57,53 @@ const deleteEnterprise = async (enterpriseId) => {
   }
 };
 
+
+
+const getEnterpriseUserCount = async (enterpriseId) => {
+  try {
+    const enterprise = await Enterprise.findOne({
+      where: { enterprise_id: enterpriseId },
+      attributes: ['enterprise_id', 'name', 'user_count'], // Get enterprise details and user limit
+      include: [{
+        model: User,
+        as: 'enterpriseUsers' ,
+        attributes: ['user_id', 'user_name'], // Include user details
+        where: { role_id: 1 }, // Filter by student role (role_id = 1)
+      }],
+    });
+
+   
+    if (!enterprise) {
+      throw new Error('Enterprise not found');
+    }
+
+    // Count users associated with the enterprise and having role_id = 1 (students)
+    const studentCount = await User.count({
+      where: {
+        enterprise_id: enterpriseId,  // Users belonging to the enterprise
+        role_id: 1,
+        is_active:true                // Filter by student role (role_id = 1)
+      }
+    });
+
+    return {
+      enterpriseName: enterprise.name,
+      maxUserCount: enterprise.user_count,
+      currentUserCount: studentCount
+    };
+  } catch (error) {
+    console.error('Error fetching user count:', error);
+    throw new Error('Error fetching enterprise user count');
+  }
+};
+
+
 module.exports = {
   createEnterprise,
   getAllEnterprises,
   getEnterpriseById,
   updateEnterprise,
   deleteEnterprise,
+  getEnterpriseUserCount,
+ 
 };

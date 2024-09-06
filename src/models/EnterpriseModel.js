@@ -9,6 +9,10 @@ const Enterprise = sequelize.define('Enterprise', {
         primaryKey: true,
         autoIncrement: true
     },
+    user_count:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     image_log: {
         type: DataTypes.TEXT,
         allowNull: true

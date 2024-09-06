@@ -27,8 +27,18 @@ const QuestionCuestionario = require('./QuestionCuestionario');
 const OptionCuestionario = require('./optionCuestionario');
 const ResultCuestionario = require('./ResultCuestionario');
 const VideoInteractivo = require('./videoInteractivo');
+const Shift = require('./ShiftModel');
+const Classroom = require('./Classroom');
 
 
+
+
+//shift relations
+
+
+
+Classroom.belongsTo(Shift, { foreignKey: 'shift_id' });
+Shift.hasMany(Classroom, { foreignKey: 'shift_id' });
 
 Course.belongsTo(Content, { foreignKey: 'content_id'});
 
@@ -146,6 +156,9 @@ User.hasMany(CourseStudent, { foreignKey: 'user_id' });
 CourseStudent.belongsTo(Course, { foreignKey: 'course_id' });
 Course.hasMany(CourseStudent, { foreignKey: 'course_id' });
 
+// Relación entre Classroom y Course
+Classroom.hasMany(CourseStudent, { foreignKey: 'classsroom_id' });
+CourseStudent.belongsTo(Classroom, { foreignKey: 'classroom_id' });
 // Relación entre Evaluation y Question
 Evaluation.hasMany(Question, { foreignKey: 'evaluation_id', as: 'questions' });
 Question.belongsTo(Evaluation, { foreignKey: 'evaluation_id', as: 'evaluation' });

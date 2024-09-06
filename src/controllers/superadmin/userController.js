@@ -130,6 +130,7 @@ const getUsersByRoleId = async (req, res) => {
   try {
       console.log('Fetching users for role ID:', roleId); // Debugging line
       const users = await User.findAll({
+        attributes: ['user_id', 'dni', 'role_id', 'enterprise_id', , 'user_name' , 'created_at' ],
           where: { role_id: roleId },
           include: [
               { model: Profile, as: 'userProfile' },
@@ -160,6 +161,7 @@ const getUsersByCompanyAndRoleId = async (req, res) => {
   try {
     console.log('Fetching users for company ID:', companyId, 'and role ID:', roleId);
     const users = await User.findAll({
+     attributes: ['user_id', 'dni', 'role_id', 'enterprise_id', , 'user_name' , 'created_at' ],
       where: { enterprise_id: companyId, role_id: roleId },
       attributes: {
         include: [

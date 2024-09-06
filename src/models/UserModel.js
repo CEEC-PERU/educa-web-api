@@ -49,7 +49,12 @@ const User = sequelize.define('User', {
     },
     last_failed_login: {
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: true   
+    },
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: true
     },
     is_blocked: {
         type: DataTypes.BOOLEAN,

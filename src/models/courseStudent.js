@@ -2,12 +2,20 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const User = require('./UserModel');
 const Course = require('./courseModel');  
-
+const Classroom = require('./Classroom'); 
 const courseStudent = sequelize.define('CourseStudent', {
     coursestudent_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    classroom_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // Si no hay aula asignada
+        references: {
+            model: Classroom,
+            key: 'classroom_id'
+        }
     },
     course_id: {
         type: DataTypes.INTEGER,
@@ -31,7 +39,7 @@ const courseStudent = sequelize.define('CourseStudent', {
     is_approved: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: false
     }
 }, {
     tableName: 'coursestudents',

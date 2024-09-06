@@ -121,3 +121,23 @@ exports.deleteEnterprise = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+
+exports.getEnterpriseUserCount = async (req, res) => {
+  try {
+    const enterpriseId = req.params.enterpriseId; // Get the enterprise ID from the route
+    const enterpriseInfo = await enterpriseService.getEnterpriseUserCount(enterpriseId);
+
+    res.json({
+      enterpriseName: enterpriseInfo.enterpriseName,
+      maxUserCount: enterpriseInfo.maxUserCount,
+      UserCount: enterpriseInfo.currentUserCount,
+      message: `${enterpriseInfo.enterpriseName} tiene ${enterpriseInfo.currentUserCount} estudiantes de ${enterpriseInfo.maxUserCount} usuarios `,
+    });
+  } catch (error) {
+    console.error('Error fetching enterprise user count:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
