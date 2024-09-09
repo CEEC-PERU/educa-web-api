@@ -452,7 +452,7 @@ async getModulesByCourseId2(course_id, user_id) {
                     include: [
                         {
                             model: User,
-                            where: { enterprise_id },
+                            where: { enterprise_id , role_id :1, is_active:true},
                             attributes: []
                         }
                     ],
