@@ -23,6 +23,33 @@ app.use((req, res, next) => {
   next();
 });
 
+const cron = require('node-cron');
+const { actualizarProgresoTodos } = require('./src/controllers/student/studentController');
+
+// Configurar cron jobs para actualizar el progreso a las 10:20 AM y a la medianoche en Perú (zona horaria America/Lima)
+
+// Cron job para 10:20 AM
+cron.schedule('33 12 * * *', () => {
+    actualizarProgresoTodos().then(() => {
+        console.log('Actualización de progreso completada a las 10:24 AM (Perú).');
+    }).catch((error) => {
+        console.error('Error al actualizar el progreso de los usuarios:', error);
+    });
+}, {
+    timezone: "America/Lima"
+});
+
+// Cron job para la medianoche
+cron.schedule('0 0 * * *', () => {
+    actualizarProgresoTodos().then(() => {
+        console.log('Actualización de progreso completada a medianoche (Perú).');
+    }).catch((error) => {
+        console.error('Error al actualizar el progreso de los usuarios:', error);
+    });
+}, {
+    timezone: "America/Lima"
+});
+
 
 // Crear evaluaciones
 app.use('/api/auth', require('./src/routes/auth/auth-route'));

@@ -1,5 +1,5 @@
 const courseResultService = require('../../services/courses/CourseResultService');
-
+const CourseResult = require('../../models/EvaluationCourseResult');
 // Manejador para obtener todos los resultados de cursos
 async function getAllCourseResults(req, res, next) {
   try {
@@ -22,12 +22,27 @@ async function getCourseResultsByUserId(req, res, next) {
 }
 
 
+
 async function createCourseResult(req, res, next) {
   const data = req.body;
   try {
-    const result = await courseResultService.createCourseResult(data);
-    res.status(201).json(result);
-  } catch (error) {
+    // Contar cuántos resultados tiene el usuario para el curso específico
+    const existingResults = await CourseResult.count({
+      where: {
+        course_id: course_id,
+        user_id: user_id
+      }
+    });
+
+    // Verificar si el usuario ya tiene dos resultados para este curso
+    if (existingResults >= 2) {
+      throw new Error('El usuario ya tiene dos resultados para este curso.');
+    }
+
+    // Crear el nuevo resultado
+    const result = await CourseResult.create(data);
+    return result;
+  }catch (error) {
     next(error);
   }
 }

@@ -36,7 +36,10 @@ const courseStudent = sequelize.define('CourseStudent', {
     },
     deadline : DataTypes.DATE,
     finished_date: DataTypes.DATE,
-    progress : DataTypes.INTEGER,
+    progress: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0 
+    },
     is_approved: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

@@ -32,7 +32,8 @@ const UserModuleProgress = sequelize.define('UserModuleProgress', {
         defaultValue: false
     },
     progress : {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue : 0
     },
 }, {
     tableName: 'user_module_progress',

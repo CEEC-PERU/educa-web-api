@@ -23,7 +23,8 @@ const Profile = sequelize.define('Profile', {
   profile_picture: {
     type: DataTypes.TEXT,
     allowNull: true
-  }
+  },
+  
 }, {
   tableName: 'profiles',
   timestamps: false,
