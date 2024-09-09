@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
+
 const Shift = sequelize.define('Shift', {
     shift_id: {
         type: DataTypes.INTEGER,

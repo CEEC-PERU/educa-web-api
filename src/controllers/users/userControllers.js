@@ -1,4 +1,6 @@
 const userService = require('../../services/users/userService');
+
+
 async function createUser(req, res) {
   try {
     const userData = req.body;
@@ -9,6 +11,23 @@ async function createUser(req, res) {
     res.status(500).json({ message: 'Error al crear el usuario' });
   }
 }
+
+
+
+const createUsersController = async (req, res) => {
+  try {
+    const users = req.body;
+    if (!Array.isArray(users) || users.length === 0) {
+      return res.status(400).json({ message: 'Invalid user data' });
+    }
+    
+    await userService.createUsers(users);
+    res.status(201).json({ message: 'Usuarios creados con éxito' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 async function createUserAdmin(req, res) {
   try {
@@ -93,4 +112,4 @@ async function getAllUsers(req, res) {
 }
 
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo }
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo , createUsersController }

@@ -35,10 +35,11 @@ const Classroom = require('./Classroom');
 
 //shift relations
 
-
-
 Classroom.belongsTo(Shift, { foreignKey: 'shift_id' });
 Shift.hasMany(Classroom, { foreignKey: 'shift_id' });
+
+Classroom.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
+Enterprise.hasMany(Classroom, { foreignKey: 'enterprise_id' });
 
 Course.belongsTo(Content, { foreignKey: 'content_id'});
 

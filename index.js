@@ -51,9 +51,8 @@ app.use('/api/superadmin', require('./src/routes/superadmin/userRoutes'));
 app.use('/api/requirements', require('./src/routes/superadmin/requirementRoutes'));
 app.use('/api/metricascorporate', require('./src/routes/courses/metricasRoutes'));
 app.use('/api/notas', require('./src/routes/courses/NotasRoutes'));
-app.use('/api/classroom', require('./src/routes/enterprise/classroomRoute'));
-
-
+app.use('/api/classrooms', require('./src/routes/enterprise/classroomRoute'));
+app.use('/api/shifts', require('./src/routes/enterprise/shiftRoute'));
 SocketService(server);
 
 

@@ -15,6 +15,26 @@ async function createUser(userData) {
   }
 }
 
+//crea varios ususarios
+
+
+const createUsers = async (users) => {
+  try {
+    // Encriptar las contraseñas de todos los usuarios
+    const hashedUsers = await Promise.all(users.map(async (user) => {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      return { ...user, password: hashedPassword };
+    }));
+
+    // Crear usuarios en la base de datos
+    return await User.bulkCreate(hashedUsers);
+  } catch (error) {
+    throw new Error('Error al crear usuarios: ' + error.message);
+  }
+};
+
+module.exports = { createUsers };
+
 async function createUserAdmin(data) {
   try {
     console.log(data); // Log the data object
@@ -76,4 +96,4 @@ async function getUserInfo(userId) {
 
 
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo }
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo , createUsers }

@@ -1,61 +1,62 @@
 const Classroom = require('../../models/Classroom');
-
-exports.getAllClassroom = async () => {
-  try {
-    return await Classroom.findAll({});
-  } catch (error) {
-    console.error('Error fetching classroom:', error);
-    throw new Error('Error fetching categories');
-  }
+const Enterprise = require('../../models/EnterpriseModel');
+const Shift = require('../../models/ShiftModel');
+// Obtener todas las aulas (classrooms)
+const getAllClassrooms = async () => {
+    return await Classroom.findAll();
 };
 
-exports.getClassroomById = async (classroomId) => {
-  try {
-    return await Classroom.findByPk(classroomId, {});
-  } catch (error) {
-    console.error('Error fetching category by ID:', error);
-    throw new Error('Error fetching category by ID');
-  }
+
+// Obtener un aula por su ID
+const getClassroomById = async (id) => {
+    return await Classroom.findByPk(id);
 };
 
-// Crear una nueva categoría
-exports.createClassroom = async (classroomData) => {
-  try {
+// Crear una nueva aula
+const createClassroom = async (classroomData) => {
     return await Classroom.create(classroomData);
-  } catch (error) {
-    console.error('Error al crear la classroom:', error);
-    throw new Error('Error creating classroom');
-  }
 };
 
-{/*
-// Actualizar una categoría existente
-exports.updateClassroom = async (categoryId, categoryData) => {
-  try {
-    const category = await Classroom.findByPk(categoryId);
-    if (category) {
-      await category.update(categoryData);
-      return category;
+// Actualizar un aula por su ID
+const updateClassroom = async (id, classroomData) => {
+    const classroom = await Classroom.findByPk(id);
+    if (classroom) {
+        return await classroom.update(classroomData);
     }
     return null;
-  } catch (error) {
-    console.error('Error al actualizar la categoría:', error);
-    throw new Error('Error updating category');
-  }
 };
 
-// Eliminar una categoría
-exports.deleteCategory = async (categoryId) => {
-  try {
-    const category = await Classroom.findByPk(categoryId);
-    if (category) {
-      await category.destroy();
-      return category;
+// Eliminar un aula por su ID
+const deleteClassroom = async (id) => {
+    const classroom = await Classroom.findByPk(id);
+    if (classroom) {
+        await classroom.destroy();
+        return true;
     }
-    return null;
-  } catch (error) {
-    console.error('Error al eliminar la categoría:', error);
-    throw new Error('Error deleting category');
-  }
+    return false;
 };
- */}
+
+const getClassroomsByEnterprise = async (enterpriseId) => {
+    return await Classroom.findAll({
+        where: {
+            enterprise_id: enterpriseId
+        },
+        include: [
+            {
+                model: Enterprise
+            },
+            {
+                model:Shift
+            }
+        ]
+    });
+};
+
+module.exports = {
+    getAllClassrooms,
+    getClassroomById,
+    createClassroom,
+    updateClassroom,
+    deleteClassroom,
+    getClassroomsByEnterprise
+};

@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Enterprise = require('./EnterpriseModel'); 
 const Shift= require('./ShiftModel'); 
+
 const Classroom = sequelize.define('Classroom', {
     classroom_id: {
         type: DataTypes.INTEGER,
