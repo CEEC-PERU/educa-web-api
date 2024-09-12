@@ -61,7 +61,7 @@ class CourseStudentService {
             include: [
               {
                 model: Course,
-                attributes: [ 'name', 'description_short','image', 'course_id'],
+                attributes: [ 'name', 'description_short','image', 'course_id', 'created_at'],
                 include : [
                   {
                     model: Category,
@@ -81,6 +81,7 @@ class CourseStudentService {
               ]
               }
             ],
+            order: [[Course, 'created_at', 'DESC']] 
           });
           return coursesByStudent
         } catch (error) {
