@@ -469,7 +469,8 @@ async getModulesByCourseId2(course_id, user_id) {
                 [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN "CourseStudents".progress = 100 THEN 1 ELSE NULL END')), 'completedCount'],
                 [Sequelize.fn('COUNT', Sequelize.literal('CASE WHEN "CourseStudents".is_approved = true THEN 1 ELSE NULL END')), 'approvedCount']
             ],
-            group: ['Course.course_id']
+            group: ['Course.course_id'],
+            order: [['created_at', 'DESC']]
         });
 
         console.log('Fetched courses:', courses);  // Agregar este console.log para verificar los datos
