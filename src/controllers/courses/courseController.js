@@ -9,8 +9,8 @@ exports.createCourse = async (req, res) => {
     const videoFile = req.files['video'][0];
     const imageFile = req.files['image'][0];
 
-    const videoUrl = await videoService.uploadVideo(videoFile.path, 'Cursos/Videos');
-    const imageUrl = await imageService.uploadImage(imageFile.path, 'Cursos/Images');
+    const videoUrl = await videoService.uploadVideo(videoFile.path, 'WEB-EDUCA/videos');
+    const imageUrl = await imageService.uploadImage(imageFile.path, 'WEB-EDUCA');
 
     const newCourseData = {
       ...req.body,

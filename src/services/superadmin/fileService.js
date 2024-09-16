@@ -1,9 +1,9 @@
-const cloudinary = require('../../config/cloudinary');
+const aws = require('../../config/aws');
 
 exports.uploadBuffer = async (buffer, folder, originalname) => {
   try {
     const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
+      const stream = aws.uploader.upload_stream(
         {
           resource_type: 'raw',
           folder: folder,
