@@ -488,9 +488,10 @@ async getModulesByCourseId2(course_id, user_id) {
                 description_short: course.description_short,
                 image: course.image, // Incluir el atributo 'image' en el resultado
                 studentCount,
-                progressPercentage: Math.min(avgProgress, 99),
-                completedPercentage: studentCount > 0 ? Math.min((completedCount / studentCount) * 100, 100) : 0,
-                approvedPercentage: studentCount > 0 ? Math.min((approvedCount / studentCount) * 100, 100) : 0
+                progressPercentage: parseFloat(Math.min(avgProgress, 99).toFixed(1)),
+                completedPercentage: studentCount > 0 ? parseFloat(Math.min((completedCount / studentCount) * 100, 100).toFixed(1)) : 0.0,
+                approvedPercentage: studentCount > 0 ? parseFloat(Math.min((approvedCount / studentCount) * 100, 100).toFixed(1)) : 0.0,
+
             };
         });
     } catch (error) {
