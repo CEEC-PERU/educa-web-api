@@ -27,14 +27,22 @@ const QuestionCuestionario = require('./QuestionCuestionario');
 const OptionCuestionario = require('./optionCuestionario');
 const ResultCuestionario = require('./ResultCuestionario');
 const VideoInteractivo = require('./videoInteractivo');
+const UserInfo= require('./UserInfo');
 const Shift = require('./ShiftModel');
 const Classroom = require('./Classroom');
 
+//userInfo relations 
+
+
+// Un usuario puede tener varias informaciones
+User.hasMany(UserInfo, { foreignKey: 'user_id' });
+
+// La información pertenece a un usuario
+UserInfo.belongsTo(User, { foreignKey: 'user_id' });
 
 
 
 //shift relations
-
 Classroom.belongsTo(Shift, { foreignKey: 'shift_id' });
 Shift.hasMany(Classroom, { foreignKey: 'shift_id' });
 

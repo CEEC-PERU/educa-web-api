@@ -80,6 +80,7 @@ app.use('/api/metricascorporate', require('./src/routes/courses/metricasRoutes')
 app.use('/api/notas', require('./src/routes/courses/NotasRoutes'));
 app.use('/api/classrooms', require('./src/routes/enterprise/classroomRoute'));
 app.use('/api/shifts', require('./src/routes/enterprise/shiftRoute'));
+app.use('/api/userinfo', require('./src/routes/users/UserInfoRoutes'));
 SocketService(server);
 
 
