@@ -83,8 +83,6 @@ app.use('/api/shifts', require('./src/routes/enterprise/shiftRoute'));
 app.use('/api/userinfo', require('./src/routes/users/UserInfoRoutes'));
 SocketService(server);
 
-
-
 app.use('/api/coursestudents', require('./src/routes/courses/courseStudentRoutes'));
 
 server.listen(PORT, () => {

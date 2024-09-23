@@ -4,6 +4,8 @@ const Profile = require('../../models/profileModel');
 const Role = require('../../models/RolModel');
 const AppSession = require("../../models/appSessionModel");
 const Enterprise = require('../../models/EnterpriseModel');
+const Classroom = require('../../models/Classroom');
+const CourseStudent = require('../../models/courseStudent');
 const { sequelize } = require('../../config/database');
 const { getSuperAdminEmails, createIndividualUser } = require('../../services/superadmin/userService');
 const { importUsersFromExcel } = require('../../services/excelService');
@@ -46,6 +48,8 @@ const createUser = async (req, res) => {
         res.status(500).json({ error: 'Error creating user' });
     }
 };
+
+
 const importUsers = async (req, res) => {
     try {
       const file = req.file;
@@ -114,6 +118,7 @@ const importUsers = async (req, res) => {
   };
   
 
+
 // Obtener todos los roles
 const getRoles = async (req, res) => {
   try {
@@ -156,6 +161,9 @@ const getCompanies = async (req, res) => {
 };
 
 // Obtener usuarios por empresa y rol ID
+
+
+
 const getUsersByCompanyAndRoleId = async (req, res) => {
   const { companyId, roleId } = req.params;
   try {
@@ -197,6 +205,85 @@ const getUsersByCompanyAndRoleId = async (req, res) => {
 
 
 
+const getUsersEnterpriseClassrooms = async (req, res) => {
+  const {  userId , companyId } = req.params;
+
+  try {
+    console.log('Fetching supervised students for supervisor ID:', userId);
+
+    // Verificar si el usuario es un supervisor
+    const supervisor = await User.findOne({
+      where: {
+        user_id: userId,
+        role_id:  6 , // Asegurarse que el usuario tiene el rol de supervisor
+        enterprise_id : companyId
+      }
+    });
+
+    if (!supervisor) {
+      return res.status(404).json({ error: 'Supervisor not found or invalid role' });
+    }
+
+    // Obtener todas las aulas donde el supervisor está asignado
+    const classrooms = await Classroom.findAll({
+      where: { user_id: userId }, // Aulas del supervisor
+      attributes: ['classroom_id', 'code'],
+      include: [{ model: Enterprise,  attributes: ['name'] }] // Relación con la empresa
+    });
+
+    // Si no hay aulas asignadas, retornar un mensaje
+    if (!classrooms || classrooms.length === 0) {
+      return res.status(200).json({ message: 'No classrooms assigned to this supervisor' });
+    }
+
+    // Obtener todos los estudiantes en las aulas donde el supervisor está asignado
+    const studentList = await CourseStudent.findAll({
+      where: {
+        classroom_id: {
+          [Op.in]: classrooms.map(c => c.classroom_id) // Aulas del supervisor
+        }
+      },
+      attributes: ['user_id', 'progress', 'is_approved', 'classroom_id'],
+
+      include: [
+        {
+          model: User, // Estudiantes inscritos
+         
+          attributes: ['user_id', 'dni', 'role_id', 'enterprise_id',  'user_name' , 'created_at' ],
+           where: { role_id: 1 }, // Solo estudiantes con rol de "student"
+         
+          include: [
+            { model: Profile, as: 'userProfile' }, // Perfil del estudiante
+            
+          ]
+        },
+        {
+          model: Classroom, // Aula a la que pertenece el estudiante
+       
+          attributes: ['code'],
+          include: [
+            { model: Enterprise,  attributes: ['name'] } // Información de la empresa
+          ]
+        }
+      ]
+    });
+
+    // Retornar la lista de estudiantes supervisados
+    res.status(200).json({
+      supervisor: supervisor.user_id,
+      classrooms: classrooms.map(c => ({
+        classroom_code: c.code,
+      })),
+      students: studentList
+    });
+  } catch (error) {
+    console.error('Error fetching supervised students:', error);
+    res.status(500).json({ error: 'Error fetching supervised students' });
+  }
+};
+
+
+
 const getUserById = async (req, res) => {
   const { userId } = req.params;
   try {
@@ -223,5 +310,6 @@ module.exports = {
     getUsersByRoleId,
     getCompanies,
     getUsersByCompanyAndRoleId,
-    updateUser
+    updateUser,
+    getUsersEnterpriseClassrooms
 };

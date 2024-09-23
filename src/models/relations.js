@@ -31,7 +31,7 @@ const UserInfo= require('./UserInfo');
 const Shift = require('./ShiftModel');
 const Classroom = require('./Classroom');
 
-//userInfo relations 
+
 
 
 // Un usuario puede tener varias informaciones
@@ -48,6 +48,13 @@ Shift.hasMany(Classroom, { foreignKey: 'shift_id' });
 
 Classroom.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
 Enterprise.hasMany(Classroom, { foreignKey: 'enterprise_id' });
+
+//salones asignados a un supervisor
+Classroom.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Classroom, { foreignKey: 'user_id' });
+
+
+
 
 Course.belongsTo(Content, { foreignKey: 'content_id'});
 

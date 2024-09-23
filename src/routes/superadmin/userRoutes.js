@@ -17,7 +17,8 @@ router.get('/enterprise/:enterpriseId', userController.getUsersByEnterprise);
 router.get('/roles', getRoles);
 router.get('/users/role/:roleId', getUsersByRoleId);
 router.get('/companies', getCompanies);
-router.get('/users/company/:companyId/role/:roleId', getUsersByCompanyAndRoleId);
+router.get('/users/company/:companyId/role/:roleId', userController.getUsersByCompanyAndRoleId);
+router.get('/classrooms/users/:userId/company/:companyId', userController.getUsersEnterpriseClassrooms);
 router.get('/users/:userId', userController.getUserById);
 router.put('/update/:userId', userController.updateUser);
 

@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Enterprise = require('./EnterpriseModel'); 
 const Shift= require('./ShiftModel'); 
-
+const User = require('./UserModel');
 const Classroom = sequelize.define('Classroom', {
     classroom_id: {
         type: DataTypes.INTEGER,
@@ -29,6 +29,13 @@ const Classroom = sequelize.define('Classroom', {
             key: 'shift_id'
         }
     },
+    user_id: {
+        type: DataTypes.INTEGER,
+            references: {
+                model: User,
+                key: 'user_id',
+            }
+      }
 }, {
     tableName: 'classrooms',
     timestamps: true,
