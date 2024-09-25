@@ -71,9 +71,22 @@ const getClassroomsByEnterprise = async (req, res) => {
     }
 };
 
+const getClassroomsByEnterprisSupervisor = async (req, res) => {
+    try {
+        const enterpriseId = req.params.enterprise_id;
+        const userId = req.params.user_id;
+        const classrooms = await classroomService.getClassroomsByEnterprise(enterpriseId , userId);
+        res.status(200).json(classrooms);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener las aulas por enterprise_id' });
+    }
+};
+
+
 
 module.exports = {
     getAllClassrooms,
+    getClassroomsByEnterprisSupervisor,
     getClassroomById,
     createClassroom,
     updateClassroom,

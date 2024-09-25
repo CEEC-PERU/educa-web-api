@@ -52,8 +52,26 @@ const getClassroomsByEnterprise = async (enterpriseId) => {
     });
 };
 
+const getClassroomsByEnterpriseSupervisor = async (enterpriseId , userId) => {
+    return await Classroom.findAll({
+        where: {
+            enterprise_id: enterpriseId,
+            user_id : userId
+        },
+        include: [
+            {
+                model: Enterprise
+            },
+            {
+                model:Shift
+            }
+        ]
+    });
+};
+
 module.exports = {
     getAllClassrooms,
+    getClassroomsByEnterpriseSupervisor,
     getClassroomById,
     createClassroom,
     updateClassroom,

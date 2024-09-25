@@ -19,6 +19,7 @@ router.put('/:id',authenticateToken, classroomController.updateClassroom);
 router.delete('/:id',authenticateToken, classroomController.deleteClassroom);
 
 router.get('/enterprise/:enterprise_id',authenticateToken, classroomController.getClassroomsByEnterprise);
-
+//OBTENER AULA POR USUARIO(role_id)
+router.get('/enterprise/:enterprise_id/user/:user_id',authenticateToken, classroomController.getClassroomsByEnterprisSupervisor);
 
 module.exports = router;
