@@ -81,6 +81,7 @@ app.use('/api/notas', require('./src/routes/courses/NotasRoutes'));
 app.use('/api/classrooms', require('./src/routes/enterprise/classroomRoute'));
 app.use('/api/shifts', require('./src/routes/enterprise/shiftRoute'));
 app.use('/api/userinfo', require('./src/routes/users/UserInfoRoutes'));
+app.use('/api/cuestionarios', require('./src/routes/courses/cuestionarioRoute'));
 SocketService(server);
 
 app.use('/api/coursestudents', require('./src/routes/courses/courseStudentRoutes'));

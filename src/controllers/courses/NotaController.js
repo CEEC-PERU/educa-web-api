@@ -195,70 +195,85 @@ exports.getCourseGrades = async (req, res) => {
     }
 };
 
-
 exports.getCourseGradesbyUserId = async (req, res) => {
-    const { enterpriseId, courseId , userId } = req.params;
+    const { enterpriseId, courseId, userId } = req.params;
 
     try {
-        // Fetch all users who are assigned to the specific course
+        // Buscar usuarios asignados al curso específico
         const users = await User.findAll({
-            attributes: ['user_id', 'enterprise_id', 'role_id' ],
-            where: { enterprise_id: enterpriseId, role_id: 1, is_active: true  , user_id : userId},
+            attributes: ['user_id', 'enterprise_id', 'role_id'], // Solo los campos necesarios
+            where: {
+                enterprise_id: enterpriseId,
+                role_id: 1, // Solo usuarios con role_id 1
+                is_active: true, // Solo usuarios activos
+                user_id: userId // Filtrar por userId
+            },
             include: [
                 {
-                    model: Profile, // Get user's name
-                    attributes: ['first_name', 'last_name', 'email'  , 'phone'],
+                    model: Profile, // Relación con el perfil del usuario
+                    attributes: ['first_name', 'last_name', 'email', 'phone'],
                     as: 'userProfile',
-                    required: true
+                    required: true // Debe haber un perfil
                 },
                 {
-                    model: CourseStudent, // Ensure that the user is part of the course
+                    model: CourseStudent, // Verificar si el usuario está inscrito en el curso
                     attributes: ['course_id', 'user_id'],
-                    where: { course_id: courseId },
-                    required: true // This makes sure only users enrolled in this course are included
+                    where: { course_id: courseId }, // Filtrar por curso
+                    required: true // El usuario debe estar inscrito
                 },
                 {
-                    model: EvaluationCourse, // Course evaluation by user
+                    model: EvaluationCourse, // Evaluaciones del curso realizadas por el usuario
                     attributes: ['course_id', 'puntaje', 'course_result_id', 'created_at'],
                     order: [['created_at', 'ASC']],
-                    where: { course_id: courseId },
-                    required: false, // Allow user to appear even without course results
+                    where: { course_id: courseId }, // Solo evaluaciones del curso específico
+                    required: false,
                     include: [
                         {
-                            model: Course,
+                            model: Course, // Información adicional del curso
                             attributes: ['course_id', 'name'],
                         }
                     ]
                 },
                 {
-                    model: EvaluationModule, // Evaluations for each module
+                    model: EvaluationModule, // Evaluaciones por módulo
                     attributes: ['puntaje', 'created_at', 'module_result_id'],
-                    order: [['created_at', 'ASC']], // Order by date
-                    required: false, // Allow user to appear even without module results
+                    order: [['created_at', 'ASC']],
+                    required: false, // La evaluación del módulo es opcional
                     include: [
                         {
-                            model: Module, // Include course modules
+                            model: Module, // Detalles del módulo
                             attributes: ['name', 'module_id'],
+                            include: [
+                                {
+                                    model: Course, // Relación con el curso
+                                    attributes: ['course_id', 'name'],
+                                    as: 'moduleCourse',
+                                    where: { course_id: courseId }, // Solo módulos de este curso
+                                }
+                            ]
                         }
                     ]
                 }
             ]
         });
 
-        // Process the results to merge module results with the same module_id
+        // Procesar los resultados para combinar evaluaciones por módulos
         const mergedUsers = users.map(user => {
             const moduleResults = user.ModuleResults.reduce((acc, moduleResult) => {
-                const moduleId = moduleResult.Module.module_id;
+                // Verificar si el moduleResult.Module existe y tiene module_id válido
+                const moduleId = moduleResult?.Module?.module_id;
+                if (!moduleId) return acc; // Ignorar si no tiene module_id
 
+                // Si no existe el módulo en el acumulador, lo agregamos
                 if (!acc[moduleId]) {
                     acc[moduleId] = {
                         module_id: moduleId,
                         module_name: moduleResult.Module.name,
-                        results: []
+                        results: [] // Inicializamos los resultados
                     };
                 }
 
-                // Push the result with puntaje and created_at into the results array
+                // Añadimos el resultado con el puntaje y la fecha
                 acc[moduleId].results.push({
                     puntaje: moduleResult.puntaje,
                     created_at: moduleResult.created_at
@@ -267,43 +282,47 @@ exports.getCourseGradesbyUserId = async (req, res) => {
                 return acc;
             }, {});
 
-            // Convert the object back to an array and sort each module's results by created_at
+            // Convertir los resultados del módulo en un array y ordenarlos por fecha
             const mergedModuleResults = Object.values(moduleResults).map(module => {
                 module.results.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
                 return module;
             });
 
-            // Count the number of complete modules
+            // Contar el número de módulos completados
             const completeModulesCount = mergedModuleResults.length;
 
-            // Return the user with the merged and sorted module results and complete module count
+            // Devolver el usuario con los resultados procesados y el conteo de módulos completados
             return {
                 ...user.toJSON(),
                 ModuleResults: mergedModuleResults,
-                completeModulesCount // Add the count of complete modules
+                completeModulesCount
             };
         });
 
-        // Sort users by the number of complete modules and then by their highest score
+        // Ordenar usuarios por número de módulos completados y puntaje más alto
         mergedUsers.sort((a, b) => {
-            // First, sort by number of complete modules (descending)
+            // Ordenar por módulos completados en orden descendente
             if (b.completeModulesCount !== a.completeModulesCount) {
                 return b.completeModulesCount - a.completeModulesCount;
             }
 
-            // If the number of complete modules is the same, sort by the highest score (descending)
+            // Si tienen el mismo número de módulos, ordenar por el puntaje más alto
             const maxScoreA = Math.max(...a.ModuleResults.flatMap(module => module.results.map(result => parseFloat(result.puntaje) || 0)));
             const maxScoreB = Math.max(...b.ModuleResults.flatMap(module => module.results.map(result => parseFloat(result.puntaje) || 0)));
 
             return maxScoreB - maxScoreA;
         });
 
+        // Responder con los usuarios procesados
         res.json(mergedUsers);
     } catch (error) {
+        // En caso de error, registrarlo en consola y devolver un estado 500
         console.error('Error obteniendo las notas del curso:', error);
         res.status(500).json({ error: 'Error al obtener las notas del curso' });
     }
 };
+
+
 
 exports.downloadCourseGradesExcel = async (req, res) => {
     const { enterpriseId, courseId } = req.params;

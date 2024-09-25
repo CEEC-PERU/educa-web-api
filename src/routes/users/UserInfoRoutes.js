@@ -13,6 +13,6 @@ router.post('/create', upload.fields([
   { name: 'documento_pdf', maxCount: 1 }
 ]), userInfoController.createUserInfo);
 
-router.get('/modals', userInfoController.shouldShowModal);
+router.get('/modals/:userId', userInfoController.shouldShowModal);
 
 module.exports = router;

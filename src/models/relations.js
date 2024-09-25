@@ -23,9 +23,9 @@ const EvaluationModuleResult = require('./EvaluationModuleResult');
 const FlashCard = require('./FlashcardModel'); 
 const AdminCorporateEnterprise = require('./EnterpriseAdmin'); 
 const Cuestionario = require('./cuestionarioModel'); 
-const QuestionCuestionario = require('./QuestionCuestionario');
-const OptionCuestionario = require('./optionCuestionario');
+
 const ResultCuestionario = require('./ResultCuestionario');
+const CuestionarioType = require('./CuestionarioType');
 const VideoInteractivo = require('./videoInteractivo');
 const UserInfo= require('./UserInfo');
 const Shift = require('./ShiftModel');
@@ -61,8 +61,6 @@ Course.belongsTo(Content, { foreignKey: 'content_id'});
 Content.hasMany(Course, { foreignKey: 'content_id'});
 
 
-//Course.belongsToMany(Cuestionario, { through: CourseCuestionario, foreignKey: 'course_id' });
-//Cuestionario.belongsToMany(Course, { through: CourseCuestionario, foreignKey: 'cuestionario_id' });
 
 VideoInteractivo.belongsTo(Session, {
   foreignKey: 'interactivo_id'
@@ -70,11 +68,24 @@ VideoInteractivo.belongsTo(Session, {
 
 Session.hasMany(VideoInteractivo,{foreignKey: 'interactivo_id'});
 
-Cuestionario.hasMany(QuestionCuestionario, { foreignKey: 'cuestionario_id' });
-QuestionCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });
 
-QuestionCuestionario.hasMany(OptionCuestionario, { foreignKey: 'cquestion_id' });
-OptionCuestionario.belongsTo(QuestionCuestionario, { foreignKey: 'cquestion_id' });
+
+// Cuestionario y CuestionarioType
+Cuestionario.belongsTo(CuestionarioType, { foreignKey: 'cuestype_id' });
+CuestionarioType.hasMany(Cuestionario, { foreignKey: 'cuestype_id' });
+
+// Course y Cuestionario (Muchos a muchos)
+Course.belongsToMany(Cuestionario, { through: 'CourseCuestionario', foreignKey: 'course_id' });
+Cuestionario.belongsToMany(Course, { through: 'CourseCuestionario', foreignKey: 'course_id' });
+
+// Cuestionario y ResultCuestionario (Uno a muchos)
+Cuestionario.hasMany(ResultCuestionario, { foreignKey: 'cuestionario_id' });
+ResultCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });
+
+// User y ResultCuestionario (Uno a muchos)
+User.hasMany(ResultCuestionario, { foreignKey: 'user_id' });
+ResultCuestionario.belongsTo(User, { foreignKey: 'user_id' });
+
 
 // Relación entre `User` y `AdminCorporateEnterprise`
 User.hasMany(AdminCorporateEnterprise, { foreignKey: 'user_id' });

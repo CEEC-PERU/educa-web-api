@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Course = require('./courseModel');
+const CuestionarioType = require('./CuestionarioType');
 
 const Cuestionario = sequelize.define('Cuestionario', {
   cuestionario_id: {
@@ -16,12 +17,13 @@ const Cuestionario = sequelize.define('Cuestionario', {
         key: 'course_id',
     }
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  type: {
-    type: DataTypes.STRING, // 'NPS', 'Effort', 'Satisfaction', VPE(valoracion estrellas) etc.//colocar en frontend definidos
+  cuestype_id: {
+ // 'NPS', 'Effort', 'Satisfaction', VPE(valoracion estrellas) etc.//colocar en frontend definidos
+    type: DataTypes.INTEGER,
+    references: {
+        model: CuestionarioType,
+        key: 'cuestype_id',
+    },
     allowNull: false
   },
 }, {

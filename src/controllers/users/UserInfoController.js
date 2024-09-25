@@ -2,7 +2,7 @@ const UserInfo = require('../../models/UserInfo');
 const awsService = require('../../services/archivos/archivoService');
 const awsServiceI = require('../../services/images/imageService');
 const path = require('path');
-
+const { Op } = require('sequelize');
 const createUserInfo = async (req, res) => {
   try {
     console.log('Request Body:', req.body); 
@@ -41,7 +41,7 @@ const createUserInfo = async (req, res) => {
 
 const shouldShowModal = async (req, res) => {
   try {
-      const userId = req.user.id; // Asumiendo que obtienes el user_id del token o sesión
+      const { userId } = req.params; //Asumiendo que obtienes el user_id del token o sesión
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Establece la hora a medianoche para comparar solo la fecha
 
