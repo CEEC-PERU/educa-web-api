@@ -1,6 +1,6 @@
 const profileService = require('../../services/users/profileService');
 const { getUserById } = require('../../services/users/userService');
-const sendMail = require('../../services/users/sendMail');
+const {sendMail } = require('../../utils/mailer');
 
 
 async function createProfile(req, res) {
@@ -16,9 +16,9 @@ async function createProfile(req, res) {
 }
 
 async function sendWelcomeEmail(profile) {
-  const subject = 'Bienvenido a Educa-Web';
-  const text = `¡Hola ${profile.first_name} ${profile.last_name}! Bienvenido a Educa-Web.`;
-  const html = `<p>¡Hola ${profile.first_name} ${profile.last_name}! Bienvenido a Educa-Web.</p>`;
+  const subject = 'Bienvenido a MentorMind';
+  const text = `¡Hola ${profile.first_name} ${profile.last_name}! Bienvenido a MentorMind.`;
+  const html = `<p>¡Hola ${profile.first_name} ${profile.last_name}! Bienvenido a MentorMind.</p>`;
 
   console.log(text , html , subject , profile.email)
   try {

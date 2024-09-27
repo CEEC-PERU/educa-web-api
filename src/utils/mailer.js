@@ -9,12 +9,13 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendMail = async (to, subject, text) => {
+const sendMail = async (to, subject, text ,html) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to,
         subject,
-        text
+        text ,
+        html
     };
 
     try {
