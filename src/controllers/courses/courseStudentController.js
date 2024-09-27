@@ -62,6 +62,20 @@ class CourseStudentController {
         }
     }
 
+    async getCourseStudentsByUserCateogoryId(req, res) {
+        const { user_id , category_id} = req.params;
+
+        try {
+            const courseStudent = await courseStudentService.getCourseStudentsByUserCategoryId(user_id , category_id);
+            if (!courseStudent) {
+                return res.status(404).json({ error: 'CourseStudent not found' });
+            }
+            res.status(200).json(courseStudent);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     async getCourseDetailByCourseId(req, res) {
         const { course_id } = req.params;
         try {

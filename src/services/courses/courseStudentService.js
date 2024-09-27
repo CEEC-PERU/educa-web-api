@@ -89,7 +89,44 @@ class CourseStudentService {
           throw error;
         }
   }
-
+  async getCourseStudentsByUserCategoryId(user_id, category_id) {
+    try {
+      const coursesByStudent = await CourseStudent.findAll({
+        where: { user_id: user_id },
+        attributes: ['course_id', 'deadline'],
+        include: [
+          {
+            model: Course,
+            attributes: ['name', 'description_short', 'image', 'course_id', 'created_at'],
+            required: true, // Ensures only records with non-null Course data are included
+            include: [
+              {
+                model: Category,
+                attributes: ['name', 'category_id'],
+                as: 'courseCategory',
+                where: { category_id: category_id }
+              },
+              {
+                model: Content,
+                attributes: ['content_id', 'name']
+              },
+              {
+                model: Profesor,
+                attributes: ['full_name'],
+                as: 'courseProfessor'
+              }
+            ]
+          }
+        ],
+        order: [[Course, 'created_at', 'DESC']]
+      });
+      return coursesByStudent;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  
 
   async getCourseDetailByCourseId(course_id ){
       try {

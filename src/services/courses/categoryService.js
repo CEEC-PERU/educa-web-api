@@ -1,15 +1,19 @@
 const Category = require('../../models/categoryModel');
 
+
+
 exports.getAllCategories = async () => {
   try {
     return await Category.findAll({
-      attributes: ['category_id', 'name'],
+      attributes: ['category_id', 'name', 'created_at' , 'logo'], // Include created_at if needed
+      order: [['created_at', 'ASC']], // Order by created_at in ascending order
     });
   } catch (error) {
     console.error('Error fetching categories:', error);
     throw new Error('Error fetching categories');
   }
 };
+
 
 exports.getCategoryById = async (categoryId) => {
   try {
