@@ -8,6 +8,7 @@ async function createProfile(req, res) {
     const { user_id } = req.params;
     const profile = await profileService.createProfile({ ...req.body, user_id: parseInt(user_id) });
     await sendWelcomeEmail(profile); // Envía un correo de bienvenida al nuevo usuario
+    
     res.status(201).json(profile);
   } catch (error) {
     console.error('Error creating profile:', error);
@@ -22,7 +23,7 @@ async function sendWelcomeEmail(profile) {
 
   console.log(text , html , subject , profile.email)
   try {
-    await sendMail({ email: profile.email , name: profile.last_name}, subject, text, html);
+    await sendMail( profile.email , subject, text, html);
     console.log('Correo de bienvenida enviado a:', profile.email);
   } catch (error) {
     console.error('Error sending welcome email:', error);

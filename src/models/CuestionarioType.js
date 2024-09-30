@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Course = require('./courseModel');
 
+
 const CuestionarioType = sequelize.define('CuestionarioType', {
   cuestype_id: {
     type: DataTypes.INTEGER,

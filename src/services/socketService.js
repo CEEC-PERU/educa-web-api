@@ -14,7 +14,8 @@ const SocketService = (server) => {
         cors: {
             origin: [
                 "http://localhost:3000",
-                "https://educa-web-seven.vercel.app"
+                "https://educa-web-seven.vercel.app",
+                "https://mentormind.com.pe"
             ],
             methods: ["GET", "POST", "PUT"]
         }

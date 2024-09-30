@@ -3,7 +3,6 @@ const { sequelize } = require('../config/database');
 const User = require('./UserModel');
 const Cuestionario = require('./cuestionarioModel');
 
-
 const Result = sequelize.define('Result', {
   result_id: {
     type: DataTypes.INTEGER,

@@ -30,8 +30,28 @@ const VideoInteractivo = require('./videoInteractivo');
 const UserInfo= require('./UserInfo');
 const Shift = require('./ShiftModel');
 const Classroom = require('./Classroom');
+const AnswerModuleResult = require('./AnswerModuleResult');
 
+// Relación con AnswerResultModule (Una pregunta puede tener muchas respuestas)
+Question.hasMany(AnswerModuleResult, {
+  foreignKey: 'question_id',
+});
 
+//Relación con AnswerResultModule (Un resultado de módulo tiene muchas respuestas)
+EvaluationModuleResult.hasMany(AnswerModuleResult, {
+  foreignKey: 'module_result_id',
+});
+
+// Relación con ModuleResult (Un resultado de módulo tiene muchas respuestas)
+AnswerModuleResult.belongsTo(EvaluationModuleResult, {
+  foreignKey: 'module_result_id',
+});
+
+// Relación con Question (Cada respuesta pertenece a una pregunta)
+AnswerResultModule.belongsTo(Question, {
+  foreignKey: 'question_id',
+  as: 'question'
+});
 
 
 // Un usuario puede tener varias informaciones

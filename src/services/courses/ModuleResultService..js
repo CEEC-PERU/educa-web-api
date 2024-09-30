@@ -1,9 +1,7 @@
 const ModuleResult = require('../../models/EvaluationModuleResult');
 
 class ModuleResultService {
-    async create(data) {
-        return await ModuleResult.create(data);
-    }
+   
 
     async getAll(filters = {}) {
         return await ModuleResult.findAll({ where: filters });
