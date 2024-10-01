@@ -1,5 +1,6 @@
 const courseResultService = require('../../services/courses/CourseResultService');
 const CourseResult = require('../../models/EvaluationCourseResult');
+const AnswerCourseResult = require('../../models/AnswerCourseResult');
 // Manejador para obtener todos los resultados de cursos
 async function getAllCourseResults(req, res, next) {
   try {
@@ -24,26 +25,40 @@ async function getCourseResultsByUserId(req, res, next) {
 
 
 async function createCourseResult(req, res, next) {
-  const data = req.body;
+  const { user_id, course_id,  evaluation_id, puntaje , second_chance , answers  } = req.body;
+
   try {
-    // Contar cuántos resultados tiene el usuario para el curso específico
-    const existingResults = await CourseResult.count({
-      where: {
-        course_id: course_id,
-        user_id: user_id
-      }
-    });
+      // Crear el resultado principal en la tabla Result
+      const result = await CourseResult.create({
+      user_id : user_id, 
+      course_id: course_id,  
+      evaluation_id : evaluation_id,
+      puntaje: puntaje, 
+      second_chance: second_chance
+      });
 
-    // Verificar si el usuario ya tiene dos resultados para este curso
-    if (existingResults >= 2) {
-      throw new Error('El usuario ya tiene dos resultados para este curso.');
-    }
+       // Guardar cada respuesta en la tabla AnswerResultModule
+  const answerPromises = answers.map(async (answer) => {
+      await AnswerCourseResult.create({
+          course_result_id: result.course_result_id,
+          question_id: answer.question_id,
+          response: JSON.stringify(answer.response), // Guardar como JSON si es array
+          is_correct: Array.isArray(answer.isCorrect2) 
+              ? answer.isCorrect2.every(val => val) 
+              : answer.isCorrect,
+          is_correct2: JSON.stringify(answer.isCorrect2), 
+          response_text: answer.response2 || null ,// Guardar el texto adicional (response2)
+          score: answer.score, 
+      });
+  });
 
-    // Crear el nuevo resultado
-    const result = await CourseResult.create(data);
-    return result;
-  }catch (error) {
-    next(error);
+  await Promise.all(answerPromises);  // Ejecutar todas las promesas de creación
+     
+  return res.status(201).json({ message: 'Respuestas guardadas correctamente' });
+    
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+      next(error);
   }
 }
 

@@ -1,33 +1,37 @@
 const ModuleResultService = require('../../services/courses/ModuleResultService.');
 const AnswerModuleResult = require('../../models/AnswerModuleResult');
+const ModuleResult = require('../../models/EvaluationModuleResult');
 class ModuleResultController {
     async create(req, res) {
-        const { user_id, module_id,  evaluation_id, answers  , score } = req.body;d
+        const { user_id, module_id,  evaluation_id, answers  , puntaje } = req.body;
 
         try {
             // Crear el resultado principal en la tabla Result
-            const result = await AnswerModuleResult.create({
-            user_id : user_id,
+            const result = await ModuleResult.create({
             evaluation_id : evaluation_id,
             module_id: module_id,  
-            cuestionario_id: module_id,  
-            puntaje: score, 
+            user_id : user_id, 
+            puntaje: puntaje, 
             });
 
-            // Guardar cada respuesta en la tabla AnswerResult
-            const answerPromises = answers.map(async (answer) => {
-                 await AnswerResult.create({
-                    module_result_id: result.result_id,
-                    question_id: answer.question_id,
-                    response: JSON.stringify(answer.response), // Guardar como JSON si es array
-                    is_correct: Array.isArray(answer.isCorrect2) ? answer.isCorrect2.every(val => val) : answer.isCorret,
-                    response_text: answer.response2  // Guardar el texto adicional (response2)
-                });
+             // Guardar cada respuesta en la tabla AnswerResultModule
+        const answerPromises = answers.map(async (answer) => {
+            await AnswerModuleResult.create({
+                module_result_id: result.module_result_id,
+                question_id: answer.question_id,
+                response: JSON.stringify(answer.response), // Guardar como JSON si es array
+                is_correct: Array.isArray(answer.isCorrect2) 
+                    ? answer.isCorrect2.every(val => val) 
+                    : answer.isCorrect,
+                is_correct2: JSON.stringify(answer.isCorrect2), 
+                response_text: answer.response2 || null ,// Guardar el texto adicional (response2)
+                score: answer.score, 
             });
+        });
 
-            await Promise.all(answerPromises);  // Ejecutar todas las promesas de creación
-            res.status(201).json(moduleResult);
-            return res.status(201).json({ message: 'Respuestas guardadas correctamente' });
+        await Promise.all(answerPromises);  // Ejecutar todas las promesas de creación
+           
+        return res.status(201).json({ message: 'Respuestas guardadas correctamente' });
           
         } catch (error) {
             res.status(400).json({ error: error.message });

@@ -1,22 +1,20 @@
-
-
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const ModuleResult = require('./EvaluationModuleResult');
+const CourseResult = require('./EvaluationCourseResult');
 const Question = require('./questionModel');
 
 // Definición del modelo de respuestas de módulos
-const AnswerResultModule = sequelize.define('AnswerResult', {
-  answer_module_id: {
+const AnswerResultCourse = sequelize.define('AnswerCourseResult', {
+  answer_course_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  module_result_id: {
+  course_result_id: {
     type: DataTypes.INTEGER,
     references: {
-      model: ModuleResult,
-      key: 'module_result_id'
+      model: CourseResult,
+      key: 'course_result_id'
     },
     allowNull: false
   },
@@ -53,10 +51,10 @@ const AnswerResultModule = sequelize.define('AnswerResult', {
     type: DataTypes.INTEGER
 },
 }, {
-  tableName: 'answer_moduleresults',
+  tableName: 'answer_courseresults',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at'
 });
 
-module.exports = AnswerResultModule;
+module.exports = AnswerResultCourse;

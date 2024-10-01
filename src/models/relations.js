@@ -31,7 +31,7 @@ const UserInfo= require('./UserInfo');
 const Shift = require('./ShiftModel');
 const Classroom = require('./Classroom');
 const AnswerModuleResult = require('./AnswerModuleResult');
-
+const AnswerCourseResult = require('./AnswerCourseResult');
 // Relación con AnswerResultModule (Una pregunta puede tener muchas respuestas)
 Question.hasMany(AnswerModuleResult, {
   foreignKey: 'question_id',
@@ -48,10 +48,37 @@ AnswerModuleResult.belongsTo(EvaluationModuleResult, {
 });
 
 // Relación con Question (Cada respuesta pertenece a una pregunta)
-AnswerResultModule.belongsTo(Question, {
+AnswerModuleResult.belongsTo(Question, {
   foreignKey: 'question_id',
   as: 'question'
 });
+
+
+
+
+
+// Relación con AnswerResultModule (Una pregunta puede tener muchas respuestas)
+Question.hasMany(AnswerCourseResult, {
+  foreignKey: 'question_id',
+});
+
+//Relación con AnswerResultModule (Un resultado de módulo tiene muchas respuestas)
+EvaluationCourseResult.hasMany(AnswerCourseResult, {
+  foreignKey: 'course_result_id',
+});
+
+// Relación con ModuleResult (Un resultado de módulo tiene muchas respuestas)
+AnswerCourseResult.belongsTo(EvaluationCourseResult, {
+  foreignKey: 'course_result_id',
+});
+
+// Relación con Question (Cada respuesta pertenece a una pregunta)
+AnswerCourseResult.belongsTo(Question, {
+  foreignKey: 'question_id',
+});
+
+
+
 
 
 // Un usuario puede tener varias informaciones

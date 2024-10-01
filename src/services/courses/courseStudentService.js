@@ -174,8 +174,70 @@ class CourseStudentService {
           throw error;
         }
   }
+
+
+
+
+  async getRandomQuestionsByScore(evaluationId, targetScore = 20) {
+    try {
+      const questions = await Question.findAll({
+        where: { evaluation_id: evaluationId },
+        attributes: ['question_id', 'question_text', 'score', 'image', 'evaluation_id'],
+        include: [
+          {
+            model: Option,
+            attributes: ['option_id', 'option_text', 'is_correct'],
+            as: 'options'
+          }
+        ]
+      });
   
-    async getModulesByCourseId(course_id, user_id) {
+      // Ordenamos aleatoriamente las preguntas para asegurar combinaciones diferentes cada vez
+      questions.sort(() => Math.random() - 0.5);
+  
+      // Función que busca combinaciones exactas de preguntas que sumen el puntaje objetivo
+      const findCombinations = (questions, targetScore) => {
+        const result = [];
+  
+        const search = (combo, index, scoreSum) => {
+          if (scoreSum === targetScore) {
+            result.push([...combo]);
+            return;
+          }
+  
+          if (scoreSum > targetScore || index >= questions.length) return;
+  
+          // Tomar la pregunta actual
+          search([...combo, questions[index]], index + 1, scoreSum + questions[index].score);
+          
+          // No tomar la pregunta actual
+          search(combo, index + 1, scoreSum);
+        };
+  
+        search([], 0, 0);
+  
+        return result;
+      };
+  
+      const validCombinations = findCombinations(questions, targetScore);
+  
+      // Si encontramos combinaciones válidas, devolvemos una aleatoria
+      if (validCombinations.length > 0) {
+        const randomIndex = Math.floor(Math.random() * validCombinations.length);
+        return validCombinations[randomIndex];
+      } else {
+        // Si no se encuentra una combinación exacta, devolvemos un arreglo vacío o el mensaje adecuado
+        return [];
+      }
+  
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+
+    async  getModulesByCourseId(course_id, user_id) {
       try {
         const coursesByStudent = await Course.findAll({
           where: { course_id: course_id },
@@ -295,7 +357,15 @@ class CourseStudentService {
           ],
         });
     
-        // Sorting the modules and sessions by created_at field
+        //Obtener preguntas aleatorias con 20 puntos para cada evaluación
+        for (const course of coursesByStudent) {
+          if (course.evaluation_id) {
+            course.randomQuestions = await this.getRandomQuestionsByScore(course.evaluation_id, 20);
+          }
+        }
+
+
+        //Ordenado por fecha de creación de sesiones y modulos
         coursesByStudent.forEach(course => {
           if (course.courseModules) {
             course.courseModules.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
