@@ -175,15 +175,20 @@ class CourseStudentService {
         }
   }
 
-
-
-
-  async getRandomQuestionsByScore(evaluationId, targetScore = 20) {
+  async getQuestionsByEvaluation (evaluation_id)  {
     try {
+      // Obtener todas las preguntas de la evaluación por su evaluation_id
       const questions = await Question.findAll({
-        where: { evaluation_id: evaluationId },
-        attributes: ['question_id', 'question_text', 'score', 'image', 'evaluation_id'],
+        where: { evaluation_id: evaluation_id },
+        attributes: ['question_id', 'question_text', 'score', 'evaluation_id' ,  'image' , 'type_id'],
+        order: Sequelize.literal('RANDOM()') ,// Usar RANDOM() para PostgreSQL
         include: [
+          {
+            model: QuestionType,
+            attributes: ['type_id', 'name'],
+            as: 'questionType'
+
+          },
           {
             model: Option,
             attributes: ['option_id', 'option_text', 'is_correct'],
@@ -192,204 +197,173 @@ class CourseStudentService {
         ]
       });
   
-      // Ordenamos aleatoriamente las preguntas para asegurar combinaciones diferentes cada vez
-      questions.sort(() => Math.random() - 0.5);
+      let selectedQuestions = [];
+      let totalScore = 0;
   
-      // Función que busca combinaciones exactas de preguntas que sumen el puntaje objetivo
-      const findCombinations = (questions, targetScore) => {
-        const result = [];
+      // Seleccionar preguntas hasta que la suma del score sea 20
+      for (const question of questions) {
+        if (totalScore + question.score <= 20) {
+          selectedQuestions.push(question);
+          totalScore += question.score;
   
-        const search = (combo, index, scoreSum) => {
-          if (scoreSum === targetScore) {
-            result.push([...combo]);
-            return;
-          }
-  
-          if (scoreSum > targetScore || index >= questions.length) return;
-  
-          // Tomar la pregunta actual
-          search([...combo, questions[index]], index + 1, scoreSum + questions[index].score);
-          
-          // No tomar la pregunta actual
-          search(combo, index + 1, scoreSum);
-        };
-  
-        search([], 0, 0);
-  
-        return result;
-      };
-  
-      const validCombinations = findCombinations(questions, targetScore);
-  
-      // Si encontramos combinaciones válidas, devolvemos una aleatoria
-      if (validCombinations.length > 0) {
-        const randomIndex = Math.floor(Math.random() * validCombinations.length);
-        return validCombinations[randomIndex];
-      } else {
-        // Si no se encuentra una combinación exacta, devolvemos un arreglo vacío o el mensaje adecuado
-        return [];
+          // Rompe el ciclo si ya llegamos a 20 puntos
+          if (totalScore === 20) break;
+        }
       }
   
+      return selectedQuestions;
+  
     } catch (error) {
-      console.log(error);
+      console.error('Error al obtener las preguntas:', error);
       throw error;
     }
-  }
+  };
+  
 
 
-    async  getModulesByCourseId(course_id, user_id) {
-      try {
-        const coursesByStudent = await Course.findAll({
-          where: { course_id: course_id },
-          attributes: ['course_id', 'name', 'evaluation_id'],
-          include: [
-            {
-              model: Module,
-              attributes: ['name', 'is_active', 'module_id', 'evaluation_id', 'created_at'],
-              as: 'courseModules',
-              include: [
-                {
-                  model: UserModuleProgress,
-                  attributes: ['is_completed', 'progress', 'user_id', 'user_module_progress_id'],
-                  as: 'usermoduleprogress',
-                  where: { user_id: user_id },
-                  required: false
-                },
-                {
-                  model: Session,
-                  attributes: ['session_id', 'name', 'video_enlace',  'duracion_minutos', 'created_at'],
-                  as: 'moduleSessions',
-                  required: false,
-                  include: [
-                    {
-                      model : VideoInteractivo,
-                      required: false,
-                    },
-                    {
-                      model: UserSessionProgress,
-                      as: 'usersessionprogress',
-                      where: { user_id: user_id },
-                      required: false
-                    }
-                  ]
-                },
-                {
-                  model: Evaluation,
-                  attributes: ['evaluation_id', 'name', 'description'],
-                  as: 'moduleEvaluation',
-                  include: [
-                    {
-                      model: Question,
-                      attributes: ['question_id', 'question_text', 'score', 'image', 'question_text', 'evaluation_id', 'type_id'],
-                      as: 'questions',
-                      include: [
-                        {
-                          model: QuestionType,
-                          attributes: ['type_id', 'name'],
-                          as: 'questionType'
-
-                        },
-                        {
-                          model: Option,
-                          attributes: ['option_id', 'option_text', 'is_correct'],
-                          as: 'options'
-                        }
-                      ]
-                    }
-                  ],
-                  required: false
-                },
-                {
-                  model: ModuleResult,
-                  attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
-                  where: { user_id: user_id },
-                  required: false,
-                  include: [
-                    {
-                      model: Evaluation,
-                      attributes: ['evaluation_id', 'name', 'description'],
-                      required: false
-                    }
-                  ]
-                }
-              ],
-              required: false
-            },
-            
-            {
-              model: CourseResult,
-              attributes: ['evaluation_id', 'course_id', 'puntaje',  'user_id', 'second_chance' ],
-              where: { user_id: user_id },
-              include: [
-                {
-                  model: Evaluation,
-                  attributes: ['evaluation_id', 'name', 'description'],
-                  required: false
-                }
-              ],
-              required: false
-            }
-            ,
-            {
-              model: Evaluation,
-              attributes: ['evaluation_id', 'name', 'description'],
-              include: [
-                {
-                  model: Question,
-                  attributes: ['question_id', 'question_text', 'score', 'image', 'question_text', 'evaluation_id', 'type_id'],
-                  as: 'questions',
-                  include: [
-                    {
-                      model: QuestionType,
-                      attributes: ['type_id', 'name'],
-                      as: 'questionType'
-                    },
-                    {
-                      model: Option,
-                      attributes: ['option_id', 'option_text', 'is_correct'],
-                      as: 'options'
-                    }
-                  ]
-                }
-              ],
-              required: false
-            }
-          ],
-        });
-    
-        //Obtener preguntas aleatorias con 20 puntos para cada evaluación
-        for (const course of coursesByStudent) {
-          if (course.evaluation_id) {
-            course.randomQuestions = await this.getRandomQuestionsByScore(course.evaluation_id, 20);
+  async getModulesByCourseId(course_id, user_id) {
+    try {
+      // Realizamos la consulta sin el 'include' de las preguntas
+      const coursesByStudent = await Course.findAll({
+        where: { course_id: course_id },
+        attributes: ['course_id', 'name', 'evaluation_id'],
+        include: [
+          {
+            model: Module,
+            attributes: ['name', 'is_active', 'module_id', 'evaluation_id', 'created_at'],
+            as: 'courseModules',
+            include: [
+              {
+                model: UserModuleProgress,
+                attributes: ['is_completed', 'progress', 'user_id', 'user_module_progress_id'],
+                as: 'usermoduleprogress',
+                where: { user_id: user_id },
+                required: false
+              },
+              {
+                model: Session,
+                attributes: ['session_id', 'name', 'video_enlace', 'duracion_minutos', 'created_at'],
+                as: 'moduleSessions',
+                required: false,
+                include: [
+                  {
+                    model: VideoInteractivo,
+                    required: false,
+                  },
+                  {
+                    model: UserSessionProgress,
+                    as: 'usersessionprogress',
+                    where: { user_id: user_id },
+                    required: false
+                  }
+                ]
+              },
+              {
+                model: Evaluation,
+                attributes: ['evaluation_id', 'name', 'description'], // Sin include de preguntas
+                as: 'moduleEvaluation',
+                required: false
+              },
+              {
+                model: ModuleResult,
+                attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
+                where: { user_id: user_id },
+                required: false,
+                include: [
+                  {
+                    model: Evaluation,
+                    attributes: ['evaluation_id', 'name', 'description'],
+                    required: false
+                  }
+                ]
+              }
+            ],
+            required: false
+          },
+          {
+            model: CourseResult,
+            attributes: ['evaluation_id', 'course_id', 'puntaje', 'user_id', 'second_chance'],
+            where: { user_id: user_id },
+            include: [
+              {
+                model: Evaluation,
+                attributes: ['evaluation_id', 'name', 'description'],
+                required: false
+              }
+            ],
+            required: false
+          },
+          {
+            model: Evaluation,
+            attributes: ['evaluation_id', 'name', 'description'], // Sin include de preguntas
+            required: false
           }
-        }
-
-
-        //Ordenado por fecha de creación de sesiones y modulos
-        coursesByStudent.forEach(course => {
-          if (course.courseModules) {
-            course.courseModules.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-            course.courseModules.forEach(module => {
-              if (module.moduleSessions) {
-                module.moduleSessions.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-                module.moduleSessions.forEach(session => {
-                  if (session.Videos) {
-                    session.Videos.sort((a, b) => a.orden - b.orden);
+        ],
+      });
+  
+            //Ordenado por fecha de creación de sesiones y modulos
+            coursesByStudent.forEach(course => {
+              if (course.courseModules) {
+                course.courseModules.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                course.courseModules.forEach(module => {
+                  if (module.moduleSessions) {
+                    module.moduleSessions.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                    module.moduleSessions.forEach(session => {
+                      if (session.Videos) {
+                        session.Videos.sort((a, b) => a.orden - b.orden);
+                      }
+                    });
                   }
                 });
               }
             });
+         // Convertir las instancias de Sequelize a JSON plano
+    const coursesJSON = coursesByStudent.map(course => course.toJSON());
+
+    // Reemplazar las preguntas en el JSON para 'course'
+    for (const course of coursesJSON) {
+      // Reemplazo para las evaluaciones en 'course'
+      if (course.Evaluation) {
+        const evaluation_id = course.Evaluation.evaluation_id;
+
+        // Obtener las preguntas filtradas para la evaluación del curso
+        const filteredQuestions = await this.getQuestionsByEvaluation(evaluation_id);
+
+        // Asignar las preguntas filtradas al campo 'questions' en course.Evaluation
+        course.Evaluation.questions = filteredQuestions.length > 0 
+          ? filteredQuestions 
+          : []; // Si no hay preguntas, deja el campo vacío.
+      }
+
+      // Reemplazo para las evaluaciones en 'courseModules'
+      if (course.courseModules) {
+        for (const module of course.courseModules) {
+          if (module.moduleEvaluation) {
+            const evaluation_id = module.moduleEvaluation.evaluation_id;
+
+            // Obtener las preguntas filtradas llamando a getQuestionsByEvaluation
+            const filteredQuestions = await this.getQuestionsByEvaluation(evaluation_id);
+
+            // Asignar las preguntas filtradas al campo 'questions'
+            module.moduleEvaluation.questions = filteredQuestions.length > 0 
+              ? filteredQuestions 
+              : []; // Si no hay preguntas, deja el campo vacío.
           }
-        });
-    
-        return coursesByStudent;
-      } catch (error) {
-        console.log(error);
-        throw error;
+        }
       }
     }
-    
-// calificaciones de modulos y cursos
+
+    // Retornamos el JSON modificado
+    return coursesJSON;
+  
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  }
+  
+  
+//calificaciones de modulos y cursos
 async getModulesByCourseId2(course_id, user_id) {
   try {
       const coursesByStudent = await Course.findAll({
