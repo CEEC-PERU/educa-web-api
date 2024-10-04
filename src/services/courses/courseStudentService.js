@@ -266,7 +266,7 @@ class CourseStudentService {
               },
               {
                 model: ModuleResult,
-                attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
+                attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id', 'created_at'],
                 where: { user_id: user_id },
                 required: false,
                 include: [
@@ -282,7 +282,7 @@ class CourseStudentService {
           },
           {
             model: CourseResult,
-            attributes: ['evaluation_id', 'course_id', 'puntaje', 'user_id', 'second_chance'],
+            attributes: ['evaluation_id', 'course_id', 'puntaje', 'user_id', 'second_chance', 'created_at'],
             where: { user_id: user_id },
             include: [
               {
@@ -317,6 +317,8 @@ class CourseStudentService {
                 });
               }
             });
+
+            // 
          // Convertir las instancias de Sequelize a JSON plano
     const coursesJSON = coursesByStudent.map(course => course.toJSON());
 
