@@ -379,7 +379,7 @@ async getModulesByCourseId2(course_id, user_id) {
                   include: [
                       {
                           model: ModuleResult,
-                          attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id'],
+                          attributes: ['evaluation_id', 'module_id', 'puntaje', 'user_id' , 'created_at'],
                           where: { user_id: user_id },
                           required: false,
                           include: [
