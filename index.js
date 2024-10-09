@@ -61,7 +61,6 @@ app.use('/api/auth', require('./src/routes/auth/auth-route'));
 app.use('/api/profiles', require('./src/routes/users/profileRoutes'));
 app.use('/api/categories', require('./src/routes/courses/categoryRoutes'));
 app.use('/api/professors', require('./src/routes/courses/professorRoutes'));
-
 app.use('/api/modules', require('./src/routes/courses/moduleRoutes'));
 app.use('/api/sessions', require('./src/routes/courses/sessionRoutes'));
 app.use('/api/evaluations', require('./src/routes/courses/evaluationRoutes'));
@@ -73,7 +72,6 @@ app.use('/api/courseresults', require('./src/routes/courses/courseResultRoutes')
 app.use('/api/moduleresults', require('./src/routes/courses/moduleResultRoutes'));
 app.use('/api/userModuleProgress', require('./src/routes/users/UserModuleProgress'));
 app.use('/api/userSessionProgress', require('./src/routes/users/UserSessionProgress'));
-
 app.use('/api/superadmin', require('./src/routes/superadmin/userRoutes'));
 app.use('/api/requirements', require('./src/routes/superadmin/requirementRoutes'));
 app.use('/api/metricascorporate', require('./src/routes/courses/metricasRoutes'));
@@ -81,7 +79,7 @@ app.use('/api/notas', require('./src/routes/courses/NotasRoutes'));
 app.use('/api/classrooms', require('./src/routes/enterprise/classroomRoute'));
 app.use('/api/shifts', require('./src/routes/enterprise/shiftRoute'));
 app.use('/api/userinfo', require('./src/routes/users/UserInfoRoutes'));
-app.use('/api/cuestionarios', require('./src/routes/courses/cuestionarioRoute'));
+app.use('/api/cuestionarioresults', require('./src/routes/courses/resultCuestionario'));
 SocketService(server);
 
 app.use('/api/coursestudents', require('./src/routes/courses/courseStudentRoutes'));

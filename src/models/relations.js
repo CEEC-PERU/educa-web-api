@@ -22,8 +22,6 @@ const Content = require('./ContenidoModel');
 const EvaluationModuleResult = require('./EvaluationModuleResult'); 
 const FlashCard = require('./FlashcardModel'); 
 const AdminCorporateEnterprise = require('./EnterpriseAdmin'); 
-const Cuestionario = require('./cuestionarioModel'); 
-
 const ResultCuestionario = require('./ResultCuestionario');
 const CuestionarioType = require('./CuestionarioType');
 const VideoInteractivo = require('./videoInteractivo');
@@ -52,6 +50,7 @@ AnswerModuleResult.belongsTo(Question, {
   foreignKey: 'question_id',
   as: 'question'
 });
+
 
 
 
@@ -116,34 +115,23 @@ VideoInteractivo.belongsTo(Session, {
 Session.hasMany(VideoInteractivo,{foreignKey: 'interactivo_id'});
 
 
+User.hasMany(ResultCuestionario, {foreignKey: 'user_id',});
+ResultCuestionario.belongsTo(User, { foreignKey: 'user_id'});
 
-// Cuestionario y CuestionarioType
-Cuestionario.belongsTo(CuestionarioType, { foreignKey: 'cuestype_id' });
-CuestionarioType.hasMany(Cuestionario, { foreignKey: 'cuestype_id' });
+Course.hasMany(ResultCuestionario, {foreignKey: 'course_id'});
+ResultCuestionario.belongsTo(Course, {foreignKey: 'course_id'});
 
-// Course y Cuestionario (Muchos a muchos)
-Course.belongsToMany(Cuestionario, { through: 'CourseCuestionario', foreignKey: 'course_id' });
-Cuestionario.belongsToMany(Course, { through: 'CourseCuestionario', foreignKey: 'course_id' });
-
-// Cuestionario y ResultCuestionario (Uno a muchos)
-Cuestionario.hasMany(ResultCuestionario, { foreignKey: 'cuestionario_id' });
-ResultCuestionario.belongsTo(Cuestionario, { foreignKey: 'cuestionario_id' });
-
-// User y ResultCuestionario (Uno a muchos)
-User.hasMany(ResultCuestionario, { foreignKey: 'user_id' });
-ResultCuestionario.belongsTo(User, { foreignKey: 'user_id' });
-
+CuestionarioType.hasMany(ResultCuestionario, { foreignKey: 'cuestype_id',});
+ResultCuestionario.belongsTo(CuestionarioType, { foreignKey: 'cuestype_id' });
 
 // Relación entre `User` y `AdminCorporateEnterprise`
 User.hasMany(AdminCorporateEnterprise, { foreignKey: 'user_id' });
 AdminCorporateEnterprise.belongsTo(User, { foreignKey: 'user_id' });
 
+
+
 AdminCorporateEnterprise.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
 Enterprise.hasMany(AdminCorporateEnterprise, { foreignKey: 'enterprise_id' });
-
-
-
-
 
 // Un Curso puede tener varios FlashCards
 Course.hasMany(FlashCard, {

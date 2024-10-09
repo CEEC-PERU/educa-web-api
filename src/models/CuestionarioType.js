@@ -2,7 +2,6 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const Course = require('./courseModel');
 
-
 const CuestionarioType = sequelize.define('CuestionarioType', {
   cuestype_id: {
     type: DataTypes.INTEGER,
@@ -11,6 +10,10 @@ const CuestionarioType = sequelize.define('CuestionarioType', {
     primaryKey: true,
   },
   name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  question: {
     type: DataTypes.STRING,
     allowNull: false
   },
