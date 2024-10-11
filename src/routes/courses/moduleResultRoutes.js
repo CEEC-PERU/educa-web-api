@@ -3,6 +3,7 @@ const router = express.Router();
 const ModuleResultController = require('../../controllers/courses/moduleResultController');
 const authenticateToken = require('../../middlewares/authenticationMiddleware');
 
+
 router.post('/',authenticateToken, ModuleResultController.create);
 router.get('/', authenticateToken, ModuleResultController.getAll);
 router.get('/:id',authenticateToken,  ModuleResultController.getById);

@@ -80,6 +80,7 @@ app.use('/api/classrooms', require('./src/routes/enterprise/classroomRoute'));
 app.use('/api/shifts', require('./src/routes/enterprise/shiftRoute'));
 app.use('/api/userinfo', require('./src/routes/users/UserInfoRoutes'));
 app.use('/api/cuestionarioresults', require('./src/routes/courses/resultCuestionario'));
+app.use('/api/flashcards', require('./src/routes/games/flashcardRoute'));
 SocketService(server);
 
 app.use('/api/coursestudents', require('./src/routes/courses/courseStudentRoutes'));

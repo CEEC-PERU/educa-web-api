@@ -104,6 +104,7 @@ User.hasMany(Classroom, { foreignKey: 'user_id' });
 
 Course.belongsTo(Content, { foreignKey: 'content_id'});
 
+
 Content.hasMany(Course, { foreignKey: 'content_id'});
 
 
@@ -134,15 +135,13 @@ AdminCorporateEnterprise.belongsTo(Enterprise, { foreignKey: 'enterprise_id' });
 Enterprise.hasMany(AdminCorporateEnterprise, { foreignKey: 'enterprise_id' });
 
 // Un Curso puede tener varios FlashCards
-Course.hasMany(FlashCard, {
-    foreignKey: 'course_id',
-    as: 'flashcards'
+Module.hasMany(FlashCard, {
+    foreignKey: 'module_id'
   });
   
   // Un FlashCard pertenece a un Curso
-FlashCard.belongsTo(Course, {
-    foreignKey: 'course_id',
-    as: 'course'
+FlashCard.belongsTo(Module, {
+    foreignKey: 'module_id'
 });
 
 // Asociación

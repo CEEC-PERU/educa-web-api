@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Course = require('./courseModel');
+const Module = require('./moduleModel');
 
 const FlashCard = sequelize.define('FlashCard', {
   flashcard_id: {
@@ -18,11 +18,11 @@ const FlashCard = sequelize.define('FlashCard', {
   incorrect_answer: {
     type: DataTypes.ARRAY(DataTypes.STRING),
   },
-  course_id: {
+  module_id: {
     type: DataTypes.INTEGER,
     references: {
-      model: Course,
-      key: 'course_id',
+      model: Module,
+      key: 'module_id',
     },
   },
   created_at: {
