@@ -4,6 +4,8 @@ const Profile = require('../../models/profileModel');
 const User = require('../../models/UserModel');
 const bcrypt = require('bcrypt');
 const Enterprise = require('../../models/EnterpriseModel');
+const Course = require('../../models/courseModel');
+const courseStudent = require('../../models/courseStudent');
 
 async function createUser(userData) {
   try {
@@ -94,6 +96,33 @@ async function getUserInfo(userId) {
   });
 }
 
+async function getCoursesByUser(userId) {
+  try {
+      // Buscar todos los cursos asignados al estudiante
+      const courses = await courseStudent.findAll({
+          where: { user_id: userId },
+          attributes: ['course_id', 'deadline'],
+          include: [
+            {
+              model: Course,
+              attributes: ['name', 'description_short', 'image', 'course_id', 'created_at'],
+              
+            }
+          ]
+        });
+      
+      // Contar los cursos finalizados (progreso al 100%)
+      const completedCourses = courses.filter(course => course.progress === 100).length;
+
+      return {
+          totalCourses: courses.length,
+          completedCourses,
+      };
+  } catch (error) {
+      throw new Error('Error al obtener los cursos del usuario');
+  }
+}
 
 
-module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo , createUsers }
+
+module.exports = { createUserAdmin, createUser, getUserById, updateUser, deleteUser, getAllUsers , getUserInfo , createUsers  , getCoursesByUser}

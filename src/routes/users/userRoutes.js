@@ -9,6 +9,7 @@ router.get('/users/:id', userController.getUserById);
 router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
 router.post('/createuserAdmin', userController.createUserAdmin);
+router.get('/courses/:user_id', userController.getCoursesByUser);
 
 
 //OBTENER INFO DE USUARIO CON EMPRESA Y PERFIL

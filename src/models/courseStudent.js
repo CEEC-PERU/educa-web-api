@@ -13,7 +13,7 @@ const courseStudent = sequelize.define('CourseStudent', {
     classroom_id: {
         type: DataTypes.INTEGER,
         allowNull: true, // Si no hay aula asignada
-        references: {
+        references: { 
             model: Classroom,
             key: 'classroom_id'
         }
