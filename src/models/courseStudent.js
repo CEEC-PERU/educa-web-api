@@ -4,6 +4,7 @@ const User = require('./UserModel');
 const Course = require('./courseModel');  
 const Classroom = require('./Classroom'); 
 
+
 const courseStudent = sequelize.define('CourseStudent', {
     coursestudent_id: {
         type: DataTypes.INTEGER,

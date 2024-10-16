@@ -4,6 +4,7 @@ const Category = require('./categoryModel');
 const Professor = require('./professorModel');  
 const Evaluation = require('./evaluationModel'); // Importa el modelo Evaluation
 const Content = require('./ContenidoModel');
+
 const Course = sequelize.define('Course', {
     course_id: {
         type: DataTypes.INTEGER,

@@ -163,7 +163,7 @@ const getCompanies = async (req, res) => {
 // Obtener usuarios por empresa y rol ID
 
 
-
+//
 const getUsersByCompanyAndRoleId = async (req, res) => {
   const { companyId, roleId } = req.params;
   try {
@@ -204,9 +204,8 @@ const getUsersByCompanyAndRoleId = async (req, res) => {
 };
 
 
-
 const getUsersEnterpriseClassrooms = async (req, res) => {
-  const {  userId , companyId } = req.params;
+  const { userId, companyId } = req.params;
 
   try {
     console.log('Fetching supervised students for supervisor ID:', userId);
@@ -215,8 +214,8 @@ const getUsersEnterpriseClassrooms = async (req, res) => {
     const supervisor = await User.findOne({
       where: {
         user_id: userId,
-        role_id:  6 , // Asegurarse que el usuario tiene el rol de supervisor
-        enterprise_id : companyId
+        role_id: 6, // Asegurarse que el usuario tiene el rol de supervisor
+        enterprise_id: companyId
       }
     });
 
@@ -228,7 +227,7 @@ const getUsersEnterpriseClassrooms = async (req, res) => {
     const classrooms = await Classroom.findAll({
       where: { user_id: userId }, // Aulas del supervisor
       attributes: ['classroom_id', 'code'],
-      include: [{ model: Enterprise,  attributes: ['name'] }] // Relación con la empresa
+      include: [{ model: Enterprise, attributes: ['name'] }] // Relación con la empresa
     });
 
     // Si no hay aulas asignadas, retornar un mensaje
@@ -236,45 +235,36 @@ const getUsersEnterpriseClassrooms = async (req, res) => {
       return res.status(200).json({ message: 'No classrooms assigned to this supervisor' });
     }
 
-    // Obtener todos los estudiantes en las aulas donde el supervisor está asignado
+    // Obtener todos los estudiantes en las aulas donde el supervisor está asignado, eliminando duplicados
     const studentList = await CourseStudent.findAll({
       where: {
         classroom_id: {
           [Op.in]: classrooms.map(c => c.classroom_id) // Aulas del supervisor
         }
       },
-      attributes: ['user_id', 'progress', 'is_approved', 'classroom_id'],
-
+      attributes: ['user_id', 'progress', 'is_approved'], // Aquí no traemos classroom_id para evitar duplicados
       include: [
         {
           model: User, // Estudiantes inscritos
-         
-          attributes: ['user_id', 'dni', 'role_id', 'enterprise_id',  'user_name' , 'created_at' ],
-           where: { role_id: 1 }, // Solo estudiantes con rol de "student"
-         
+          attributes: ['user_id', 'dni', 'role_id', 'enterprise_id', 'user_name', 'created_at'],
+          where: { role_id: 1 }, // Solo estudiantes con rol de "student"
           include: [
-            { model: Profile, as: 'userProfile' }, // Perfil del estudiante
-            
-          ]
-        },
-        {
-          model: Classroom, // Aula a la que pertenece el estudiante
-       
-          attributes: ['code'],
-          include: [
-            { model: Enterprise,  attributes: ['name'] } // Información de la empresa
+            { model: Profile, as: 'userProfile' } // Perfil del estudiante
           ]
         }
-      ]
+      ],
+      distinct: true // Distinct para evitar duplicados de estudiantes
     });
 
-    // Retornar la lista de estudiantes supervisados
+    // Retornar la lista de estudiantes supervisados, eliminando duplicados
+    const uniqueStudents = [...new Map(studentList.map(student => [student.user_id, student])).values()];
+
     res.status(200).json({
       supervisor: supervisor.user_id,
       classrooms: classrooms.map(c => ({
         classroom_code: c.code,
       })),
-      students: studentList
+      students: uniqueStudents // Lista de estudiantes únicos
     });
   } catch (error) {
     console.error('Error fetching supervised students:', error);

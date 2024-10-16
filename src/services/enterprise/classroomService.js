@@ -1,6 +1,8 @@
 const Classroom = require('../../models/Classroom');
 const Enterprise = require('../../models/EnterpriseModel');
 const Shift = require('../../models/ShiftModel');
+const User = require('../../models/UserModel');
+const Profile = require('../../models/profileModel');
 // Obtener todas las aulas (classrooms)
 const getAllClassrooms = async () => {
     return await Classroom.findAll();
@@ -36,21 +38,40 @@ const deleteClassroom = async (id) => {
     return false;
 };
 
+
 const getClassroomsByEnterprise = async (enterpriseId) => {
-    return await Classroom.findAll({
-        where: {
-            enterprise_id: enterpriseId
-        },
-        include: [
-            {
-                model: Enterprise
+    try {
+        const classrooms = await Classroom.findAll({
+            where: {
+                enterprise_id: enterpriseId
             },
-            {
-                model:Shift
-            }
-        ]
-    });
+            include: [
+                {
+                    model: Enterprise,
+                },
+                {
+                    model: Shift,
+                },
+                {
+                    model: User,
+                    attributes: ['user_id'], // Fetch only user_id from User
+                    include: [
+                        {
+                            model: Profile,
+                            attributes: ['first_name', 'last_name'], // Fetch name details from Profile
+                            as: 'userProfile' 
+                        }
+                    ]
+                }
+            ]
+        });
+        return classrooms;
+    } catch (error) {
+        console.error('Error fetching classrooms:', error);
+        throw error; // Re-throw the error to handle it in the calling function
+    }
 };
+
 
 const getClassroomsByEnterpriseSupervisor = async (enterpriseId , userId) => {
     return await Classroom.findAll({
